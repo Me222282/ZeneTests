@@ -24,9 +24,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Physics\Physics.csproj" />
-    <ProjectReference Include="..\..\Sprites\Sprites.csproj" />
-    <ProjectReference Include="..\..\Structs\Structs.csproj" />
+    <ProjectReference Include="..\..\Physics\src\Physics.csproj" />
+    <ProjectReference Include="..\..\Sprites\src\Sprites.csproj" />
+    <ProjectReference Include="..\..\Structs\src\Structs.csproj" />
   </ItemGroup>
 
 </Project>

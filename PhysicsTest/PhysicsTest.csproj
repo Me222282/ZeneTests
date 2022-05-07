@@ -10,11 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Graphics\Graphics.csproj" />
-    <ProjectReference Include="..\..\Physics\Physics.csproj" />
-    <ProjectReference Include="..\..\Sprites\Sprites.csproj" />
-    <ProjectReference Include="..\..\Structs\Structs.csproj" />
-    <ProjectReference Include="..\..\Windowing\Windowing.csproj" />
+    <ProjectReference Include="..\..\Graphics\src\Graphics.csproj" />
+    <ProjectReference Include="..\..\Physics\src\Physics.csproj" />
+    <ProjectReference Include="..\..\Sprites\src\Sprites.csproj" />
+    <ProjectReference Include="..\..\Structs\src\Structs.csproj" />
+    <ProjectReference Include="..\..\Windowing\src\Windowing.csproj" />
   </ItemGroup>
 
   <ItemGroup>

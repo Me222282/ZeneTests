@@ -5,15 +5,15 @@ VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhysicsTest", "PhysicsTest.csproj", "{8C588A85-1BA5-4E6C-B22E-DD161DA86332}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphics", "..\..\Graphics\Graphics.csproj", "{D8551A6A-4F2B-4BA3-B7BA-E5D0EEFF0F03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphics", "..\..\Graphics\src\Graphics.csproj", "{D8551A6A-4F2B-4BA3-B7BA-E5D0EEFF0F03}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Structs", "..\..\Structs\Structs.csproj", "{04A66B19-98A0-4A10-A7B6-82DEB1DA418B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Structs", "..\..\Structs\src\Structs.csproj", "{04A66B19-98A0-4A10-A7B6-82DEB1DA418B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Physics", "..\..\Physics\Physics.csproj", "{6962B22F-D11D-43CB-9219-505A03161F25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Physics", "..\..\Physics\src\Physics.csproj", "{6962B22F-D11D-43CB-9219-505A03161F25}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sprites", "..\..\Sprites\Sprites.csproj", "{CF3B3E21-C5E0-4CE8-8E59-5A07AC7299DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sprites", "..\..\Sprites\src\Sprites.csproj", "{CF3B3E21-C5E0-4CE8-8E59-5A07AC7299DB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Windowing", "..\..\Windowing\Windowing.csproj", "{8B02C375-F04B-4F95-811A-988E5999B9AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Windowing", "..\..\Windowing\src\Windowing.csproj", "{8B02C375-F04B-4F95-811A-988E5999B9AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

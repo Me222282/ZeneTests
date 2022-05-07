@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImplicitFunctions", "ImplicitFunctions.csproj", "{31345BD1-B48F-497D-A202-F69D1AD4477E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphics", "..\..\Graphics\Graphics.csproj", "{FCC04BBC-817D-4A38-AB43-90AA7998BDB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphics", "..\..\Graphics\src\Graphics.csproj", "{FCC04BBC-817D-4A38-AB43-90AA7998BDB7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Structs", "..\..\Structs\Structs.csproj", "{6EE424B3-EDEC-4E6B-BCB8-D1DDBBBC0698}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Structs", "..\..\Structs\src\Structs.csproj", "{6EE424B3-EDEC-4E6B-BCB8-D1DDBBBC0698}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Windowing", "..\..\Windowing\Windowing.csproj", "{07E85AEC-3899-4F4C-9B21-D4BB99D4715D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Windowing", "..\..\Windowing\src\Windowing.csproj", "{07E85AEC-3899-4F4C-9B21-D4BB99D4715D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

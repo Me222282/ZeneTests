@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.32106.194
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenchMark", "BenchMark.csproj", "{1B38DAD6-72AB-4E0E-889B-32F6B50186DB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphics", "..\..\Graphics\Graphics.csproj", "{BFB54A40-0F60-4DC8-8BC5-E0A92AC9A31D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphics", "..\..\Graphics\src\Graphics.csproj", "{BFB54A40-0F60-4DC8-8BC5-E0A92AC9A31D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Windowing", "..\..\Windowing\Windowing.csproj", "{D75F26CB-8EAF-48FF-962A-1DF40471545D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Windowing", "..\..\Windowing\src\Windowing.csproj", "{D75F26CB-8EAF-48FF-962A-1DF40471545D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Structs", "..\..\Structs\Structs.csproj", "{0DB36D9A-5D10-4511-8A97-521F1C76BEE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Structs", "..\..\Structs\src\Structs.csproj", "{0DB36D9A-5D10-4511-8A97-521F1C76BEE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

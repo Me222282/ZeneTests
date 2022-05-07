@@ -18,9 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Graphics\Graphics.csproj" />
-    <ProjectReference Include="..\..\Structs\Structs.csproj" />
-    <ProjectReference Include="..\..\Windowing\Windowing.csproj" />
+    <ProjectReference Include="..\..\Graphics\src\Graphics.csproj" />
+    <ProjectReference Include="..\..\Structs\src\Structs.csproj" />
+    <ProjectReference Include="..\..\Windowing\src\Windowing.csproj" />
   </ItemGroup>
 
 </Project>
