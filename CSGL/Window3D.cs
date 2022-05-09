@@ -88,6 +88,9 @@ namespace CSGL
 
                 Framebuffer.Draw();
 
+                Console.WriteLine(State.DrawView);
+                Console.WriteLine(BaseFramebuffer.View);
+
                 GLFW.SwapBuffers(Handle);
 
                 GLFW.PollEvents();
@@ -601,8 +604,10 @@ namespace CSGL
         {
             base.OnSizePixelChange(e);
 
-            Framebuffer.Size = new Vector2I(Width, Height);
-            BaseFramebuffer.ViewSize = new Vector2I(Width, Height);
+            Framebuffer.Size = e.Size;
+            BaseFramebuffer.ViewSize = e.Size;
+
+            Console.WriteLine(BaseFramebuffer.View);
 
             double mWidth;
             double mHeight;

@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Zene.Graphics;
 using Zene.Graphics.Base;
+using Zene.Graphics.Shaders;
 using Zene.Structs;
 using Zene.Windowing;
+using Zene.Windowing.Base;
 
 namespace CSGL
 {
@@ -12,14 +16,14 @@ namespace CSGL
         static void Main()
         {
             Core.Init();
-            
+
             //TestTextureParam();
 
 
             //ShadowLWindow window = new ShadowLWindow(800, 500, "Work");
 
             //CubeMapTest window = new CubeMapTest(800, 500, "Work");
-
+            /*
             Window3D window = new Window3D(800, 500, "Work");
 
             //WindowTest window = new WindowTest(800, 500, "Test");
@@ -36,6 +40,104 @@ namespace CSGL
             {
                 Console.WriteLine(ex);
                 Console.ReadLine();
+            }*/
+            
+            Task.Run(() =>
+            {
+                Window3D a = new Window3D(800, 500, "Work");
+
+                a.Run();
+            });
+
+            Thread.Sleep(1000);
+
+            Window3D b = new Window3D(800, 500, "Work");
+
+            b.Run();
+
+
+            //Core.Context = null;
+            /*
+            Task.Run(() =>
+            {
+                Window a = new Window(800, 500, "Work");
+                //a.IsContext = true;
+
+                if (State.CurrentContext == GraphicsContext.None)
+                {
+                    Console.WriteLine("problem");
+                }
+
+                a.SizePixelChange += (_, e) =>
+                {
+                    Console.WriteLine(GLFW.GetCurrentContext() == a.Handle);
+
+                    BaseFramebuffer.ViewSize = e.Size;
+                };
+
+                DrawObject<double, byte> d = new DrawObject<double, byte>(new double[]
+                {
+                    0.5d, 0.5d,
+                    0.5d, -0.5,
+                    -0.5, -0.5,
+                    -0.5, 0.5d
+                }, new byte[] { 0, 1, 2, 2, 3, 0 }, 2, 0, AttributeSize.D2, BufferUsage.DrawFrequent);
+
+                BasicShader s = new BasicShader();
+
+                while (GLFW.WindowShouldClose(a.Handle) == GLFW.False)
+                {
+                    BaseFramebuffer.Bind();
+                    BaseFramebuffer.Clear(BufferBit.Colour);
+
+                    s.Bind();
+                    d.Draw();
+
+                    GLFW.SwapBuffers(a.Handle);
+                }
+
+                a.Dispose();
+            });
+            Task.Run(() =>
+            {
+                Window b = new Window(800, 500, "Work");
+                //b.IsContext = true;
+
+                b.SizePixelChange += (_, e) => BaseFramebuffer.ViewSize = e.Size;
+
+                DrawObject<double, byte> d = new DrawObject<double, byte>(new double[]
+                {
+                    0.5d, 0.5d,
+                    0.5d, -0.5,
+                    -0.5, -0.5,
+                    -0.5, 0.5d
+                }, new byte[] { 0, 1, 2, 2, 3, 0 }, 2, 0, AttributeSize.D2, BufferUsage.DrawFrequent);
+
+                BasicShader s = new BasicShader();
+
+                while (GLFW.WindowShouldClose(b.Handle) == GLFW.False)
+                {
+                    BaseFramebuffer.Bind();
+                    BaseFramebuffer.Clear(BufferBit.Colour);
+
+                    s.Bind();
+                    d.Draw();
+
+                    GLFW.SwapBuffers(b.Handle);
+                    GLFW.PollEvents();
+                }
+
+                b.Dispose();
+            });
+
+            while (true)
+            {
+                GLFW.WaitEvents();
+
+                //if (GLFW.WindowShouldClose(a.Handle) == GLFW.True)
+                //{
+                //    break;
+                //}
             }*/
 
             Core.Terminate();
