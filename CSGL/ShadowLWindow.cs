@@ -24,7 +24,7 @@ namespace CSGL
             OnSizeChange(new SizeChangeEventArgs(width, height));
             BaseFramebuffer.View = new RectangleI(0, 0, width, height);
 
-            FullScreen = true;
+            //FullScreen = true;
         }
 
         protected override void Dispose(bool dispose)
