@@ -1,0 +1,63 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                //"${workspaceFolder}/Tests/BenchMarking/BenchMarking.csproj",
+                //"${workspaceFolder}/Tests/CollisionsTest/CollisionsTest.csproj",
+                "${workspaceFolder}/Tests/CSGL/CSGL.csproj",
+                //"${workspaceFolder}/Tests/FXAA/FXAA.csproj",
+                //"${workspaceFolder}/Tests/GUITest/GUITest.csproj",
+                //"${workspaceFolder}/Tests/ImplicitFunctions/ImplicitFunctions.csproj",
+                //"${workspaceFolder}/Tests/PhysicsTest/PhysicsTest.csproj",
+                //"${workspaceFolder}/Tests/TexelPhysics/TexelPhysics.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                //"${workspaceFolder}/Tests/BenchMarking/BenchMarking.csproj",
+                //"${workspaceFolder}/Tests/CollisionsTest/CollisionsTest.csproj",
+                "${workspaceFolder}/Tests/CSGL/CSGL.csproj",
+                //"${workspaceFolder}/Tests/FXAA/FXAA.csproj",
+                //"${workspaceFolder}/Tests/GUITest/GUITest.csproj",
+                //"${workspaceFolder}/Tests/ImplicitFunctions/ImplicitFunctions.csproj",
+                //"${workspaceFolder}/Tests/PhysicsTest/PhysicsTest.csproj",
+                //"${workspaceFolder}/Tests/TexelPhysics/TexelPhysics.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                //"${workspaceFolder}/Tests/BenchMarking/BenchMarking.csproj",
+                //"${workspaceFolder}/Tests/CollisionsTest/CollisionsTest.csproj",
+                "${workspaceFolder}/Tests/CSGL/CSGL.csproj",
+                //"${workspaceFolder}/Tests/FXAA/FXAA.csproj",
+                //"${workspaceFolder}/Tests/GUITest/GUITest.csproj",
+                //"${workspaceFolder}/Tests/ImplicitFunctions/ImplicitFunctions.csproj",
+                //"${workspaceFolder}/Tests/PhysicsTest/PhysicsTest.csproj",
+                //"${workspaceFolder}/Tests/TexelPhysics/TexelPhysics.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
