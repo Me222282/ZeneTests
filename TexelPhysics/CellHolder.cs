@@ -66,7 +66,7 @@ namespace TexelPhysics
             }
         }
 
-        public bool Empty => _cells[0] == Cell.Empty;
+        public bool Empty => _cells.Count == 0 || _cells[0] == Cell.Empty;
 
         public bool CanPush(double force)
         {

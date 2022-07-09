@@ -1,7 +1,7 @@
 ﻿using Zene.Graphics;
 using Zene.Windowing;
-using Zene.Windowing.Base;
 using Zene.Structs;
+using System;
 
 namespace PhysicsTest
 {
@@ -47,24 +47,15 @@ namespace PhysicsTest
             }
         }
 
-        public void Run()
+        private double _count = 0;
+        protected override void OnUpdate(EventArgs e)
         {
-            // VSync
-            GLFW.SwapInterval(1);
+            base.OnUpdate(e);
 
-            double count = 0;
+            Framebuffer.Clear(BufferBit.Colour);
 
-            while (GLFW.WindowShouldClose(Handle) == 0) // While window won't close
-            {
-                GLFW.PollEvents();
-
-                Framebuffer.Clear(BufferBit.Colour);
-
-                _textDraw.DrawLeftBound($"Count:{count:N3}", _font, -0.15, 0);
-                count += 0.001;
-
-                GLFW.SwapBuffers(Handle);
-            }
+            _textDraw.DrawLeftBound($"Count:{_count:N3}", _font, -0.15, 0);
+            _count += 0.001;
         }
 
         protected override void OnSizeChange(SizeChangeEventArgs e)
@@ -74,7 +65,7 @@ namespace PhysicsTest
             _textDraw.Projection = Matrix4.CreateOrthographic(e.Width, e.Height, 0, -1);
             _textDraw.Model = Matrix4.CreateScale(30, 30, 1) * Matrix4.CreateTranslation(-e.Width * 0.5, e.Height * 0.5, 0);
 
-            Framebuffer.ViewSize = new Vector2I((int)e.Width, (int)e.Height);
+            Framebuffer.ViewSize = new Vector2I(e.Width, e.Height);
         }
     }
 }

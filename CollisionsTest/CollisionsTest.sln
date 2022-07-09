@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sprites", "../../Sprites\sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Physics", "../../Physics\src\Physics.csproj", "{0A2FC845-07E8-4833-A464-EA5CDD583CC7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Collisions", "Collisions.csproj", "{9C1A01BF-ECCF-4743-9AC7-9BF3B68D3F2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CollisionsTest", "CollisionsTest.csproj", "{9C1A01BF-ECCF-4743-9AC7-9BF3B68D3F2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

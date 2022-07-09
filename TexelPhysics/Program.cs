@@ -3,7 +3,6 @@ using Zene.Graphics;
 using Zene.Graphics.Base.Extensions;
 using Zene.Structs;
 using Zene.Windowing;
-using Zene.Windowing.Base;
 
 namespace TexelPhysics
 {
@@ -161,40 +160,31 @@ namespace TexelPhysics
 
         private readonly World _world;
         private Cell.Type _addingCell;
-        public void Run()
+        protected override void OnUpdate(EventArgs e)
         {
-            // Vsync
-            GLFW.SwapInterval(1);
+            base.OnUpdate(e);
 
-            // While window isn't closing
-            while (GLFW.WindowShouldClose(Handle) == GLFW.False)
+            // Set cells to mouse pos
+            if (_mouseDown)
             {
-                // Set cells to mouse pos
-                if (_mouseDown)
+                for (int x = 0; x < _drawingSize.X; x++)
                 {
-                    for (int x = 0; x < _drawingSize.X; x++)
+                    for (int y = 0; y < _drawingSize.Y; y++)
                     {
-                        for (int y = 0; y < _drawingSize.Y; y++)
-                        {
-                            _world.OverrideCell(_worldMouse.X + x, _worldMouse.Y + y, Cell.CreateType(_addingCell));
-                        }
+                        _world.OverrideCell(_worldMouse.X + x, _worldMouse.Y + y, Cell.CreateType(_addingCell));
                     }
                 }
-
-                _world.UpdateCells();
-
-                base.Framebuffer.Clear(BufferBit.Colour);
-
-
-                // Set texture data to values of cellmap
-                _texture.TexSubImage2D(0, 0, 0, _texture.Width, _texture.Height, BaseFormat.Rgba, TextureData.Byte, _world.GetTextureData());
-                // Copy framebuffer to the main framebuffer
-                Framebuffer.CopyFrameBuffer(base.Framebuffer, BufferBit.Colour, TextureSampling.Nearest);
-
-                // Window management
-                GLFW.SwapBuffers(Handle);
-                GLFW.PollEvents();
             }
+
+            _world.UpdateCells();
+
+            base.Framebuffer.Clear(BufferBit.Colour);
+
+
+            // Set texture data to values of cellmap
+            _texture.TexSubImage2D(0, 0, 0, _texture.Width, _texture.Height, BaseFormat.Rgba, TextureData.Byte, _world.GetTextureData());
+            // Copy framebuffer to the main framebuffer
+            Framebuffer.CopyFrameBuffer(base.Framebuffer, BufferBit.Colour, TextureSampling.Nearest);
         }
 
         private bool _mouseDown;
@@ -245,12 +235,12 @@ namespace TexelPhysics
         {
             base.OnKeyDown(e);
 
-            if (e.Key == Keys.W)
+            if (e[Keys.W])
             {
                 _wKey = true;
                 return;
             }
-            if (e.Key == Keys.S)
+            if (e[Keys.S])
             {
                 _sKey = true;
                 return;
@@ -260,12 +250,12 @@ namespace TexelPhysics
         {
             base.OnKeyDown(e);
 
-            if (e.Key == Keys.W)
+            if (e[Keys.W])
             {
                 _wKey = false;
                 return;
             }
-            if (e.Key == Keys.S)
+            if (e[Keys.S])
             {
                 _sKey = false;
                 return;

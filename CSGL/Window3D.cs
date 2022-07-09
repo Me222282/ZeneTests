@@ -4,10 +4,8 @@ using Zene.Graphics.Z3D;
 using Zene.Graphics;
 using Zene.Graphics.Shaders;
 using Zene.Windowing;
-using Zene.Windowing.Base;
 using Zene.Structs;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace CSGL
 {
@@ -32,6 +30,8 @@ namespace CSGL
             BaseFramebuffer.View = new RectangleI(0, 0, width, height);
 
             State.OutputDebug = false;
+
+            SupportsAsync = true;
         }
 
         protected override void Dispose(bool dispose)
@@ -71,76 +71,49 @@ namespace CSGL
             }
         }
 
-        public void RunAsync()
+        protected override void OnStart(EventArgs e)
         {
-            Thread thread = new Thread(() =>
+            base.OnStart(e);
+
+            _refTime = 0d;
+            Core.Timer = 0d;
+        }
+        private double _refTime;
+        protected override void OnUpdate(EventArgs e)
+        {
+            base.OnUpdate(e);
+
+            State.ClearErrors();
+
+            _actions.Flush();
+
+            Framebuffer.Bind();
+
+            GL.PolygonMode(GLEnum.FrontAndBack, _polygonMode);
+
+            Draw();
+
+            GL.PolygonMode(GLEnum.FrontAndBack, GLEnum.Fill);
+
+            Framebuffer.Draw();
+
+            _fpsCounter++;
+
+            double time = Core.Timer - _refTime;
+
+            if (time >= 10)
             {
-                IsContext = true;
+                _runTimeLog.Add($"FPS:{_fpsCounter / time}");
 
-                Run(false);
-            })
-            {
-                Priority = ThreadPriority.Highest
-            };
-
-            IsContext = false;
-
-            thread.Start();
-
-            while (thread.IsAlive)
-            {
-                //GLFW.PollEvents();
-                GLFW.WaitEvents();
+                _fpsCounter = 0;
+                _refTime = Core.Timer;
             }
         }
-        public void Run() => Run(true);
-        private void Run(bool poll)
+        protected override void OnStop(EventArgs e)
         {
-            // VSync
-            GLFW.SwapInterval(-1);
-
-            double refTime = 0d;
-            Core.Timer = 0d;
-
-            while (GLFW.WindowShouldClose(Handle) == 0)
-            {
-                State.ClearErrors();
-
-                _actions.Flush();
-
-                Framebuffer.Bind();
-
-                GL.PolygonMode(GLEnum.FrontAndBack, _polygonMode);
-
-                Draw();
-
-                GL.PolygonMode(GLEnum.FrontAndBack, GLEnum.Fill);
-
-                Framebuffer.Draw();
-
-                GLFW.SwapBuffers(Handle);
-
-                if (poll)
-                {
-                    GLFW.PollEvents();
-                }
-
-                _fpsCounter++;
-
-                double time = Core.Timer - refTime;
-
-                if (time >= 10)
-                {
-                    _runTimeLog.Add($"FPS:{_fpsCounter / time}");
-
-                    _fpsCounter = 0;
-                    refTime = Core.Timer;
-                }
-            }
+            base.OnStop(e);
 
             System.IO.File.WriteAllLines("runtimeLog.txt", _runTimeLog);
-
-            Dispose();
         }
 
         public override PostProcessing Framebuffer { get; }
@@ -452,51 +425,62 @@ namespace CSGL
         {
             base.OnKeyDown(e);
 
-            if (e.Key == Keys.LeftShift)
+            if (e[Keys.LeftShift])
             {
                 _lShift = true;
+                return;
             }
-            else if (e.Key == Keys.RightShift)
+            if (e[Keys.RightShift])
             {
                 _lSlow = true;
+                return;
             }
-            else if (e.Key == Keys.LeftAlt)
+            if (e[Keys.LeftAlt])
             {
                 _lAltGoFast = true;
+                return;
             }
-            else if (e.Key == Keys.LeftControl)
+            if (e[Keys.LeftControl])
             {
                 _down = true;
+                return;
             }
-            else if (e.Key == Keys.S)
+            if (e[Keys.S])
             {
                 _backward = true;
+                return;
             }
-            else if (e.Key == Keys.W)
+            if (e[Keys.W])
             {
                 _forward = true;
+                return;
             }
-            else if (e.Key == Keys.A)
+            if (e[Keys.A])
             {
                 _left = true;
+                return;
             }
-            else if (e.Key == Keys.D)
+            if (e[Keys.D])
             {
                 _right = true;
+                return;
             }
-            else if (e.Key == Keys.Space)
+            if (e[Keys.Space])
             {
                 _up = true;
+                return;
             }
-            else if (e.Key == Keys.Escape)
+            if (e[Keys.Escape])
             {
                 Close();
+                return;
             }
-            else if (e.Key == Keys.Tab)
+            if (e[Keys.Tab])
             {
                 FullScreen = !FullScreen;
+                return;
             }
-            else if (e.Key == Keys.BackSpace)
+            if (e[Keys.BackSpace])
             {
                 CameraPos = Vector3.Zero;
                 rotateX = Radian.Percent(0.5);
@@ -509,8 +493,9 @@ namespace CSGL
                 {
                     _actions.Push(() => Shader.SetSpotLightColour(0, cameraLightCC));
                 }
+                return;
             }
-            else if (e.Key == Keys.Enter)
+            if (e[Keys.Enter])
             {
                 CameraPos = new Vector3(-8008, -2, 8);
                 rotateX = Radian.Percent(0.5);
@@ -523,25 +508,27 @@ namespace CSGL
                 {
                     _actions.Push(() => Shader.SetSpotLightColour(0, cameraLightCC));
                 }
+                return;
             }
-            else if (e.Key == Keys.L)
+            if (e[Keys.L])
             {
                 torchLight = !torchLight;
 
                 if (torchLight)
                 {
                     _actions.Push(() => Shader.SetSpotLightColour(0, cameraLightCC));
+                    return;
                 }
-                else
-                {
-                    _actions.Push(() => Shader.SetSpotLightColour(0, Colour.Zero));
-                }
+
+                _actions.Push(() => Shader.SetSpotLightColour(0, Colour.Zero));
+                return;
             }
-            else if (e.Key == Keys.N)
+            if (e[Keys.N])
             {
                 doLight = !doLight;
+                return;
             }
-            else if (e.Key == Keys.P)
+            if (e[Keys.P])
             {
                 _postProcess = !_postProcess;
 
@@ -551,15 +538,15 @@ namespace CSGL
                     {
                         Framebuffer.Pixelate(true);
                         Framebuffer.UseKernel(true);
+                        return;
                     }
-                    else
-                    {
-                        Framebuffer.Pixelate(false);
-                        Framebuffer.UseKernel(false);
-                    }
+
+                    Framebuffer.Pixelate(false);
+                    Framebuffer.UseKernel(false);
                 });
+                return;
             }
-            else if (e.Key == Keys.M)
+            if (e[Keys.M])
             {
                 if (CursorMode != CursorMode.Normal)
                 {
@@ -568,8 +555,9 @@ namespace CSGL
                 }
 
                 CursorMode = CursorMode.Disabled;
+                return;
             }
-            else if (e.Key == Keys.J)
+            if (e[Keys.J])
             {
                 if (_polygonMode == GLEnum.Fill)
                 {
@@ -578,47 +566,57 @@ namespace CSGL
                 }
 
                 _polygonMode = GLEnum.Fill;
+                return;
             }
         }
         protected override void OnKeyUp(KeyEventArgs e)
         {
             base.OnKeyUp(e);
 
-            if (e.Key == Keys.LeftShift)
+            if (e[Keys.LeftShift])
             {
                 _lShift = false;
+                return;
             }
-            else if (e.Key == Keys.RightShift)
+            if (e[Keys.RightShift])
             {
                 _lSlow = false;
+                return;
             }
-            else if (e.Key == Keys.LeftAlt)
+            if (e[Keys.LeftAlt])
             {
                 _lAltGoFast = false;
+                return;
             }
-            else if (e.Key == Keys.LeftControl)
+            if (e[Keys.LeftControl])
             {
                 _down = false;
+                return;
             }
-            else if (e.Key == Keys.S)
+            if (e[Keys.S])
             {
                 _backward = false;
+                return;
             }
-            else if (e.Key == Keys.W)
+            if (e[Keys.W])
             {
                 _forward = false;
+                return;
             }
-            else if (e.Key == Keys.A)
+            if (e[Keys.A])
             {
                 _left = false;
+                return;
             }
-            else if (e.Key == Keys.D)
+            if (e[Keys.D])
             {
                 _right = false;
+                return;
             }
-            else if (e.Key == Keys.Space)
+            if (e[Keys.Space])
             {
                 _up = false;
+                return;
             }
         }
         private Vector2 _mouseLocation = Vector2.Zero;

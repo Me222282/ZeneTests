@@ -1,6 +1,5 @@
 ﻿using Zene.Graphics;
 using Zene.Windowing;
-using Zene.Windowing.Base;
 using Zene.Structs;
 using System;
 
@@ -109,7 +108,7 @@ namespace CSGL
             State.DepthTesting = true;
 
             // Hide mouse
-            GLFW.SetInputMode(Handle, GLFW.Cursor, GLFW.CursorHidden);
+            CursorMode = CursorMode.Disabled;
 
             OnSizeChange(new SizeChangeEventArgs(width, height));
         }
@@ -130,32 +129,18 @@ namespace CSGL
             }
         }
 
-        public void Run()
-        {
-            GLFW.SwapInterval(GLFW.True);
-
-            while (GLFW.WindowShouldClose(Handle) == GLFW.False)
-            {
-                Draw();
-
-                GLFW.SwapBuffers(Handle);
-                GLFW.PollEvents();
-            }
-
-            Dispose();
-        }
         private bool _textureLoaded = false;
         private Vector3 _offset = Vector3.Zero;
-        private void Draw()
+        protected override void OnUpdate(EventArgs e)
         {
+            base.OnUpdate(e);
+
             if (!_textureLoaded)
             {
                 _textureLoaded = CubeMap.CheckSyncLoading();
             }
 
             Framebuffer.Clear(BufferBit.Colour | BufferBit.Depth);
-
-            MouseMovement();
 
             Vector3 cameraMove = new Vector3(0, 0, 0);
 
@@ -225,9 +210,6 @@ namespace CSGL
         {
             base.OnSizeChange(e);
 
-            _width = (int)e.Width;
-            _height = (int)e.Height;
-
             _shader.Projection = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)e.Width / e.Height, _near, _far);
         }
         protected override void OnSizePixelChange(SizeChangeEventArgs e)
@@ -235,73 +217,70 @@ namespace CSGL
             base.OnSizePixelChange(e);
 
             // Invalide size
-            if ((int)e.Width <= 0 || (int)e.Height <= 0) { return; }
+            if (e.Width <= 0 || e.Height <= 0) { return; }
 
-            Framebuffer.ViewSize = new Vector2I((int)e.Width, (int)e.Height);
+            Framebuffer.ViewSize = new Vector2I(e.Width, e.Height);
         }
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
 
-            if (e.Key == Keys.Escape)
+            if (e[Keys.Escape])
             {
                 Close();
                 return;
             }
 
-            if (e.Key == Keys.Tab)
+            if (e[Keys.Tab])
             {
                 FullScreen = !FullScreen;
-                GLFW.SwapInterval(1);
                 return;
             }
 
-            if (e.Key == Keys.M)
+            if (e[Keys.M])
             {
-                if (GLFW.GetInputMode(Handle, GLFW.Cursor) == GLFW.CursorHidden)
+                if (CursorMode != CursorMode.Normal)
                 {
-                    GLFW.SetInputMode(Handle, GLFW.Cursor, GLFW.CursorNormal);
-                    _mouseShow = true;
+                    CursorMode = CursorMode.Normal;
                     return;
                 }
 
-                GLFW.SetInputMode(Handle, GLFW.Cursor, GLFW.CursorHidden);
-                _mouseShow = false;
+                CursorMode = CursorMode.Disabled;
                 return;
             }
 
-            if (e.Key == Keys.Enter)
+            if (e[Keys.Enter])
             {
                 _offset = Vector3.Zero;
                 return;
             }
 
-            if (e.Key == Keys.W)
+            if (e[Keys.W])
             {
                 _w = true;
                 return;
             }
-            if (e.Key == Keys.S)
+            if (e[Keys.S])
             {
                 _s = true;
                 return;
             }
-            if (e.Key == Keys.A)
+            if (e[Keys.A])
             {
                 _a = true;
                 return;
             }
-            if (e.Key == Keys.D)
+            if (e[Keys.D])
             {
                 _d = true;
                 return;
             }
-            if (e.Key == Keys.Space)
+            if (e[Keys.Space])
             {
                 _space = true;
                 return;
             }
-            if (e.Key == Keys.LeftControl)
+            if (e[Keys.LeftControl])
             {
                 _ctrl = true;
                 return;
@@ -311,32 +290,32 @@ namespace CSGL
         {
             base.OnKeyUp(e);
 
-            if (e.Key == Keys.W)
+            if (e[Keys.W])
             {
                 _w = false;
                 return;
             }
-            if (e.Key == Keys.S)
+            if (e[Keys.S])
             {
                 _s = false;
                 return;
             }
-            if (e.Key == Keys.A)
+            if (e[Keys.A])
             {
                 _a = false;
                 return;
             }
-            if (e.Key == Keys.D)
+            if (e[Keys.D])
             {
                 _d = false;
                 return;
             }
-            if (e.Key == Keys.Space)
+            if (e[Keys.Space])
             {
                 _space = false;
                 return;
             }
-            if (e.Key == Keys.LeftControl)
+            if (e[Keys.LeftControl])
             {
                 _ctrl = false;
                 return;
@@ -349,34 +328,25 @@ namespace CSGL
         private bool _space;
         private bool _ctrl;
 
-        private Vector2 mouseLocation;
         private Radian rotateX = 0;
         private Radian rotateY = 0;
-        private int _width;
-        private int _height;
 
-        private bool _mouseShow = false;
-        private void MouseMovement()
+        private Vector2 _mouseLocation = Vector2.Zero;
+        protected override void OnMouseMove(MouseEventArgs e)
         {
-            if (_mouseShow) { return; }
+            base.OnMouseMove(e);
 
-            GLFW.GetCursorPos(Handle, out double mX, out double mY);
+            if (CursorMode != CursorMode.Disabled) { return; }
 
-            if (new Vector2(mX, mY) == mouseLocation) { return; }
+            if (new Vector2(e.X, e.Y) == _mouseLocation) { return; }
 
-            double distanceX = mX - mouseLocation.X;
-            double distanceY = mouseLocation.Y - mY;
+            double distanceX = e.X - _mouseLocation.X;
+            double distanceY = _mouseLocation.Y - e.Y;
 
-            mouseLocation = new Vector2(mX, mY);
+            _mouseLocation = new Vector2(e.X, e.Y);
 
-            rotateY -= Radian.Degrees(distanceX * 0.1);
+            rotateY += Radian.Degrees(distanceX * 0.1);
             rotateX += Radian.Degrees(distanceY * 0.1);
-
-            Vector2 newMPos = new Vector2(_width / 2, _height / 2);
-
-            mouseLocation = newMPos;
-
-            GLFW.SetCursorPos(Handle, newMPos.X, newMPos.Y);
         }
     }
 }

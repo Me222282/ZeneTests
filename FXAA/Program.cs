@@ -66,15 +66,12 @@ namespace FXAA
         
         private readonly DrawObject<double, byte> _drawable;
         private Texture _texture;
-        
-        public void Run()
+
+        protected override void OnUpdate(EventArgs e)
         {
-            // Vsync
-            GLFW.SwapInterval(1);
+            base.OnUpdate(e);
             
-            while (GLFW.WindowShouldClose(Handle) == GLFW.False)
-            {
-                Framebuffer.Bind();
+            Framebuffer.Bind();
                 // Draw box
                 //_shader.Bind();
                 //_shader.SetColourSource(ColourSource.None);
@@ -95,10 +92,6 @@ namespace FXAA
                 //_texture.Bind(0);
                 _drawable.Draw();
                 //Framebuffer.CopyFrameBuffer(base.Framebuffer, BufferBit.Colour, TextureSampling.Nearest);
-                
-                GLFW.SwapBuffers(Handle);
-                GLFW.PollEvents();
-            }
         }
         
         protected override void OnSizePixelChange(SizeChangeEventArgs e)

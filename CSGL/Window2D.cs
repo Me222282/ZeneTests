@@ -2,7 +2,6 @@
 using Zene.Graphics.Base;
 using Zene.Graphics;
 using Zene.Windowing;
-using Zene.Windowing.Base;
 using Zene.Graphics.Shaders;
 using Zene.Structs;
 
@@ -34,25 +33,6 @@ namespace CSGL
             }
         }
 
-        public void Run()
-        {
-            GLFW.SwapInterval(1);
-
-            while (GLFW.WindowShouldClose(Handle) == 0)
-            {
-
-                Draw();
-
-                GLFW.SwapBuffers(Handle);
-
-                GLFW.PollEvents();
-
-                //System.Threading.Thread.Sleep(interval);
-            }
-
-            Dispose();
-        }
-
         private readonly float[] vertData = new float[]
         {
             /*Vertex*/ 0.5f, 0.5f, /*-20f, /*Colour*/ 0.0f, 0.0f, 1.0f,
@@ -79,9 +59,6 @@ namespace CSGL
         private Matrix4 matrix;
 
         private double scale;
-
-        private int _width;
-        private int _height;
 
         private double orthoWidth;
         private double orthoHeight;
@@ -112,8 +89,10 @@ namespace CSGL
             //GL.PolygonMode(GLEnum.FrontAndBack, GLEnum.Line);
         }
 
-        protected virtual void Draw()
+        protected override void OnUpdate(EventArgs e)
         {
+            base.OnUpdate(e);
+
             BaseFramebuffer.ClearColour = new ColourF(0.2f, 0.4f, 0.8f, 0.5f);
             //BaseFramebuffer.ClearColour = new ColourF(0.2f, 0.4f, 0.8f, 1.0f);
             BaseFramebuffer.Clear(BufferBit.Colour);
@@ -151,25 +130,30 @@ namespace CSGL
         {
             base.OnKeyDown(e);
 
-            if (e.Key == Keys.LeftShift)
+            if (e[Keys.LeftShift])
             {
                 _leftShift = true;
+                return;
             }
-            else if (e.Key == Keys.RightShift)
+            if (e[Keys.RightShift])
             {
                 _rightShift = true;
+                return;
             }
-            else if (e.Key == Keys.LeftControl)
+            if (e[Keys.LeftControl])
             {
                 _leftControl = true;
+                return;
             }
-            else if (e.Key == Keys.RightControl)
+            if (e[Keys.RightControl])
             {
                 _rightControl = true;
+                return;
             }
-            else if (e.Key == Keys.Tab)
+            if (e[Keys.Tab])
             {
                 FullScreen = !FullScreen;
+                return;
             }
         }
 
@@ -177,21 +161,25 @@ namespace CSGL
         {
             base.OnKeyUp(e);
 
-            if (e.Key == Keys.LeftShift)
+            if (e[Keys.LeftShift])
             {
                 _leftShift = false;
+                return;
             }
-            else if (e.Key == Keys.RightShift)
+            if (e[Keys.RightShift])
             {
                 _rightShift = false;
+                return;
             }
-            else if (e.Key == Keys.LeftControl)
+            if (e[Keys.LeftControl])
             {
                 _leftControl = false;
+                return;
             }
-            else if (e.Key == Keys.RightControl)
+            if (e[Keys.RightControl])
             {
                 _rightControl = false;
+                return;
             }
         }
 
@@ -199,15 +187,12 @@ namespace CSGL
         {
             base.OnSizeChange(e);
 
-            _width = (int)e.Width;
-            _height = (int)e.Height;
-
             double mWidth;
             double mHeight;
 
-            if (_width > _height)
+            if (e.Width > e.Height)
             {
-                double heightPercent = (double)_height / _width;
+                double heightPercent = (double)e.Height / e.Width;
 
                 mWidth = 1600;
 
@@ -215,7 +200,7 @@ namespace CSGL
             }
             else
             {
-                double widthPercent = (double)_width / _height;
+                double widthPercent = (double)e.Width / e.Height;
 
                 mHeight = 900;
 
@@ -230,7 +215,7 @@ namespace CSGL
         {
             base.OnSizePixelChange(e);
 
-            BaseFramebuffer.ViewSize = new Vector2I((int)e.Width, (int)e.Height);
+            BaseFramebuffer.ViewSize = new Vector2I(e.Width, e.Height);
         }
     }
 }

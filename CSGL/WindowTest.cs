@@ -3,7 +3,6 @@ using Zene.Graphics;
 using Zene.Graphics.Base;
 using Zene.Graphics.Shaders;
 using Zene.Windowing;
-using Zene.Windowing.Base;
 using Zene.Structs;
 
 namespace CSGL
@@ -27,22 +26,6 @@ namespace CSGL
                 _drawObject.Dispose();
                 _texture.Dispose();
             }
-        }
-
-        public void Run()
-        {
-            GLFW.SwapInterval(1);
-
-            while (GLFW.WindowShouldClose(Handle) == 0)
-            {
-                Draw();
-
-                GLFW.SwapBuffers(Handle);
-
-                GLFW.PollEvents();
-            }
-
-            Dispose();
         }
 
         private readonly float[] vertData = new float[]
@@ -92,9 +75,9 @@ namespace CSGL
 
         private double pDir = 0;
 
-        protected virtual void Draw()
+        protected override void OnUpdate(EventArgs e)
         {
-            MouseMovement();
+            base.OnUpdate(e);
 
             rotationMatrix = Matrix3.CreateRotationY(rotateY);
 
@@ -155,84 +138,100 @@ namespace CSGL
         {
             base.OnKeyDown(e);
 
-            if (e.Key == Keys.LeftShift)
+            if (e[Keys.LeftShift])
             {
                 _lShift = true;
+                return;
             }
-            else if (e.Key == Keys.LeftAlt)
+            if (e[Keys.LeftAlt])
             {
                 _lAltGoFast = true;
+                return;
             }
-            else if (e.Key == Keys.LeftControl)
+            if (e[Keys.LeftControl])
             {
                 _down = true;
+                return;
             }
-            else if (e.Key == Keys.S)
+            if (e[Keys.S])
             {
                 _backward = true;
+                return;
             }
-            else if (e.Key == Keys.W)
+            if (e[Keys.W])
             {
                 _forward = true;
+                return;
             }
-            else if (e.Key == Keys.A)
+            if (e[Keys.A])
             {
                 _left = true;
+                return;
             }
-            else if (e.Key == Keys.D)
+            if (e[Keys.D])
             {
                 _right = true;
+                return;
             }
-            else if (e.Key == Keys.Space)
+            if (e[Keys.Space])
             {
                 _up = true;
+                return;
             }
-            else if (e.Key == Keys.Escape)
+            if (e[Keys.Escape])
             {
                 Close();
+                return;
             }
-            else if (e.Key == Keys.Tab)
+            if (e[Keys.Tab])
             {
                 FullScreen = !FullScreen;
-                GLFW.SwapInterval(1);
+                return;
             }
         }
-
         protected override void OnKeyUp(KeyEventArgs e)
         {
             base.OnKeyUp(e);
 
-            if (e.Key == Keys.LeftShift)
+            if (e[Keys.LeftShift])
             {
                 _lShift = false;
+                return;
             }
-            else if (e.Key == Keys.LeftAlt)
+            if (e[Keys.LeftAlt])
             {
                 _lAltGoFast = false;
+                return;
             }
-            else if (e.Key == Keys.LeftControl)
+            if (e[Keys.LeftControl])
             {
                 _down = false;
+                return;
             }
-            else if (e.Key == Keys.S)
+            if (e[Keys.S])
             {
                 _backward = false;
+                return;
             }
-            else if (e.Key == Keys.W)
+            if (e[Keys.W])
             {
                 _forward = false;
+                return;
             }
-            else if (e.Key == Keys.A)
+            if (e[Keys.A])
             {
                 _left = false;
+                return;
             }
-            else if (e.Key == Keys.D)
+            if (e[Keys.D])
             {
                 _right = false;
+                return;
             }
-            else if (e.Key == Keys.Space)
+            if (e[Keys.Space])
             {
                 _up = false;
+                return;
             }
         }
 
@@ -240,12 +239,8 @@ namespace CSGL
         {
             base.OnSizeChange(e);
 
-            _width = (int)e.Width;
-            _height = (int)e.Height;
-
             _shader.Matrix3 = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(65), (double)e.Width / e.Height, 0.1, 1000);
         }
-
         protected override void OnSizePixelChange(SizeChangeEventArgs e)
         {
             base.OnSizePixelChange(e);
@@ -253,40 +248,24 @@ namespace CSGL
             BaseFramebuffer.ViewSize = new Vector2I((int)e.Width, (int)e.Height);
         }
 
-        private Vector2 mouseLocation;
-
-        private Radian rotateX = 0;
-        private Radian rotateY = 0;
-        private Radian rotateZ = 0;
-
-        private int _width;
-        private int _height;
-
-        private void MouseMovement()
+        private Vector2 _mouseLocation = Vector2.Zero;
+        protected override void OnMouseMove(MouseEventArgs e)
         {
-            GLFW.GetCursorPos(Handle, out double mX, out double mY);
+            base.OnMouseMove(e);
 
-            if (new Vector2(mX, mY) == mouseLocation) { return; }
+            if (CursorMode != CursorMode.Disabled) { return; }
 
-            double distanceX = mX - mouseLocation.X;
-            double distanceY = mouseLocation.Y - mY;
+            if (new Vector2(e.X, e.Y) == _mouseLocation) { return; }
 
-            mouseLocation = new Vector2(mX, mY);
+            double distanceX = e.X - _mouseLocation.X;
+            double distanceY = _mouseLocation.Y - e.Y;
+
+            _mouseLocation = new Vector2(e.X, e.Y);
 
             rotateY += Radian.Degrees(distanceX * 0.1);
-            rotateX += Radian.Degrees(distanceY * 0.1);
-
-            GLFW.GetWindowPos(Handle, out int x, out int y);
-
-            Vector2 newMPos = new Vector2(x + (_width / 2), y + (_height / 2));
-
-            mouseLocation = newMPos;
-
-            GLFW.SetCursorPos(Handle, newMPos.X, newMPos.Y);
-
-            GLFW.GetCursorPos(Handle, out double cX, out double cY);
-
-            mouseLocation = new Vector2(cX, cY);
+            //rotateX += Radian.Degrees(distanceY * 0.1);
         }
+
+        private Radian rotateY = 0;
     }
 }

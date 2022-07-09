@@ -5,7 +5,6 @@ using Zene.Graphics;
 using Zene.Graphics.Shaders;
 using Zene.Structs;
 using Zene.Windowing;
-using Zene.Windowing.Base;
 
 namespace GUITest
 {
@@ -30,26 +29,6 @@ namespace GUITest
 
             // End glfw
             Core.Terminate();
-        }
-
-        public void Run()
-        {
-            // Vsync
-            GLFW.SwapInterval(1);
-
-            State.DepthTesting = true;
-            Zene.Graphics.Base.GL.DepthFunc(Zene.Graphics.Base.GLEnum.Less);
-
-            while (GLFW.WindowShouldClose(Handle) == GLFW.False)
-            {
-                GLFW.PollEvents();
-
-                Draw();
-
-                GLFW.SwapBuffers(Handle);
-            }
-
-            Dispose();
         }
 
         protected override void Dispose(bool dispose)
@@ -116,6 +95,10 @@ namespace GUITest
             Zene.Graphics.Base.GL.BlendFunc(Zene.Graphics.Base.GLEnum.SrcAlpha, Zene.Graphics.Base.GLEnum.OneMinusSrcAlpha);
 
             OnSizePixelChange(new SizeChangeEventArgs(width, height));
+
+            // Something that used to happen before the while loop
+            State.DepthTesting = true;
+            Zene.Graphics.Base.GL.DepthFunc(Zene.Graphics.Base.GLEnum.Less);
         }
 
         private readonly TextRenderer _textRender;
@@ -132,8 +115,10 @@ namespace GUITest
         private readonly List<Panel> _panels;
 
         private double _fontSize = 10d;
-        private void Draw()
+        protected override void OnUpdate(EventArgs e)
         {
+            base.OnUpdate(e);
+
             Framebuffer.Bind();
 
             Framebuffer.Clear(BufferBit.Colour | BufferBit.Depth);
@@ -161,17 +146,17 @@ namespace GUITest
                 _textRender2.Reload();
                 return;
             }
-            if (e.Key == Keys.Enter || e.Key == Keys.NumPadEnter)
+            if (e[Keys.Enter] || e[Keys.NumPadEnter])
             {
                 _text.Append('\n');
                 return;
             }
-            if (e.Key == Keys.Tab)
+            if (e[Keys.Tab])
             {
                 _text.Append('\t');
                 return;
             }
-            if (e.Key == Keys.BackSpace)
+            if (e[Keys.BackSpace])
             {
                 // Nothing to remove
                 if (_text.Length == 0) { return; }

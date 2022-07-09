@@ -2,8 +2,6 @@
 using Zene.Graphics;
 using Zene.Structs;
 using System;
-using System.Diagnostics;
-using Zene.Windowing.Base;
 
 namespace ImplicitFunctions
 {
@@ -207,48 +205,41 @@ namespace ImplicitFunctions
         private readonly Ball[] _balls;
         private Box _bounds;
 
-        public void Run()
+        protected override void OnStart(EventArgs e)
         {
-            // Vsync
-            GLFW.SwapInterval(GLFW.True);
+            base.OnStart(e);
 
-            Stopwatch s = new Stopwatch();
-            long time = 0;
+            Core.Timer = 0d;
+        }
+        private double _refTime = 0d;
+        protected override void OnUpdate(EventArgs e)
+        {
+            base.OnUpdate(e);
 
-            s.Start();
+            double elap = Core.Timer;
+            double frameTime = elap - _refTime;
+            _refTime = elap;
 
-            while (GLFW.WindowShouldClose(Handle) == GLFW.False)
+            // Clear screen black
+            BaseFramebuffer.Clear(BufferBit.Colour);
+
+            foreach (Ball b in _balls)
             {
-                long elap = s.ElapsedMilliseconds;
-                double frameTime = (elap - time) * 0.001;
-                time = elap;
-
-                GLFW.PollEvents();
-                // Clear screen black
-                BaseFramebuffer.Clear(BufferBit.Colour);
-
-                foreach (Ball b in _balls)
-                {
-                    b.Update(_bounds, frameTime);
-                }
-
-                _shader.Bind();
-                _shader.ParseBalls();
-                _oilObj.Draw();
-
-                _player.Draw(frameTime);
-
-                GLFW.SwapBuffers(Handle);
+                b.Update(_bounds, frameTime);
             }
 
-            Dispose();
+            _shader.Bind();
+            _shader.ParseBalls();
+            _oilObj.Draw();
+
+            _player.Draw(frameTime);
         }
 
         protected override void OnSizeChange(SizeChangeEventArgs e)
         {
             base.OnSizeChange(e);
 
-            BaseFramebuffer.ViewSize = new Vector2I((int)e.Width, (int)e.Height);
+            BaseFramebuffer.ViewSize = new Vector2I(e.Width, e.Height);
 
             _shader.Scale = new Vector2(e.Width * 2, e.Height * 2);
             _bounds = new Box(-e.Width * 2, e.Width * 2, e.Height * 2, -e.Height * 2);
@@ -260,9 +251,10 @@ namespace ImplicitFunctions
         {
             base.OnKeyDown(e);
 
-            if (e.Key == Keys.Escape)
+            if (e[Keys.Escape])
             {
                 Close();
+                return;
             }
 
             _player.KeyDown(e.Key);

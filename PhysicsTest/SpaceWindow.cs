@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using Zene.Graphics;
 using Zene.Graphics.Shaders;
 using Zene.Windowing;
-using Zene.Windowing.Base;
 using Zene.Physics;
 using Zene.Structs;
 
@@ -90,40 +88,29 @@ namespace PhysicsTest
         private Vector2 _viewSize;
         private Vector2 _worldSize;
 
-        public void Run()
+        protected override void OnStart(EventArgs e)
         {
-            Stopwatch fpsTimer = new Stopwatch();
-            fpsTimer.Start();
+            base.OnStart(e);
 
-            // VSync
-            GLFW.SwapInterval(1);
-
-            long preFrame = 0;
-            double frameTime = 1;
-
-            while (GLFW.WindowShouldClose(Handle) == 0) // Window shouldn't close
-            {
-                Framebuffer.Bind();
-
-                // Frametime is in seconds
-                Draw(frameTime * 0.001);
-
-                Framebuffer.Unbind();
-                Framebuffer.Draw();
-
-                GLFW.PollEvents();
-                GLFW.SwapBuffers(Handle);
-                //System.Threading.Thread.Sleep(16);
-
-                frameTime = fpsTimer.ElapsedMilliseconds - preFrame;
-                // Restart stopwatch to make sure it doesn't go over int.MaxValue
-                if (fpsTimer.ElapsedMilliseconds > 214748547) // int.MaxValue - 100
-                {
-                    fpsTimer.Restart();
-                }
-                preFrame = fpsTimer.ElapsedMilliseconds;
-            }
+            Core.Timer = 0d;
         }
+        private double _timeRef = 0d;
+        protected override void OnUpdate(EventArgs e)
+        {
+            base.OnUpdate(e);
+
+            double frameTime = Core.Timer - _timeRef;
+            _timeRef = Core.Timer;
+
+            Framebuffer.Bind();
+
+            // Frametime is in seconds
+            Draw(frameTime);
+
+            Framebuffer.Unbind();
+            Framebuffer.Draw();
+        }
+
         private void Draw(double frameTime)
         {
             //_planets.ApplyPhysics(frameTime);
@@ -214,32 +201,32 @@ namespace PhysicsTest
         {
             base.OnKeyDown(e);
 
-            if (e.Key == Keys.Up)
+            if (e[Keys.Up])
             {
                 _rocket.MoveForward = true;
                 return;
             }
-            if (e.Key == Keys.Down)
+            if (e[Keys.Down])
             {
                 _rocket.MoveBackward = true;
                 return;
             }
-            if (e.Key == Keys.Left)
+            if (e[Keys.Left])
             {
                 _rocket.TurnLeft = true;
                 return;
             }
-            if (e.Key == Keys.Right)
+            if (e[Keys.Right])
             {
                 _rocket.TurnRight = true;
                 return;
             }
-            if (e.Key == Keys.Escape)
+            if (e[Keys.Escape])
             {
                 Close();
                 return;
             }
-            if (e.Key == Keys.Space)
+            if (e[Keys.Space])
             {
                 _space = true;
 
@@ -262,7 +249,7 @@ namespace PhysicsTest
                 }
                 return;
             }
-            if (e.Key == Keys.Z)
+            if (e[Keys.Z])
             {
                 if (_fullView)
                 {
@@ -280,13 +267,13 @@ namespace PhysicsTest
                 UpdateViewSize();
                 return;
             }
-            if (e.Key == Keys.Enter)
+            if (e[Keys.Enter])
             {
                 _rocket.Location = new Vector2(0, 0);
                 _rocket.Velocity = Velocity.Zero;
                 return;
             }
-            if (e.Key == Keys.BackSpace)
+            if (e[Keys.BackSpace])
             {
                 _rocket.Velocity = Velocity.Zero;
                 return;
@@ -296,27 +283,27 @@ namespace PhysicsTest
         {
             base.OnKeyDown(e);
 
-            if (e.Key == Keys.Up)
+            if (e[Keys.Up])
             {
                 _rocket.MoveForward = false;
                 return;
             }
-            if (e.Key == Keys.Down)
+            if (e[Keys.Down])
             {
                 _rocket.MoveBackward = false;
                 return;
             }
-            if (e.Key == Keys.Left)
+            if (e[Keys.Left])
             {
                 _rocket.TurnLeft = false;
                 return;
             }
-            if (e.Key == Keys.Right)
+            if (e[Keys.Right])
             {
                 _rocket.TurnRight = false;
                 return;
             }
-            if (e.Key == Keys.Space)
+            if (e[Keys.Space])
             {
                 _space = false;
 
@@ -360,11 +347,6 @@ namespace PhysicsTest
             UpdateViewSize();
         }
 
-        private void UpdateViewSize()
-        {
-            // Update orthographic matrix
-            GLFW.GetWindowSize(Handle, out int w, out int h);
-            OnSizeChange(new SizeChangeEventArgs(w, h));
-        }
+        private void UpdateViewSize() => OnSizeChange(new SizeChangeEventArgs(Width, Height));
     }
 }

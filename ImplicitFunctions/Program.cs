@@ -1,7 +1,7 @@
 ﻿using Zene.Windowing;
-using Zene.Windowing.Base;
 using Zene.Graphics;
 using Zene.Structs;
+using System;
 
 namespace ImplicitFunctions
 {
@@ -48,44 +48,35 @@ namespace ImplicitFunctions
             }
         }
 
-        public void Run()
+        protected override void OnUpdate(EventArgs e)
         {
-            // Vsync
-            GLFW.SwapInterval(GLFW.True);
+            base.OnUpdate(e);
 
-            while (GLFW.WindowShouldClose(Handle) == GLFW.False)
-            {
-                GLFW.PollEvents();
-                // Clear screen black
-                BaseFramebuffer.Clear(BufferBit.Colour);
+            // Clear screen black
+            BaseFramebuffer.Clear(BufferBit.Colour);
 
-                // Use shader and render object
-                _shader.Bind();
-                _drawable.Draw();
-
-                GLFW.SwapBuffers(Handle);
-            }
-
-            Dispose();
+            // Use shader and render object
+            _shader.Bind();
+            _drawable.Draw();
         }
 
         protected override void OnSizeChange(SizeChangeEventArgs e)
         {
             base.OnSizeChange(e);
 
-            BaseFramebuffer.ViewSize = new Vector2I((int)e.Width, (int)e.Height);
+            BaseFramebuffer.ViewSize = new Vector2I(e.Width, e.Height);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
 
-            if (e.Key == Keys.Escape)
+            if (e[Keys.Escape])
             {
                 Close();
                 return;
             }
-            if (e.Key == Keys.F5)
+            if (e[Keys.F5])
             {
                 _shader.Recreate();
                 return;
