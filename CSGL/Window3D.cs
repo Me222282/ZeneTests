@@ -7,7 +7,7 @@ using Zene.Windowing;
 using Zene.Windowing.Base;
 using Zene.Structs;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Threading;
 
 namespace CSGL
 {
@@ -25,9 +25,10 @@ namespace CSGL
 
             SetUp();
 
-            GLFW.SetInputMode(Handle, GLFW.Cursor, GLFW.CursorHidden);
+            CursorMode = CursorMode.Disabled;
 
-            OnSizeChange(new SizeChangeEventArgs(width, height));
+            // Trigger on size change when window starts
+            _actions.Push(() => OnSizePixelChangeReceive(new SizeChangeEventArgs(width, height)));
             BaseFramebuffer.View = new RectangleI(0, 0, width, height);
 
             State.OutputDebug = false;
@@ -70,13 +71,42 @@ namespace CSGL
             }
         }
 
-        public void Run()
+        public void RunAsync()
         {
-            _fpsTimer.Start();
+            Thread thread = new Thread(() =>
+            {
+                IsContext = true;
+
+                Run(false);
+            })
+            {
+                Priority = ThreadPriority.Highest
+            };
+
+            IsContext = false;
+
+            thread.Start();
+
+            while (thread.IsAlive)
+            {
+                //GLFW.PollEvents();
+                GLFW.WaitEvents();
+            }
+        }
+        public void Run() => Run(true);
+        private void Run(bool poll)
+        {
+            // VSync
+            GLFW.SwapInterval(-1);
+
+            double refTime = 0d;
+            Core.Timer = 0d;
 
             while (GLFW.WindowShouldClose(Handle) == 0)
             {
                 State.ClearErrors();
+
+                _actions.Flush();
 
                 Framebuffer.Bind();
 
@@ -88,25 +118,23 @@ namespace CSGL
 
                 Framebuffer.Draw();
 
-                Console.WriteLine(State.DrawView);
-                Console.WriteLine(BaseFramebuffer.View);
-
                 GLFW.SwapBuffers(Handle);
 
-                GLFW.PollEvents();
+                if (poll)
+                {
+                    GLFW.PollEvents();
+                }
 
                 _fpsCounter++;
 
-                long time = _fpsTimer.ElapsedMilliseconds;
+                double time = Core.Timer - refTime;
 
-                if (time >= 10000)
+                if (time >= 10)
                 {
-                    double sec = time * 0.001;
-
-                    _runTimeLog.Add($"FPS:{_fpsCounter / sec}");
+                    _runTimeLog.Add($"FPS:{_fpsCounter / time}");
 
                     _fpsCounter = 0;
-                    _fpsTimer.Restart();
+                    refTime = Core.Timer;
                 }
             }
 
@@ -284,8 +312,6 @@ namespace CSGL
             //    _texturesLoaded = Bitmap.CheckTextures();
             //}
 
-            MouseMovement();
-
             rotationMatrix = Matrix3.CreateRotationY(rotateY) * Matrix3.CreateRotationX(rotateX);
 
             Vector3 cameraMove = new Vector3(0, 0, 0);
@@ -363,9 +389,8 @@ namespace CSGL
             Shader.SetModelMatrix(Matrix4.CreateTranslation(light.LightVector));
             Shader.SetColourSource(ColourSource.UniformColour);
             Shader.SetDrawColour(light.LightColour);
-            
-            LightObject.Draw();
 
+            LightObject.Draw();
 
             double lA = Math.Sin(Radian.Percent(lightAmplitude));
             lightAmplitude += 0.005;
@@ -398,11 +423,10 @@ namespace CSGL
             _room.Draw();
 
             _textDisplay.Model = Matrix4.CreateTranslation(0, 0, -5.1) * Matrix4.CreateRotationX(Radian.Percent(objectRotation));
-            _textDisplay.DrawCentred($"{objectRotation:N3}\n", _font, -0.15, 0);
+            _textDisplay.DrawCentred($"{Core.Timer:N3}\n", _font, -0.15, 0);
             _textDisplay.DrawCentred($"\n{CameraPos.SquaredLength:N3}", _font, -0.15, 0);
         }
 
-        private readonly Stopwatch _fpsTimer = new Stopwatch();
         private int _fpsCounter = 0;
 
         private bool _left;
@@ -415,12 +439,14 @@ namespace CSGL
         private bool _lAltGoFast;
         private bool _lSlow;
 
-        private bool flashLight = true;
+        private bool torchLight = true;
         private bool doLight = true;
         private Colour cameraLightCC;
 
         private bool _postProcess = false;
         private uint _polygonMode = GLEnum.Fill;
+
+        private readonly ActionManager _actions = new ActionManager();
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
@@ -478,8 +504,11 @@ namespace CSGL
                 rotateZ = 0;
                 moveSpeed = 1;
 
-                Shader.SetSpotLightColour(0, cameraLight);
                 cameraLightCC = cameraLight;
+                if (torchLight)
+                {
+                    _actions.Push(() => Shader.SetSpotLightColour(0, cameraLightCC));
+                }
             }
             else if (e.Key == Keys.Enter)
             {
@@ -489,20 +518,23 @@ namespace CSGL
                 rotateZ = 0;
                 moveSpeed = 0.125;
 
-                Shader.SetSpotLightColour(0, new Colour(255, 235, 210));
                 cameraLightCC = new Colour(255, 235, 210);
+                if (torchLight)
+                {
+                    _actions.Push(() => Shader.SetSpotLightColour(0, cameraLightCC));
+                }
             }
             else if (e.Key == Keys.L)
             {
-                flashLight = !flashLight;
+                torchLight = !torchLight;
 
-                if (flashLight)
+                if (torchLight)
                 {
-                    Shader.SetSpotLightColour(0, cameraLightCC);
+                    _actions.Push(() => Shader.SetSpotLightColour(0, cameraLightCC));
                 }
                 else
                 {
-                    Shader.SetSpotLightColour(0, Colour.Zero);
+                    _actions.Push(() => Shader.SetSpotLightColour(0, Colour.Zero));
                 }
             }
             else if (e.Key == Keys.N)
@@ -513,28 +545,29 @@ namespace CSGL
             {
                 _postProcess = !_postProcess;
 
-                if (_postProcess)
+                _actions.Push(() =>
                 {
-                    Framebuffer.Pixelate(true);
-                    Framebuffer.UseKernel(true);
-                }
-                else
-                {
-                    Framebuffer.Pixelate(false);
-                    Framebuffer.UseKernel(false);
-                }
+                    if (_postProcess)
+                    {
+                        Framebuffer.Pixelate(true);
+                        Framebuffer.UseKernel(true);
+                    }
+                    else
+                    {
+                        Framebuffer.Pixelate(false);
+                        Framebuffer.UseKernel(false);
+                    }
+                });
             }
             else if (e.Key == Keys.M)
             {
-                if (GLFW.GetInputMode(Handle, GLFW.Cursor) == GLFW.CursorHidden)
+                if (CursorMode != CursorMode.Normal)
                 {
-                    GLFW.SetInputMode(Handle, GLFW.Cursor, GLFW.CursorNormal);
-                    _mouseShow = true;
+                    CursorMode = CursorMode.Normal;
                     return;
                 }
 
-                GLFW.SetInputMode(Handle, GLFW.Cursor, GLFW.CursorHidden);
-                _mouseShow = false;
+                CursorMode = CursorMode.Disabled;
             }
             else if (e.Key == Keys.J)
             {
@@ -588,26 +621,42 @@ namespace CSGL
                 _up = false;
             }
         }
-        private const double _near = 0.1;
-        private const double _far = 3000;
-        protected override void OnSizeChange(SizeChangeEventArgs e)
+        private Vector2 _mouseLocation = Vector2.Zero;
+        protected override void OnMouseMove(MouseEventArgs e)
         {
-            base.OnSizeChange(e);
+            base.OnMouseMove(e);
 
-            Matrix4 matrix = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)e.Width / e.Height, _near, _far);
+            if (CursorMode != CursorMode.Disabled) { return; }
 
-            Shader.SetProjectionMatrix(matrix);
-            _textDisplay.Projection = matrix;
+            if (new Vector2(e.X, e.Y) == _mouseLocation) { return; }
+
+            double distanceX = e.X - _mouseLocation.X;
+            double distanceY = _mouseLocation.Y - e.Y;
+
+            _mouseLocation = new Vector2(e.X, e.Y);
+
+            rotateY += Radian.Degrees(distanceX * 0.1);
+            rotateX += Radian.Degrees(distanceY * 0.1);
         }
 
+        private const double _near = 0.1;
+        private const double _far = 3000;
         protected override void OnSizePixelChange(SizeChangeEventArgs e)
         {
             base.OnSizePixelChange(e);
 
+            _actions.Push(() => OnSizePixelChangeReceive(e));
+        }
+        private void OnSizePixelChangeReceive(SizeChangeEventArgs e)
+        {
+            // Matrices
+            Matrix4 matrix = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)e.Width / e.Height, _near, _far);
+
+            Shader.SetProjectionMatrix(matrix);
+            _textDisplay.Projection = matrix;
+
             Framebuffer.Size = e.Size;
             BaseFramebuffer.ViewSize = e.Size;
-
-            Console.WriteLine(BaseFramebuffer.View);
 
             double mWidth;
             double mHeight;
@@ -637,6 +686,10 @@ namespace CSGL
         {
             base.OnScroll(e);
 
+            _actions.Push(() => OnScrollReceive(e));
+        }
+        private void OnScrollReceive(ScrollEventArgs e)
+        {
             _zoom -= e.DeltaY;
 
             if (_zoom < 1)
@@ -654,38 +707,14 @@ namespace CSGL
             _textDisplay.Projection = matrix;
         }
 
-        private bool _mouseShow = false;
-        private Vector2 mouseLocation;
-        private void MouseMovement()
-        {
-            if (_mouseShow) { return; }
-
-            // Window focused? - shouldn't calculate mouse movement
-            if (GLFW.GetWindowAttrib(Handle, GLFW.Focused) == GLFW.False) { return; }
-
-            GLFW.GetCursorPos(Handle, out double mX, out double mY);
-
-            if (new Vector2(mX, mY) == mouseLocation) { return; }
-
-            double distanceX = mX - mouseLocation.X;
-            double distanceY = mouseLocation.Y - mY;
-
-            mouseLocation = new Vector2(mX, mY);
-
-            rotateY += Radian.Degrees(distanceX * 0.1);
-            rotateX += Radian.Degrees(distanceY * 0.1);
-
-            Vector2 newMPos = new Vector2(Width / 2.0, Height / 2.0);
-
-            mouseLocation = newMPos;
-
-            GLFW.SetCursorPos(Handle, newMPos.X, newMPos.Y);
-        }
-
         protected override void OnFileDrop(FileDropEventArgs e)
         {
             base.OnFileDrop(e);
 
+            _actions.Push(() => OnFileDropReceive(e));
+        }
+        private void OnFileDropReceive(FileDropEventArgs e)
+        {
             if (Bitmap.GetImageEncoding(e.Paths[0]) != ImageEncoding.Unknown)
             {
                 _loadObjectImage.Dispose();

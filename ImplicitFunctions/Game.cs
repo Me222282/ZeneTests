@@ -180,7 +180,7 @@ namespace ImplicitFunctions
             Random r = new Random();
             for (int i = 0; i < BallCount; i++)
             {
-                _balls[i] = new Ball(Vector2.Zero, (r.NextDouble() * 3) + 2, Vector2.Random(r, -200, 200), _player, _shader, i);
+                _balls[i] = new Ball(Vector2.Zero, (r.NextDouble() * 3) + 2, r.NextVector2(-200, 200), _player, _shader, i);
             }
 
             // Enabling transparency
