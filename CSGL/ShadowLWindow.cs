@@ -111,9 +111,6 @@ namespace CSGL
 
         private ShadowMapper ShadowMapShader;
 
-        private int _width;
-        private int _height;
-
         private DrawObject<Vector3, uint> DrawObject;
 
         private DrawObject<Vector3, uint> Plane;

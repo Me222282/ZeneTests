@@ -75,10 +75,8 @@ namespace CSGL
         {
             base.OnStart(e);
 
-            _refTime = 0d;
-            Core.Timer = 0d;
+            Timer = 0d;
         }
-        private double _refTime;
         protected override void OnUpdate(EventArgs e)
         {
             base.OnUpdate(e);
@@ -99,14 +97,14 @@ namespace CSGL
 
             _fpsCounter++;
 
-            double time = Core.Timer - _refTime;
+            double time = Timer;
 
             if (time >= 10)
             {
                 _runTimeLog.Add($"FPS:{_fpsCounter / time}");
 
                 _fpsCounter = 0;
-                _refTime = Core.Timer;
+                Timer = 0;
             }
         }
         protected override void OnStop(EventArgs e)
@@ -396,7 +394,7 @@ namespace CSGL
             _room.Draw();
 
             _textDisplay.Model = Matrix4.CreateTranslation(0, 0, -5.1) * Matrix4.CreateRotationX(Radian.Percent(objectRotation));
-            _textDisplay.DrawCentred($"{Core.Timer:N3}\n", _font, -0.15, 0);
+            _textDisplay.DrawCentred($"{Core.Time:N3}\n", _font, -0.15, 0);
             _textDisplay.DrawCentred($"\n{CameraPos.SquaredLength:N3}", _font, -0.15, 0);
         }
 

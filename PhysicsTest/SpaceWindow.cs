@@ -92,15 +92,14 @@ namespace PhysicsTest
         {
             base.OnStart(e);
 
-            Core.Timer = 0d;
+            Timer = 0d;
         }
-        private double _timeRef = 0d;
         protected override void OnUpdate(EventArgs e)
         {
             base.OnUpdate(e);
 
-            double frameTime = Core.Timer - _timeRef;
-            _timeRef = Core.Timer;
+            double frameTime = Timer;
+            Timer = 0d;
 
             Framebuffer.Bind();
 
