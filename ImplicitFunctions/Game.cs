@@ -209,16 +209,14 @@ namespace ImplicitFunctions
         {
             base.OnStart(e);
 
-            Core.Timer = 0d;
+            Timer = 0d;
         }
-        private double _refTime = 0d;
         protected override void OnUpdate(EventArgs e)
         {
             base.OnUpdate(e);
 
-            double elap = Core.Timer;
-            double frameTime = elap - _refTime;
-            _refTime = elap;
+            double frameTime = Timer;
+            Timer = 0d;
 
             // Clear screen black
             BaseFramebuffer.Clear(BufferBit.Colour);
