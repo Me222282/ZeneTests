@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Zene.Graphics;
 using Zene.Graphics.Base;
+using Zene.Graphics.Shaders;
 using Zene.Structs;
 using Zene.Windowing;
 
@@ -16,11 +17,11 @@ namespace CSGL
 
             //TestTextureParam();
 
-
+            /*
             //ShadowLWindow window = new ShadowLWindow(800, 500, "Work");
 
             //CubeMapTest window = new CubeMapTest(800, 500, "Work");
-            /*
+            
             Window3D window = new Window3D(800, 500, "Work");
 
             //WindowTest window = new WindowTest(800, 500, "Test");
@@ -28,7 +29,7 @@ namespace CSGL
             //Window2D window = new Window2D(800, 500, "Work");
 
             window.Run();
-            */
+            
             /*
             Task.Run(() =>
             {

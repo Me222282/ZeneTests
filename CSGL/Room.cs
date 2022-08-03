@@ -9,13 +9,13 @@ namespace CSGL
 {
     public class Room : IDrawable, IDisposable
     {
-        public unsafe Room(LightingShader shader)
+        public Room(LightingShader shader)
         {
             _disposed = false;
 
             Object3D.AddNormalTangents(wallVerts, 2, 1, wallIndices, out List<Vector3> nwv, out List<uint> nwi);
 
-            wallSide = new DrawObject<Vector3, uint>(nwv, nwi, 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
+            wallSide = new DrawObject<Vector3, uint>(nwv.ToArray(), nwi.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
             wallSide.AddAttribute((uint)LightingShader.Location.TextureCoords, 1, AttributeSize.D3); // Texture Coords
             wallSide.AddAttribute((uint)LightingShader.Location.AmbientLightTextureCoords, 1, AttributeSize.D3); // Diffuse Light Textrue
             wallSide.AddAttribute((uint)LightingShader.Location.NormalMapTextureCoords, 1, AttributeSize.D3); // Normal Map Coords
@@ -28,7 +28,7 @@ namespace CSGL
 
             Object3D.AddNormalTangents(wallTopVerts, 2, 1, wallTopIndices, out List<Vector3> nwtv, out List<uint> nwti);
 
-            wallTop = new DrawObject<Vector3, uint>(nwtv, nwti, 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
+            wallTop = new DrawObject<Vector3, uint>(nwtv.ToArray(), nwti.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
             wallTop.AddAttribute((uint)LightingShader.Location.TextureCoords, 1, AttributeSize.D3); // Texture Coords
             wallTop.AddAttribute((uint)LightingShader.Location.AmbientLightTextureCoords, 1, AttributeSize.D3); // Diffuse Light Textrue
             wallTop.AddAttribute((uint)LightingShader.Location.NormalMapTextureCoords, 1, AttributeSize.D3); // Normal Map Coords
@@ -41,7 +41,7 @@ namespace CSGL
 
             Object3D.AddNormalTangents(floorVerts, 2, 1, floorIndices, out List<Vector3> nfv, out List<uint> nfi);
 
-            floor = new DrawObject<Vector3, uint>(nfv, nfi, 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
+            floor = new DrawObject<Vector3, uint>(nfv.ToArray(), nfi.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
             floor.AddAttribute((uint)LightingShader.Location.TextureCoords, 1, AttributeSize.D3); // Texture Coords
             floor.AddAttribute((uint)LightingShader.Location.AmbientLightTextureCoords, 1, AttributeSize.D3); // Diffuse Light Textrue
             floor.AddAttribute((uint)LightingShader.Location.NormalMapTextureCoords, 1, AttributeSize.D3); // Normal Map Coords
@@ -63,7 +63,7 @@ namespace CSGL
 
             Object3D.AddNormalTangents(wallVerts, 2, 1, wallIndices, out List<Vector3> nwv, out List<uint> nwi);
 
-            wallSide = new DrawObject<Vector3, uint>(nwv, nwi, 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
+            wallSide = new DrawObject<Vector3, uint>(nwv.ToArray(), nwi.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
             wallSide.AddAttribute((uint)BasicShader.Location.TextureCoords, 1, AttributeSize.D3); // Texture Coords
 
             wallTexture = Texture2D.Create("Resources/Room/wallTex.png", WrapStyle.Repeated, TextureSampling.NearestMipMapBlend, true);
@@ -72,7 +72,7 @@ namespace CSGL
 
             Object3D.AddNormalTangents(wallTopVerts, 2, 1, wallTopIndices, out List<Vector3> nwtv, out List<uint> nwti);
 
-            wallTop = new DrawObject<Vector3, uint>(nwtv, nwti, 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
+            wallTop = new DrawObject<Vector3, uint>(nwtv.ToArray(), nwti.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
             wallTop.AddAttribute((uint)BasicShader.Location.TextureCoords, 1, AttributeSize.D3); // Texture Coords
 
             wallTopTexture = Texture2D.Create("Resources/Room/wallTopTex.png", WrapStyle.Repeated, TextureSampling.NearestMipMapBlend, true);
@@ -81,7 +81,7 @@ namespace CSGL
 
             Object3D.AddNormalTangents(floorVerts, 2, 1, floorIndices, out List<Vector3> nfv, out List<uint> nfi);
 
-            floor = new DrawObject<Vector3, uint>(nfv, nfi, 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
+            floor = new DrawObject<Vector3, uint>(nfv.ToArray(), nfi.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
             floor.AddAttribute((uint)BasicShader.Location.TextureCoords, 1, AttributeSize.D3); // Texture Coords
 
 

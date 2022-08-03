@@ -35,11 +35,11 @@ namespace CSGL
 
         private readonly float[] vertData = new float[]
         {
-            /*Vertex*/ 0.5f, 0.5f, /*-20f, /*Colour*/ 0.0f, 0.0f, 1.0f,
-            /*Vertex*/ 0.5f, -0.5f, /*-20f, /*Colour*/ 0.0f, 1.0f, 0.0f,
-            //*Vertex*/ 0.5f, -0.5f, /*-20f, /*Colour*/ 0.0f, 1.0f, 0.0f,
-            /*Vertex*/ -0.5f, -0.5f, /*-20f, /*Colour*/ 1.0f, 0.0f, 0.0f,
-            /*Vertex*/ -0.5f, 0.5f, /*-20f, /*Colour*/ 1.0f, 1.0f, 0.0f
+            /*Vertex*/ 0.5f, 0.5f, /*-20f, /*Colour*/ 0f, 0f, 1f,
+            /*Vertex*/ 0.5f, -0.5f, /*-20f, /*Colour*/ 0f, 1f, 0f,
+            //*Vertex*/ 0.5f, -0.5f, /*-20f, /*Colour*/ 0f, 1f, 0f,
+            /*Vertex*/ -0.5f, -0.5f, /*-20f, /*Colour*/ 1f, 0f, 0f,
+            /*Vertex*/ -0.5f, 0.5f, /*-20f, /*Colour*/ 1f, 1f, 0f
         };
 
         private readonly byte[] indices = new byte[]

@@ -201,7 +201,7 @@ namespace CSGL
 
             Object3D.AddNormals(vertData, 2, indexData, out List<Vector3> vertices, out List<uint> indices);
 
-            DrawObject = new DrawObject<Vector3, uint>(vertices, indices, 3, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
+            DrawObject = new DrawObject<Vector3, uint>(vertices.ToArray(), indices.ToArray(), 3, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
 
             DrawObject.AddAttribute((int)LightingShader.Location.ColourAttribute, 1, AttributeSize.D3); // Colour attribute
             DrawObject.AddAttribute((int)LightingShader.Location.Normal, 2, AttributeSize.D3); // Normals
@@ -211,7 +211,7 @@ namespace CSGL
                 new Vector3(500, 10, 500), new Vector3(100, 100, 0),
                 new Vector3(-500, 10, 500), new Vector3(0, 100, 0)}, 2, 1, new uint[] { 0, 1, 2, 2, 3, 0 }, out List<Vector3> floorVerts, out List<uint> floorInds);
 
-            Floor = new DrawObject<Vector3, uint>(floorVerts, floorInds, 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
+            Floor = new DrawObject<Vector3, uint>(floorVerts.ToArray(), floorInds.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
 
             FloorTexture = Texture2D.Create("Resources/wood.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
 

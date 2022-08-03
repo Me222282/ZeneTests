@@ -91,10 +91,10 @@ namespace PhysicsTest
                 Collisions[i] = planet.Collision;
             }
 
-            _instanceData = new ArrayBuffer<Vector4>(instData, 5, BufferUsage.DrawFrequent);
+            _instanceData = new ArrayBuffer<Vector4>(5, BufferUsage.DrawFrequent);
+            _instanceData.SetData(instData);
 
             // Set matrix instance reference
-            _drawable.Vao.Bind();
             _drawable.Vao.AddBuffer(_instanceData, 2, 0, DataType.Double, AttributeSize.D4);
             _drawable.Vao.AddBuffer(_instanceData, 3, 1, DataType.Double, AttributeSize.D4);
             _drawable.Vao.AddBuffer(_instanceData, 4, 2, DataType.Double, AttributeSize.D4);
@@ -103,12 +103,12 @@ namespace PhysicsTest
             _drawable.Vao.AddBuffer(_instanceData, 6, 4, DataType.Double, AttributeSize.D3);
 
             // Set up instancing
+            _drawable.Vao.Bind();
             GL.VertexAttribDivisor(2, 1);
             GL.VertexAttribDivisor(3, 1);
             GL.VertexAttribDivisor(4, 1);
             GL.VertexAttribDivisor(5, 1);
             GL.VertexAttribDivisor(6, 1);
-
             _drawable.Vao.Unbind();
         }
 

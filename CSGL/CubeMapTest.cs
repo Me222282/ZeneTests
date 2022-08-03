@@ -345,7 +345,7 @@ namespace CSGL
 
             _mouseLocation = new Vector2(e.X, e.Y);
 
-            rotateY += Radian.Degrees(distanceX * 0.1);
+            rotateY -= Radian.Degrees(distanceX * 0.1);
             rotateX += Radian.Degrees(distanceY * 0.1);
         }
     }
