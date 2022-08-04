@@ -583,14 +583,25 @@ namespace GUITest
 
         public override CharFontData GetCharacterData(char character)
         {
-            try
+            int char33 = character - 33;
+
+            if (char33 >= 0 &&
+                char33 < _characterData.Length)
             {
                 return _characterData[character - 33];
             }
-            catch (IndexOutOfRangeException)
+
+            switch (character)
             {
-                return CharFontData.Unsupported;
+                case '£':
+                    return new CharFontData(
+                        new Vector2(_pixelWidth * 120, _pixelHeight * 200),
+                        _texSize,
+                        _charSize,
+                        Vector2.Zero);
             }
+
+            return CharFontData.Unsupported;
         }
     }
 }

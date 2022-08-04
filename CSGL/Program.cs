@@ -3,7 +3,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Zene.Graphics;
 using Zene.Graphics.Base;
-using Zene.Graphics.Shaders;
 using Zene.Structs;
 using Zene.Windowing;
 

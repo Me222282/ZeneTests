@@ -29,7 +29,6 @@ namespace CSGL
                 Shader.Dispose();
 
                 DrawObject.Dispose();
-                PointObject.Dispose();
             }
         }
 
@@ -49,8 +48,6 @@ namespace CSGL
         };
 
         private DrawObject<float, byte> DrawObject;
-
-        private DrawingTexture<Vector2> PointObject;
 
         private BasicShader Shader;
 
@@ -73,14 +70,6 @@ namespace CSGL
 
             State.Blending = true;
             GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
-
-            PointObject = new DrawingTexture<Vector2>(new Vector2[] 
-            {
-                new Vector2(-0.628, -0.75),
-                new Vector2(-0.75, -0.872),
-                new Vector2(-0.872, -0.75),
-                new Vector2(-0.75, -0.628)
-            }, 2, new Bitmap("Resources/CharacterLeftN.png"), WrapStyle.EdgeClamp, TextureSampling.Nearest, BufferUsage.DrawFrequent, false);
 
             scale = 100;
 
@@ -114,11 +103,6 @@ namespace CSGL
             Shader.SetColourSource(ColourSource.AttributeColour);
 
             DrawObject.Draw();
-
-            Shader.SetColourSource(ColourSource.Texture);
-            Shader.SetTextureSlot(0);
-
-            PointObject.Draw();
         }
 
         private bool _leftShift;

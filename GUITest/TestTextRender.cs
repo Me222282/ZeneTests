@@ -128,7 +128,7 @@ namespace GUITest
             Reload();
         }
         private readonly DrawObject<Vector2, byte> _drawable;
-        private ArrayBuffer<Vector2> _instanceData;
+        private readonly ArrayBuffer<Vector2> _instanceData;
 
         private int _capacity;
         public int Capacity
