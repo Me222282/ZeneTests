@@ -72,26 +72,26 @@ namespace FXAA
             base.OnUpdate(e);
             
             Framebuffer.Bind();
-                // Draw box
-                //_shader.Bind();
-                //_shader.SetColourSource(ColourSource.None);
-                //_shader.Matrix1 = Matrix4.CreateScale(0.5) * Matrix4.CreateRotationZ(Radian.Percent(0.125));
-                _circle.Bind();
-                _circle.Matrix1 = Matrix4.CreateScale(0.5);
-                _drawable.Draw();
-                
-                base.Framebuffer.Bind();
-                // Draw to screen
-                _fxaa.Bind();
-                _fxaa.TextureSlot = 0;
-                //_shader.Bind();
-                //_shader.SetColourSource(ColourSource.Texture);
-                //_shader.SetTextureSlot(0);
-                //_shader.Matrix1 = Matrix4.Identity;
-                Framebuffer.GetTexture(FrameAttachment.Colour0).Bind(0);
-                //_texture.Bind(0);
-                _drawable.Draw();
-                //Framebuffer.CopyFrameBuffer(base.Framebuffer, BufferBit.Colour, TextureSampling.Nearest);
+            // Draw box
+            //_shader.Bind();
+            //_shader.SetColourSource(ColourSource.None);
+            //_shader.Matrix1 = Matrix4.CreateScale(0.5) * Matrix4.CreateRotationZ(Radian.Percent(0.125));
+            _circle.Bind();
+            _circle.Matrix1 = Matrix4.CreateScale(0.5);
+            _drawable.Draw();
+            
+            base.Framebuffer.Bind();
+            // Draw to screen
+            _fxaa.Bind();
+            _fxaa.TextureSlot = 0;
+            //_shader.Bind();
+            //_shader.SetColourSource(ColourSource.Texture);
+            //_shader.SetTextureSlot(0);
+            //_shader.Matrix1 = Matrix4.Identity;
+            Framebuffer.GetTexture(FrameAttachment.Colour0).Bind(0);
+            //_texture.Bind(0);
+            _drawable.Draw();
+            //Framebuffer.CopyFrameBuffer(base.Framebuffer, BufferBit.Colour, TextureSampling.Nearest);
         }
         
         protected override void OnSizePixelChange(SizeChangeEventArgs e)

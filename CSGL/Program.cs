@@ -42,7 +42,7 @@ namespace CSGL
             Window3D b = new Window3D(800, 500, "Work");
 
             //b.Run();
-            b.RunAsync();
+            b.RunMultithread();
 
             Core.Terminate();
         }

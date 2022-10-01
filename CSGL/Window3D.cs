@@ -12,7 +12,7 @@ namespace CSGL
     public unsafe class Window3D : Window
     {
         public Window3D(int width, int height, string title)
-            : base(width, height, title)
+            : base(width, height, title, true)
         {
             Framebuffer = new PostProcessing(width, height);
 
@@ -30,8 +30,6 @@ namespace CSGL
             BaseFramebuffer.View = new RectangleI(0, 0, width, height);
 
             State.OutputDebug = false;
-
-            SupportsAsync = true;
         }
 
         protected override void Dispose(bool dispose)
