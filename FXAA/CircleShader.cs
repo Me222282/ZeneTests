@@ -131,7 +131,7 @@ namespace FXAA
             GC.SuppressFinalize(this);
         }
 
-        public void Bind() => GL.UseProgram(Id);
-        public void Unbind() => GL.UseProgram(0);
+        public void Bind() => GL.UseProgram(this);
+        public void Unbind() => GL.UseProgram(null);
     }
 }

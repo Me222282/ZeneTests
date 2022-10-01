@@ -77,11 +77,11 @@ namespace ImplicitFunctions
 
         public void Bind()
         {
-            GL.UseProgram(Id);
+            GL.UseProgram(this);
         }
         public void Unbind()
         {
-            GL.UseProgram(0);
+            GL.UseProgram(null);
         }
     }
 }

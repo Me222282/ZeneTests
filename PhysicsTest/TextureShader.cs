@@ -68,7 +68,7 @@ namespace PhysicsTest
 
         public void Bind()
         {
-            GL.UseProgram(Id);
+            GL.UseProgram(this);
         }
 
         private bool _disposed = false;
@@ -84,7 +84,7 @@ namespace PhysicsTest
 
         public void Unbind()
         {
-            GL.UseProgram(0);
+            GL.UseProgram(null);
         }
     }
 }

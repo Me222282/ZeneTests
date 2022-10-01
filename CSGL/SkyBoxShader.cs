@@ -24,7 +24,7 @@ namespace CSGL
 
         public void Bind()
         {
-            GL.UseProgram(Program);
+            GL.UseProgram(this);
         }
         private bool _disposed = false;
         public void Dispose()
@@ -38,7 +38,7 @@ namespace CSGL
         }
         public void Unbind()
         {
-            GL.UseProgram(0);
+            GL.UseProgram(null);
         }
 
         private readonly int _uniformSampler;
