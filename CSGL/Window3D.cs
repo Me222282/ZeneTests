@@ -285,17 +285,16 @@ namespace CSGL
 
             Vector3 cameraMove = new Vector3(0, 0, 0);
 
-            if (_left)      { cameraMove.X += moveSpeed; }
-            if (_right)     { cameraMove.X -= moveSpeed; }
-            if (_forward)   { cameraMove.Z -= moveSpeed; }
-            if (_backward)  { cameraMove.Z += moveSpeed; }
-            if (_up)        { cameraMove.Y -= moveSpeed; }
-            if (_down)      { cameraMove.Y += moveSpeed; }
+            if (this[Keys.A])       { cameraMove.X += moveSpeed; }
+            if (this[Keys.D])       { cameraMove.X -= moveSpeed; }
+            if (this[Keys.W])       { cameraMove.Z -= moveSpeed; }
+            if (this[Keys.S])       { cameraMove.Z += moveSpeed; }
+            if (this[Keys.Space])   { cameraMove.Y -= moveSpeed; }
+            if (this[Mods.Control]) { cameraMove.Y += moveSpeed; }
 
-            if (_lShift)    { cameraMove *= 2; }
-            if (_lSlow) { cameraMove *= 0.25; }
-
-            if (_lAltGoFast) { cameraMove *= 4; }
+            if (this[Keys.LeftShift])   { cameraMove *= 2; }
+            if (this[Keys.RightShift])  { cameraMove *= 0.25; }
+            if (this[Mods.Alt])         { cameraMove *= 4; }
 
             CameraPos += cameraMove * rotationMatrix;
 
@@ -398,16 +397,6 @@ namespace CSGL
 
         private int _fpsCounter = 0;
 
-        private bool _left;
-        private bool _right;
-        private bool _up;
-        private bool _down;
-        private bool _forward;
-        private bool _backward;
-        private bool _lShift;
-        private bool _lAltGoFast;
-        private bool _lSlow;
-
         private bool torchLight = true;
         private bool doLight = true;
         private Colour cameraLightCC;
@@ -421,51 +410,6 @@ namespace CSGL
         {
             base.OnKeyDown(e);
 
-            if (e[Keys.LeftShift])
-            {
-                _lShift = true;
-                return;
-            }
-            if (e[Keys.RightShift])
-            {
-                _lSlow = true;
-                return;
-            }
-            if (e[Keys.LeftAlt])
-            {
-                _lAltGoFast = true;
-                return;
-            }
-            if (e[Keys.LeftControl])
-            {
-                _down = true;
-                return;
-            }
-            if (e[Keys.S])
-            {
-                _backward = true;
-                return;
-            }
-            if (e[Keys.W])
-            {
-                _forward = true;
-                return;
-            }
-            if (e[Keys.A])
-            {
-                _left = true;
-                return;
-            }
-            if (e[Keys.D])
-            {
-                _right = true;
-                return;
-            }
-            if (e[Keys.Space])
-            {
-                _up = true;
-                return;
-            }
             if (e[Keys.Escape])
             {
                 Close();
@@ -562,56 +506,6 @@ namespace CSGL
                 }
 
                 _polygonMode = GLEnum.Fill;
-                return;
-            }
-        }
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
-            base.OnKeyUp(e);
-
-            if (e[Keys.LeftShift])
-            {
-                _lShift = false;
-                return;
-            }
-            if (e[Keys.RightShift])
-            {
-                _lSlow = false;
-                return;
-            }
-            if (e[Keys.LeftAlt])
-            {
-                _lAltGoFast = false;
-                return;
-            }
-            if (e[Keys.LeftControl])
-            {
-                _down = false;
-                return;
-            }
-            if (e[Keys.S])
-            {
-                _backward = false;
-                return;
-            }
-            if (e[Keys.W])
-            {
-                _forward = false;
-                return;
-            }
-            if (e[Keys.A])
-            {
-                _left = false;
-                return;
-            }
-            if (e[Keys.D])
-            {
-                _right = false;
-                return;
-            }
-            if (e[Keys.Space])
-            {
-                _up = false;
                 return;
             }
         }
