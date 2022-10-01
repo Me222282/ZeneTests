@@ -13,7 +13,7 @@ namespace GUITest
             byte[] byteData = Bitmap.ExtractData("resources/fontI.png", out int w, out int h);
             // Convert to one channel GLArray
             GLArray<Vector4<byte>> texData = new GLArray<Vector4<byte>>(w, h);
-            for (int i = 0; i < texData.Size; i++)
+            for (int i = 0; i < texData.Length; i++)
             {
                 int offset = i * 4;
 

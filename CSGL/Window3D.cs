@@ -211,11 +211,11 @@ namespace CSGL
 
             Floor = new DrawObject<Vector3, uint>(floorVerts.ToArray(), floorInds.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
 
-            FloorTexture = Texture2D.Create("Resources/wood.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
+            FloorTexture = Texture2D.LoadSync("Resources/wood.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
 
             Shader.SetTextureSlot(0);
             Shader.SetNormalMapSlot(1);
-            FloorNormalMap = Texture2D.Create("Resources/woodNor.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
+            FloorNormalMap = Texture2D.LoadSync("Resources/woodNor.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
 
             Floor.AddAttribute((int)LightingShader.Location.TextureCoords, 1, AttributeSize.D3); // Texture Coordinates
             Floor.AddAttribute((int)LightingShader.Location.NormalMapTextureCoords, 1, AttributeSize.D3); // Normal Map Coordinates

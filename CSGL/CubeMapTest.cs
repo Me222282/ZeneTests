@@ -135,11 +135,6 @@ namespace CSGL
         {
             base.OnUpdate(e);
 
-            if (!_textureLoaded)
-            {
-                _textureLoaded = CubeMap.CheckSyncLoading();
-            }
-
             Framebuffer.Clear(BufferBit.Colour | BufferBit.Depth);
 
             Vector3 cameraMove = new Vector3(0, 0, 0);

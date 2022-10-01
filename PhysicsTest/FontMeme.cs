@@ -15,7 +15,7 @@ namespace PhysicsTest
             byte[] byteData = Bitmap.ExtractData(fontPath, out int w, out int h);
             // Convert to one channel GLArray
             GLArray<Vector2<byte>> texData = new GLArray<Vector2<byte>>(w, h);
-            for (int i = 0; i < texData.Size; i++)
+            for (int i = 0; i < texData.Length; i++)
             {
                 //texData[i] = new Vector4<byte>(byteData[i * 4], 0, 0, 0);
                 texData[i] = new Vector2<byte>(byteData[i * 4], 0);
