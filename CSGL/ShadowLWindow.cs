@@ -160,8 +160,8 @@ namespace CSGL
             //FloorTexture = new TextureBuffer("Resources/wood.png", WrapStyle.Repeated, TextureQuality.Blend, true);
             FloorTexture = Texture2D.Create("Resources/wood.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
 
-            Shader.SetTextureSlot(0);
-            Shader.SetNormalMapSlot(1);
+            Shader.TextureSlot = 0;
+            Shader.NormalMapSlot = 1;
             //FloorNormalMap = new TextureBuffer("Resources/woodNor.png", WrapStyle.Repeated, TextureQuality.Blend, true);
             FloorNormalMap = Texture2D.Create("Resources/woodNor.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
 
@@ -173,12 +173,12 @@ namespace CSGL
             State.Blending = true;
             GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
 
-            Shader.SetAmbientLight(new Colour(12, 12, 15));
+            Shader.AmbientLight = new Colour(12, 12, 15);
 
-            Shader.IngorBlackLight(true);
+            Shader.IngorBlackLight = true;
 
             //Shader.SetLight(0, new Zene.Graphics.Light(new Colour(255, 255, 255), Colour.Zero, 0, 0, lightDir, true));
-            Shader.SetSpotLight(0, new SpotLight(new ColourF(1.4f, 1.4f, 1.4f), Radian.Degrees(45), Radian.Degrees(60), 0, 0, lightDir, lightDir));
+            Shader.SetSpotLight(0, new SpotLight(new ColourF3(1.4f, 1.4f, 1.4f), Radian.Degrees(45), Radian.Degrees(60), 0, 0, lightDir, lightDir));
 
             DepthDraw = new DrawObject<Vector2, byte>(new Vector2[]
                 {
@@ -265,41 +265,41 @@ namespace CSGL
             //Shader.SetViewMatrix(Matrix4.Identity);
             //Shader.SetModelMatrix(Matrix4.Identity);
 
-            Shader.SetCameraPosition(-CameraPos);
+            Shader.CameraPosition = -CameraPos;
             Shader.Matrix2 = Matrix4.CreateTranslation(CameraPos) * Matrix4.CreateRotationY(rotateY) *
                 Matrix4.CreateRotationX(rotateX) * Matrix4.CreateRotationZ(rotateZ);
 
             //Shader.SetCameraPosition(lightDir);
             //Shader.SetViewMatrix(Matrix4.LookAt(lightDir, Point3.Zero, new Point3(0, 1, 0)));
             
-            Shader.DrawLighting(doLight);
+            Shader.DrawLighting = doLight;
             Shader.Matrix1 = Matrix4.Identity;
 
-            Shader.UseNormalMapping(false);
-            Shader.SetColourSource(ColourSource.AttributeColour);
+            Shader.NormalMapping = false;
+            Shader.ColourSource = ColourSource.AttributeColour;
             Shader.SetMaterial(ObjectMaterial);
 
             DrawObject.Draw();
 
-            Shader.UseNormalMapping(false);
-            Shader.SetColourSource(ColourSource.UniformColour);
-            Shader.SetDrawColour(new Colour(100, 200, 255));
+            Shader.NormalMapping = false;
+            Shader.ColourSource = ColourSource.UniformColour;
+            Shader.Colour = new Colour(100, 200, 255);
             Shader.SetMaterial(FloorMaterial);
 
             Plane.Draw();
 
-            Shader.UseNormalMapping(false);
-            Shader.DrawLighting(false);
+            Shader.NormalMapping = false;
+            Shader.DrawLighting = false;
             Shader.Matrix1 = Matrix4.CreateTranslation(lightDir);
-            Shader.SetColourSource(ColourSource.UniformColour);
-            Shader.SetDrawColour(new Colour(255, 255, 255));
+            Shader.ColourSource = ColourSource.UniformColour;
+            Shader.Colour = new Colour(255, 255, 255);
 
             LightObject.Draw();
 
-            Shader.SetColourSource(ColourSource.Texture);
+            Shader.ColourSource = ColourSource.Texture;
             Shader.SetMaterial(FloorMaterial);
-            Shader.UseNormalMapping(true);
-            Shader.DrawLighting(doLight);
+            Shader.NormalMapping = true;
+            Shader.DrawLighting = doLight;
 
             FloorTexture.Bind(0);
             FloorNormalMap.Bind(1);
@@ -326,7 +326,7 @@ namespace CSGL
 
             ShadowMapShader.ProjectionMatrix = smP;
             ShadowMapShader.ViewMatrix = smV;
-            Shader.SetLightSpaceMatrix(smV * smP);
+            Shader.LightSpaceMatrix = smV * smP;
             ShadowMapShader.ModelMatrix = Matrix4.Identity;
 
             Floor.Draw();
@@ -340,7 +340,7 @@ namespace CSGL
             player.Draw();
 
             ShadowMapShader.BindTexture(2);
-            Shader.SetShadowMapSlot(2);
+            Shader.ShadowMapSlot = 2;
 
             ShadowMapShader.UnBind();
         }

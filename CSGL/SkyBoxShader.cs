@@ -1,53 +1,25 @@
 ﻿using System;
 using System.IO;
-using Zene.Graphics.Base;
 using Zene.Graphics;
 using Zene.Structs;
 
 namespace CSGL
 {
-    public class SkyBoxShader : IShaderProgram
+    public class SkyBoxShader : BaseShaderProgram
     {
         public SkyBoxShader()
         {
-            Program = CustomShader.CreateShader(
+            Create(
                 File.ReadAllText("Resources/skyBoxVert.shader"),
-                File.ReadAllText("Resources/skyBoxFrag.shader"));
-
-            _uniformSampler = GL.GetUniformLocation(Program, "skybox");
-            _uniformMatrix = GL.GetUniformLocation(Program, "matrix");
+                File.ReadAllText("Resources/skyBoxFrag.shader"),
+                "skybox", "matrix");
         }
-
-        public uint Program { get; }
-        uint IIdentifiable.Id => Program;
-
-        public void Bind()
-        {
-            GL.UseProgram(this);
-        }
-        private bool _disposed = false;
-        public void Dispose()
-        {
-            if (_disposed) { return; }
-
-            GL.DeleteProgram(Program);
-
-            _disposed = true;
-            GC.SuppressFinalize(this);
-        }
-        public void Unbind()
-        {
-            GL.UseProgram(null);
-        }
-
-        private readonly int _uniformSampler;
-        private readonly int _uniformMatrix;
 
         public int TextureSlot
         {
             set
             {
-                GL.ProgramUniform1i(Program, _uniformSampler, value);
+                SetUniformI(Uniforms[0], value);
             }
         }
         private Matrix4 _m3 = Matrix4.Identity;
@@ -85,7 +57,8 @@ namespace CSGL
         }
         private void SetMatrices()
         {
-            GL.ProgramUniformMatrix4fv(Program, _uniformMatrix, false, (_m1 * _m2 * _m3).GetGLData());
+            Matrix4 matrix = _m1 * _m2 * _m3;
+            SetUniformF(Uniforms[1], ref matrix);
         }
     }
 }

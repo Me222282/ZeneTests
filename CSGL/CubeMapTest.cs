@@ -129,7 +129,6 @@ namespace CSGL
             }
         }
 
-        private bool _textureLoaded = false;
         private Vector3 _offset = Vector3.Zero;
         protected override void OnUpdate(EventArgs e)
         {
