@@ -2,7 +2,6 @@
 using Zene.Graphics.Base;
 using Zene.Graphics.Z3D;
 using Zene.Graphics;
-using Zene.Graphics.Shaders;
 using Zene.Windowing;
 using Zene.Structs;
 using System.Collections.Generic;
@@ -267,14 +266,14 @@ namespace CSGL
             //Shader.SetModelMatrix(Matrix4.Identity);
 
             Shader.SetCameraPosition(-CameraPos);
-            Shader.SetViewMatrix(Matrix4.CreateTranslation(CameraPos) * Matrix4.CreateRotationY(rotateY) *
-                Matrix4.CreateRotationX(rotateX) * Matrix4.CreateRotationZ(rotateZ));
+            Shader.Matrix2 = Matrix4.CreateTranslation(CameraPos) * Matrix4.CreateRotationY(rotateY) *
+                Matrix4.CreateRotationX(rotateX) * Matrix4.CreateRotationZ(rotateZ);
 
             //Shader.SetCameraPosition(lightDir);
             //Shader.SetViewMatrix(Matrix4.LookAt(lightDir, Point3.Zero, new Point3(0, 1, 0)));
             
             Shader.DrawLighting(doLight);
-            Shader.SetModelMatrix(Matrix4.Identity);
+            Shader.Matrix1 = Matrix4.Identity;
 
             Shader.UseNormalMapping(false);
             Shader.SetColourSource(ColourSource.AttributeColour);
@@ -291,7 +290,7 @@ namespace CSGL
 
             Shader.UseNormalMapping(false);
             Shader.DrawLighting(false);
-            Shader.SetModelMatrix(Matrix4.CreateTranslation(lightDir));
+            Shader.Matrix1 = Matrix4.CreateTranslation(lightDir);
             Shader.SetColourSource(ColourSource.UniformColour);
             Shader.SetDrawColour(new Colour(255, 255, 255));
 
@@ -305,9 +304,9 @@ namespace CSGL
             FloorTexture.Bind(0);
             FloorNormalMap.Bind(1);
 
-            Shader.SetModelMatrix(Matrix4.CreateTranslation(10, 2.5, 10));
+            Shader.Matrix1 = Matrix4.CreateTranslation(10, 2.5, 10);
             sphere.Draw();
-            Shader.SetModelMatrix(Matrix4.Identity);
+            Shader.Matrix1 = Matrix4.Identity;
             Floor.Draw();
 
             FloorTexture.Unbind();
@@ -567,7 +566,7 @@ namespace CSGL
 
             Matrix4 proj = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(60), (double)e.Width / e.Height, 1, 5000);
 
-            Shader.SetProjectionMatrix(proj);
+            Shader.Matrix1 = proj;
         }
 
         protected override void OnSizePixelChange(SizeChangeEventArgs e)

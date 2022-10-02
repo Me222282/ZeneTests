@@ -2,7 +2,6 @@
 using Zene.Windowing;
 using Zene.Windowing.Base;
 using Zene.Graphics;
-using Zene.Graphics.Shaders;
 using Zene.Structs;
 
 namespace FXAA

@@ -3,7 +3,6 @@ using System.IO;
 using Zene.Graphics.Base;
 using Zene.Graphics;
 using Zene.Structs;
-using Zene.Graphics.Shaders;
 
 namespace CSGL
 {

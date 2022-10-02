@@ -1,6 +1,5 @@
 ﻿using System;
 using Zene.Graphics;
-using Zene.Graphics.Shaders;
 using Zene.Windowing;
 using Zene.Physics;
 using Zene.Structs;

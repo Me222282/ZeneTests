@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Zene.Graphics;
-using Zene.Graphics.Shaders;
 using Zene.Structs;
 using Zene.Windowing;
 

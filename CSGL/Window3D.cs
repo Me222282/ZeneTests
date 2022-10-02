@@ -2,7 +2,6 @@
 using Zene.Graphics.Base;
 using Zene.Graphics.Z3D;
 using Zene.Graphics;
-using Zene.Graphics.Shaders;
 using Zene.Windowing;
 using Zene.Structs;
 using System.Collections.Generic;
@@ -182,9 +181,9 @@ namespace CSGL
 
         private Light FarLightObject;
 
-        private Zene.Graphics.Shaders.Light light;
+        private Zene.Graphics.Light light;
 
-        private Zene.Graphics.Shaders.Light farLight;
+        private Zene.Graphics.Light farLight;
 
         private double lightAmplitude = 0;
 
@@ -229,10 +228,10 @@ namespace CSGL
 
             rotationMatrix = Matrix3.CreateRotationX(0);
 
-            light = new Zene.Graphics.Shaders.Light(new Colour(255, 255, 255), Colour.Zero, 0.0014, 0.000007, new Vector3(10, 0, 10));
+            light = new Zene.Graphics.Light(new Colour(255, 255, 255), Colour.Zero, 0.0014, 0.000007, new Vector3(10, 0, 10));
             Shader.SetLight(0, light);
 
-            farLight = new Zene.Graphics.Shaders.Light(new Colour(200, 200, 200), Colour.Zero, 0.014, 0.0007, new Vector3(500, 0, 500));
+            farLight = new Zene.Graphics.Light(new Colour(200, 200, 200), Colour.Zero, 0.014, 0.0007, new Vector3(500, 0, 500));
             Shader.SetLight(1, farLight);
 
             Shader.SetAmbientLight(new Colour(12, 12, 15));
@@ -308,7 +307,7 @@ namespace CSGL
 
             Matrix4 view = Matrix4.CreateTranslation(CameraPos) * Matrix4.CreateRotationY(rotateY) *
                 Matrix4.CreateRotationX(rotateX) * Matrix4.CreateRotationZ(rotateZ);
-            Shader.SetViewMatrix(view);
+            Shader.Matrix2 = view;
             _textDisplay.View = view;
 
             Shader.SetSpotLightPosition(0, -CameraPos);
@@ -322,7 +321,7 @@ namespace CSGL
 
             Shader.UseNormalMapping(false);
             Shader.DrawLighting(doLight);
-            Shader.SetModelMatrix(Matrix4.CreateRotationX(Radian.Percent(objectRotation)));
+            Shader.Matrix1 = Matrix4.CreateRotationX(Radian.Percent(objectRotation));
             objectRotation += 0.001;
             Shader.SetColourSource(ColourSource.AttributeColour);
             Shader.SetMaterial(ObjectMaterial);
@@ -330,7 +329,7 @@ namespace CSGL
             DrawObject.Draw();
 
             Shader.DrawLighting(doLight);
-            Shader.SetModelMatrix(Matrix4.CreateRotationZ(Radian.Percent(0.5)) * Matrix4.CreateRotationY(Radian.Percent(0.25)) * Matrix4.CreateTranslation(100, 0, 0));
+            Shader.Matrix1 = Matrix4.CreateRotationZ(Radian.Percent(0.5)) * Matrix4.CreateRotationY(Radian.Percent(0.25)) * Matrix4.CreateTranslation(100, 0, 0);
             //Shader.SetColourSource(ColourSource.UniformColour);
             Shader.SetColourSource(ColourSource.Texture);
             Shader.SetDrawColour(new Colour(134, 94, 250));
@@ -340,7 +339,7 @@ namespace CSGL
             loadObject.Draw();
 
             Shader.SetColourSource(ColourSource.Texture);
-            Shader.SetModelMatrix(Matrix4.Identity);
+            Shader.Matrix1 = Matrix4.Identity;
             Shader.SetMaterial(FloorMaterial);
             Shader.UseNormalMapping(true);
 
@@ -354,7 +353,7 @@ namespace CSGL
 
             Shader.UseNormalMapping(false);
             Shader.DrawLighting(false);
-            Shader.SetModelMatrix(Matrix4.CreateTranslation(light.LightVector));
+            Shader.Matrix1 = Matrix4.CreateTranslation(light.LightVector);
             Shader.SetColourSource(ColourSource.UniformColour);
             Shader.SetDrawColour(light.LightColour);
 
@@ -375,7 +374,7 @@ namespace CSGL
 
             Shader.SetLight(1, farLight);
 
-            Shader.SetModelMatrix(Matrix4.Identity);
+            Shader.Matrix1 = Matrix4.Identity;
             Shader.SetColourSource(ColourSource.UniformColour);
             Shader.SetDrawColour(farLight.LightColour);
 
@@ -383,7 +382,7 @@ namespace CSGL
 
             Shader.DrawLighting(doLight);
             Shader.SetMaterial(_room.RoomMat);
-            Shader.SetModelMatrix(Matrix4.CreateTranslation(8000, 0, 0));
+            Shader.Matrix1 = Matrix4.CreateTranslation(8000, 0, 0);
             Shader.SetColourSource(ColourSource.Texture);
             Shader.SetTextureSlot(Room.TexTexSlot);
             Shader.SetNormalMapSlot(Room.NorTexSlot);
@@ -540,7 +539,7 @@ namespace CSGL
             // Matrices
             Matrix4 matrix = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)e.Width / e.Height, _near, _far);
 
-            Shader.SetProjectionMatrix(matrix);
+            Shader.Matrix3 = matrix;
             _textDisplay.Projection = matrix;
 
             Framebuffer.Size = e.Size;
@@ -591,7 +590,7 @@ namespace CSGL
 
             Matrix4 matrix = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)Width / Height, _near, _far);
 
-            Shader.SetProjectionMatrix(matrix);
+            Shader.Matrix1 = matrix;
             _textDisplay.Projection = matrix;
         }
 

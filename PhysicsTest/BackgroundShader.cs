@@ -1,5 +1,4 @@
 ﻿using System;
-using Zene.Graphics.Shaders;
 using Zene.Graphics.Base;
 using System.IO;
 using Zene.Structs;

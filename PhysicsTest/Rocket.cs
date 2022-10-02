@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Zene.Graphics;
-using Zene.Graphics.Shaders;
 using Zene.Physics;
 using Zene.Sprites;
 using Zene.Structs;

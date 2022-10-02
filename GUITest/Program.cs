@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using Zene.Graphics;
-using Zene.Graphics.Shaders;
 using Zene.Structs;
 using Zene.Windowing;
 

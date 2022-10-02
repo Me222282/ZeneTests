@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Zene.Graphics;
 using Zene.Graphics.Z3D;
-using Zene.Graphics.Shaders;
 using Zene.Structs;
 
 namespace CSGL
@@ -53,8 +52,8 @@ namespace CSGL
 
             RoomMat = new Material(new Colour(106, 80, 93), Material.Source.None, Shine.None);
 
-            shader.SetLight(2, new Zene.Graphics.Shaders.Light(new Colour(120, 100, 120), Colour.Zero, 0.007, 0.00014, new Vector3(8008, -3, -8)));
-            shader.SetLight(3, new Zene.Graphics.Shaders.Light(new Colour(120, 100, 120), Colour.Zero, 0.007, 0.00014, new Vector3(8008, -3, -28)));
+            shader.SetLight(2, new Zene.Graphics.Light(new Colour(120, 100, 120), Colour.Zero, 0.007, 0.00014, new Vector3(8008, -3, -8)));
+            shader.SetLight(3, new Zene.Graphics.Light(new Colour(120, 100, 120), Colour.Zero, 0.007, 0.00014, new Vector3(8008, -3, -28)));
         }
 
         public Room()

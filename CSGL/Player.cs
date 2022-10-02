@@ -1,7 +1,6 @@
 ﻿using System;
 using Zene.Graphics;
 using Zene.Graphics.Z3D;
-using Zene.Graphics.Shaders;
 
 namespace CSGL
 {

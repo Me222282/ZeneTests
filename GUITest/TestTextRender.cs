@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Zene.Graphics;
 using Zene.Graphics.Base;
-using Zene.Graphics.Shaders;
 using Zene.Structs;
 
 namespace GUITest

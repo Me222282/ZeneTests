@@ -5,7 +5,6 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using Zene.Windowing;
 using System.Diagnostics;
-using Zene.Graphics.Shaders;
 using Zene.Windowing.Base;
 
 namespace GUI
