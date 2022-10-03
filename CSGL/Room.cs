@@ -50,7 +50,7 @@ namespace CSGL
             floorTexture = Texture2D.Create("Resources/Room/floorTex.png", WrapStyle.Repeated, TextureSampling.NearestMipMapBlend, true);
             floorNormal = Texture2D.Create("Resources/Room/floorNor.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
 
-            RoomMat = new Material(new Colour(106, 80, 93), Material.Source.None, Shine.None);
+            RoomMat = new Material(new Colour3(106, 80, 93), Material.Source.None, Shine.None);
 
             shader.SetLight(2, new Zene.Graphics.Light(new Colour3(120, 100, 120), Colour3.Zero, 0.007, 0.00014, new Vector3(8008, -3, -8)));
             shader.SetLight(3, new Zene.Graphics.Light(new Colour3(120, 100, 120), Colour3.Zero, 0.007, 0.00014, new Vector3(8008, -3, -28)));
@@ -87,7 +87,7 @@ namespace CSGL
             floorTexture = Texture2D.Create("Resources/Room/floorTex.png", WrapStyle.Repeated, TextureSampling.NearestMipMapBlend, true);
             floorNormal = Texture2D.Create("Resources/Room/floorNor.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
 
-            RoomMat = new Material(new Colour(106, 80, 93), Material.Source.None, Shine.None);
+            RoomMat = new Material(new Colour3(106, 80, 93), Material.Source.None, Shine.None);
         }
 
         private readonly DrawObject<Vector3, uint> wallSide;

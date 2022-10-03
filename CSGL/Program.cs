@@ -39,8 +39,8 @@ namespace CSGL
 
             Thread.Sleep(2000);
             */
-            //Window3D b = new Window3D(800, 500, "Work");
-            ShadowLWindow b = new ShadowLWindow(800, 500, "Work");
+            Window3D b = new Window3D(800, 500, "Work");
+            //ShadowLWindow b = new ShadowLWindow(800, 500, "Work");
 
             b.Run();
             //b.RunMultithread();
