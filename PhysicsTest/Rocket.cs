@@ -159,13 +159,13 @@ namespace PhysicsTest
                 }
 
                 _shader.Bind();
-                _shader.SetColourSource(ColourSource.Texture);
+                _shader.ColourSource = ColourSource.Texture;
                 _shader.Matrix1 =
                     Matrix4.CreateRotationZ(-Math.Atan2(sprite.Velocity.Direction.X, sprite.Velocity.Direction.Y)) * 
                     Matrix4.CreateScale(sprite.Box.Width * multiplier, sprite.Box.Height * multiplier, 1) * 
                     Matrix4.CreateTranslation((Vector3)sprite.Box.Centre);
 
-                _shader.SetTextureSlot(0);
+                _shader.TextureSlot = 0;
                 if (Arrow)
                 {
                     _arrow.Bind(0);

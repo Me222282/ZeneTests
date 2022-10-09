@@ -1,25 +1,19 @@
 ﻿using System;
 using System.IO;
 using Zene.Graphics;
-using Zene.Graphics.Base;
 using Zene.Structs;
 
 namespace ImplicitFunctions
 {
-    public class CircleShader : IShaderProgram
+    public class CircleShader : BaseShaderProgram
     {
         public CircleShader()
         {
-            Id = CustomShader.CreateShader(
-                File.ReadAllText("resources/CircleVert.shader"),
-                File.ReadAllText("resources/CircleFrag.shader"));
-
-            _uniformMatrix = GL.GetUniformLocation(Id, "matrix");
+            Create(File.ReadAllText("resources/CircleVert.shader"),
+                File.ReadAllText("resources/CircleFrag.shader"),
+                "matrix");
         }
 
-        public uint Id { get; }
-
-        private readonly int _uniformMatrix;
         private Matrix4 _m1 = Matrix4.Identity;
         public Matrix4 Model
         {
@@ -61,27 +55,8 @@ namespace ImplicitFunctions
         }
         private void SetMatrix()
         {
-            GL.ProgramUniformMatrix4fv(Id, _uniformMatrix, false, (_m1 * _m2 * _m3).GetGLData());
-        }
-
-        private bool _disposed = false;
-        public void Dispose()
-        {
-            if (_disposed) { return; }
-
-            GL.DeleteProgram(Id);
-
-            _disposed = true;
-            GC.SuppressFinalize(this);
-        }
-
-        public void Bind()
-        {
-            GL.UseProgram(this);
-        }
-        public void Unbind()
-        {
-            GL.UseProgram(null);
+            Matrix4 matrix = _m1 * _m2 * _m3;
+            SetUniformF(Uniforms[0], ref matrix);
         }
     }
 }

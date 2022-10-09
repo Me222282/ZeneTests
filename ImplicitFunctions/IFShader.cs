@@ -1,46 +1,15 @@
 ﻿using System;
 using System.IO;
 using Zene.Graphics;
-using Zene.Graphics.Base;
 
 namespace ImplicitFunctions
 {
-    public class IFShader : IShaderProgram
+    public class IFShader : BaseShaderProgram
     {
         public IFShader()
         {
-            Id = CustomShader.CreateShader(
-                File.ReadAllText("resources/ImplicitFuncVert.shader"),
+            Create(File.ReadAllText("resources/ImplicitFuncVert.shader"),
                 File.ReadAllText("resources/ImplicitFuncFrag.shader"));
-        }
-
-        public uint Id { get; private set; }
-
-        public void Recreate()
-        {
-            Id = CustomShader.CreateShader(
-                File.ReadAllText("resources/ImplicitFuncVert.shader"),
-                File.ReadAllText("resources/ImplicitFuncFrag.shader"));
-        }
-
-        private bool _disposed = false;
-        public void Dispose()
-        {
-            if (_disposed) { return; }
-
-            GL.DeleteProgram(Id);
-
-            _disposed = true;
-            GC.SuppressFinalize(this);
-        }
-
-        public void Bind()
-        {
-            GL.UseProgram(this);
-        }
-        public void Unbind()
-        {
-            GL.UseProgram(null);
         }
     }
 }

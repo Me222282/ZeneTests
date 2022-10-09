@@ -9,26 +9,16 @@ namespace FXAA
     /// <summary>
     /// http://blog.simonrodriguez.fr/articles/2016/07/implementing_fxaa.html
     /// </summary>
-    public class FXAAShader2 : IShaderProgram
+    public class FXAAShader2 : BaseShaderProgram
     {
         public FXAAShader2()
         {
-            Id = CustomShader.CreateShader(
-                File.ReadAllText("resources/fxaaV2.glsl"),
-                File.ReadAllText("resources/fxaaF2.glsl")
-            );
+            Create(File.ReadAllText("resources/fxaaV2.glsl"),
+                File.ReadAllText("resources/fxaaF2.glsl"),
+                "u_colorTexture", "inverseScreenSize");
             
             GL.BindAttribLocation(Id, 2, "vTex");
-            
-            _uniformTexture = GL.GetUniformLocation(Id, "u_colorTexture");
-            
-            _uniformInvSize = GL.GetUniformLocation(Id, "inverseScreenSize");
         }
-        
-        public uint Id { get; }
-        
-        private int _uniformTexture;
-        private int _uniformInvSize;
         
         private int _texture = 0;
         public int TextureSlot
@@ -37,8 +27,8 @@ namespace FXAA
             set
             {
                 _texture = value;
-                
-                GL.ProgramUniform1i(Id, _uniformTexture, value);
+
+                SetUniformI(Uniforms[0], value);
             }
         }
         
@@ -49,23 +39,9 @@ namespace FXAA
             set
             {
                 _size = value;
-                
-                GL.ProgramUniform2f(Id, _uniformInvSize, (float)(1.0 / value.X), (float)(1.0 / value.Y));
+
+                SetUniformF(Uniforms[1], (1d, 1d) / value);
             }
         }
-        
-        private bool _disposed = false;
-        public void Dispose()
-        {
-            if (_disposed) { return; }
-            
-            GL.DeleteProgram(Id);
-            
-            _disposed = true;
-            GC.SuppressFinalize(this);
-        }
-
-        public void Bind() => GL.UseProgram(this);
-        public void Unbind() => GL.UseProgram(null);
     }
 }

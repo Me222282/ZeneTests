@@ -1,38 +1,34 @@
 ﻿using System;
-using Zene.Graphics.Base;
 using System.IO;
 using Zene.Structs;
 using Zene.Graphics;
 
 namespace PhysicsTest
 {
-    public class BackgroundShader : IShaderProgram
+    public class BackgroundShader : BaseShaderProgram
     {
         public BackgroundShader()
         {
-            Id = CustomShader.CreateShader(
-                File.ReadAllText("Resources/Vertex2.shader"),
-                File.ReadAllText("Resources/Fragment2.shader"));
-
-            _uniformTexSlot = GL.GetUniformLocation(Id, "uTextureSlot");
-            _uniformMatrix = GL.GetUniformLocation(Id, "matrix");
+            Create(File.ReadAllText("Resources/Vertex2.shader"),
+                File.ReadAllText("Resources/Fragment2.shader"),
+                "uTextureSlot", "matrix");
 
             // Set amtrix to identiy
-            GL.ProgramUniformMatrix4fv(Id, _uniformMatrix, false, Matrix4.Zero.GetGLData());
+            SetMatrices();
         }
 
-        public uint Id { get; }
-
-        private readonly int _uniformTexSlot;
+        private int _texSlot = 0;
         public int TextureSlot
         {
+            get => _texSlot;
             set
             {
-                GL.ProgramUniform1i(Id, _uniformTexSlot, value);
+                _texSlot = value;
+
+                SetUniformI(Uniforms[0], value);
             }
         }
 
-        private readonly int _uniformMatrix;
         private Matrix4 _m1 = Matrix4.Identity;
         public Matrix4 Matrix1
         {
@@ -64,27 +60,7 @@ namespace PhysicsTest
         private void SetMatrices()
         {
             Matrix4 matrix = _m1 * _m2 * _m3;
-            GL.ProgramUniformMatrix4fv(Id, _uniformMatrix, false, matrix.GetGLData());
-        }
-
-        public void Bind()
-        {
-            GL.UseProgram(this);
-        }
-
-        private bool _disposed = false;
-        public void Dispose()
-        {
-            if (_disposed) { return; }
-
-            GL.DeleteProgram(Id);
-
-            _disposed = true;
-            GC.SuppressFinalize(this);
-        }
-        public void Unbind()
-        {
-            GL.UseProgram(null);
+            SetUniformF(Uniforms[1], ref matrix);
         }
     }
 

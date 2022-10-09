@@ -56,8 +56,8 @@ namespace GUI
             BasicShader shader = new BasicShader();
 
             shader.Bind();
-            shader.SetColourSource(ColourSource.Texture);
-            shader.SetTextureSlot(0);
+            shader.ColourSource = ColourSource.Texture;
+            shader.TextureSlot = 0;
             texture.Bind(0);
 
             drawable.Draw();

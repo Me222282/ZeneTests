@@ -65,7 +65,8 @@ namespace GUITest
 
             //_font = new FontMeme("Resources/fontB.png");
             //_font = new FontA();
-            _font = new IntelligentFont();
+            //_font = new IntelligentFont();
+            _font = new DFFont();
 
             _drawingBox = new DrawObject<double, byte>(new double[]
             {
@@ -124,7 +125,7 @@ namespace GUITest
 
             // Text
             _textRender2.Model = Matrix4.CreateScale(_fontSize, _fontSize, 0);
-            _textRender2.DrawCentred(_text.ToString(), _font, -0.5, 0);
+            _textRender2.DrawCentred(_text.ToString(), _font, 0.05, 0.05);
 
             double dp = 1 / _panels.Count;
 
@@ -142,7 +143,7 @@ namespace GUITest
 
             if (e[Keys.F1])
             {
-                _textRender2.Reload();
+                //_textRender2.Reload();
                 return;
             }
             if (e[Keys.Enter] || e[Keys.NumPadEnter])

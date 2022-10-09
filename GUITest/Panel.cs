@@ -357,8 +357,8 @@ namespace GUITest
                 _shader.Matrix3 = Matrix4.CreateOrthographic(_bounds.Width, _bounds.Height, 0, -2);
 
                 // Draw tab
-                _shader.SetColourSource(ColourSource.UniformColour);
-                _shader.SetDrawColour(_tabColour);
+                _shader.ColourSource = ColourSource.UniformColour;
+                _shader.Colour = _tabColour;
 
                 _shader.Matrix1 = Matrix4.CreateScale(_bounds.Width, _tabBox.Height, depth)
                     * Matrix4.CreateTranslation((Vector3)(_tabBox.Centre - _bounds.Centre));
@@ -373,8 +373,8 @@ namespace GUITest
             _handle.SetProjection();
 
             _shader.Bind();
-            _shader.SetColourSource(ColourSource.Texture);
-            _shader.SetTextureSlot(0);
+            _shader.ColourSource = ColourSource.Texture;
+            _shader.TextureSlot = 0;
 
             Box bounds = Bounds;
             _shader.Matrix1 = Matrix4.CreateScale(bounds.Width, bounds.Height, depth) *

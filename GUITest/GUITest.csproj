@@ -17,6 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="resources\DFFont.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="resources\fontA.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

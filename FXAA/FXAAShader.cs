@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using Zene.Graphics;
-using Zene.Graphics.Base;
 using Zene.Structs;
 
 namespace FXAA
@@ -9,39 +8,15 @@ namespace FXAA
     /// <summary>
     /// https://github.com/McNopper/OpenGL/tree/master/Example42/shader
     /// </summary>
-    public class FXAAShader : IShaderProgram
+    public class FXAAShader : BaseShaderProgram
     {
         public FXAAShader()
         {
-            Id = CustomShader.CreateShader(
-                File.ReadAllText("resources/fxaaVert.glsl"),
-                File.ReadAllText("resources/fxaaFrag.glsl")
-            );
-
-            _uniformTexture = GL.GetUniformLocation(Id, "u_colorTexture");
-            
-            _uniformTexelStep = GL.GetUniformLocation(Id, "u_texelStep");
-            _uniformShowEdges = GL.GetUniformLocation(Id, "u_showEdges");
-            _uniformFxaaOn = GL.GetUniformLocation(Id, "u_fxaaOn");
-            
-            _uniformLumaThreshold = GL.GetUniformLocation(Id, "u_lumaThreshold");
-            _uniformMulReduce = GL.GetUniformLocation(Id, "u_mulReduce");
-            _uniformMinReduce = GL.GetUniformLocation(Id, "u_minReduce");
-            _uniformMaxSpan = GL.GetUniformLocation(Id, "u_maxSpan");
+            Create(File.ReadAllText("resources/fxaaVert.glsl"),
+                File.ReadAllText("resources/fxaaFrag.glsl"),
+                "u_colorTexture", "u_texelStep", "u_showEdges", "u_fxaaOn",
+                "u_lumaThreshold", "u_mulReduce", "u_minReduce", "u_maxSpan");
         }
-        
-        public uint Id { get; }
-        
-        private int _uniformTexture;
-        
-        private int _uniformTexelStep;
-        private int _uniformShowEdges;
-        private int _uniformFxaaOn;
-        
-        private int _uniformLumaThreshold;
-        private int _uniformMulReduce;
-        private int _uniformMinReduce;
-        private int _uniformMaxSpan;
         
         private int _texture = 0;
         public int TextureSlot
@@ -50,8 +25,8 @@ namespace FXAA
             set
             {
                 _texture = value;
-                
-                GL.ProgramUniform1i(Id, _uniformTexture, value);
+
+                SetUniformI(Uniforms[0], value);
             }
         }
         
@@ -62,8 +37,8 @@ namespace FXAA
             set
             {
                 _texelStep = value;
-                
-                GL.ProgramUniform2f(Id, _uniformTexelStep, (float)value.X, (float)value.Y);
+
+                SetUniformF(Uniforms[1], value);
             }
         }
         private bool _showEdges = false;
@@ -73,8 +48,8 @@ namespace FXAA
             set
             {
                 _showEdges = value;
-                
-                GL.ProgramUniform1i(Id, _uniformShowEdges, value ? 1 : 0);
+
+                SetUniformI(Uniforms[2], value ? 1 : 0);
             }
         }
         private bool _fxaaOn = false;
@@ -84,8 +59,8 @@ namespace FXAA
             set
             {
                 _fxaaOn = value;
-                
-                GL.ProgramUniform1i(Id, _uniformFxaaOn, value ? 1 : 0);
+
+                SetUniformI(Uniforms[3], value ? 1 : 0);
             }
         }
         
@@ -96,8 +71,8 @@ namespace FXAA
             set
             {
                 _lumaThreshold = value;
-                
-                GL.ProgramUniform1f(Id, _uniformLumaThreshold, (float)value);
+
+                SetUniformF(Uniforms[4], value);
             }
         }
         private double _mulReduce = 0.0;
@@ -107,8 +82,8 @@ namespace FXAA
             set
             {
                 _mulReduce = value;
-                
-                GL.ProgramUniform1f(Id, _uniformMulReduce, (float)(1.0 / value));
+
+                SetUniformF(Uniforms[5], 1d / value);
             }
         }
         private double _minReduce = 0.0;
@@ -118,8 +93,8 @@ namespace FXAA
             set
             {
                 _minReduce = value;
-                
-                GL.ProgramUniform1f(Id, _uniformMinReduce, (float)(1.0 / value));
+
+                SetUniformF(Uniforms[6], 1d / value);
             }
         }
         private double _maxSpan = 0.0;
@@ -129,23 +104,9 @@ namespace FXAA
             set
             {
                 _maxSpan = value;
-                
-                GL.ProgramUniform1f(Id, _uniformMaxSpan, (float)value);
+
+                SetUniformF(Uniforms[7], value);
             }
         }
-        
-        private bool _disposed = false;
-        public void Dispose()
-        {
-            if (_disposed) { return; }
-            
-            GL.DeleteProgram(Id);
-            
-            _disposed = true;
-            GC.SuppressFinalize(this);
-        }
-
-        public void Bind() => GL.UseProgram(this);
-        public void Unbind() => GL.UseProgram(null);
     }
 }

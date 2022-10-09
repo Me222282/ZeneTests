@@ -227,7 +227,7 @@ namespace ImplicitFunctions
             }
 
             _shader.Bind();
-            _shader.ParseBalls();
+            //_shader.ParseBalls();
             _oilObj.Draw();
 
             _player.Draw(frameTime);

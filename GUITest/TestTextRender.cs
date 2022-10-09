@@ -7,19 +7,14 @@ using Zene.Structs;
 
 namespace GUITest
 {
-    public class TestTextRender : IShaderProgram
+    public class TestTextRender : BaseShaderProgram
     {
-        public uint ShaderId { get; private set; }
-        uint IIdentifiable.Id => ShaderId;
+        public uint ShaderId => Id;
 
-        private int _uniformMatrix;
         private Matrix4 _m1 = Matrix4.Identity;
         public Matrix4 Model
         {
-            get
-            {
-                return _m1;
-            }
+            get => _m1;
             set
             {
                 _m1 = value;
@@ -29,10 +24,7 @@ namespace GUITest
         private Matrix4 _m2 = Matrix4.Identity;
         public Matrix4 View
         {
-            get
-            {
-                return _m2;
-            }
+            get => _m2;
             set
             {
                 _m2 = value;
@@ -42,10 +34,7 @@ namespace GUITest
         private Matrix4 _m3 = Matrix4.Identity;
         public Matrix4 Projection
         {
-            get
-            {
-                return _m3;
-            }
+            get => _m3;
             set
             {
                 _m3 = value;
@@ -54,34 +43,20 @@ namespace GUITest
         }
         private void SetMatrices()
         {
-            GL.ProgramUniformMatrix4fv(ShaderId, _uniformMatrix, false, (_m1 * _m2 * _m3).GetGLData());
+            Matrix4 matrix = _m1 * _m2 * _m3;
+            SetUniformF(Uniforms[0], ref matrix);
         }
 
-        private int _uniformColour;
         private Colour _colour;
         public Colour Colour
         {
-            get
-            {
-                return _colour;
-            }
+            get => _colour;
             set
             {
                 _colour = value;
-                ColourF cf = value;
-                GL.ProgramUniform4f(ShaderId, _uniformColour, cf.R, cf.G, cf.B, cf.A);
+
+                SetUniformF(Uniforms[1], (Vector4)(ColourF)value);
             }
-        }
-
-        private int _uniformTexSlot;
-
-        void IBindable.Bind()
-        {
-            GL.UseProgram(this);
-        }
-        void IBindable.Unbind()
-        {
-            GL.UseProgram(null);
         }
 
         private const int _blockSize = 4;
@@ -124,7 +99,13 @@ namespace GUITest
             // Shader
             //
 
-            Reload();
+            Create(ShaderPresets.TextVert, File.ReadAllText("resources/textfrag.shader"),
+                "matrix", "uColour", "uTextureSlot");
+
+            // Set matrices in shader to default
+            SetMatrices();
+            // Set colour to default
+            Colour = new Colour(255, 255, 255);
         }
         private readonly DrawObject<Vector2, byte> _drawable;
         private readonly ArrayBuffer<Vector2> _instanceData;
@@ -157,17 +138,15 @@ namespace GUITest
         public bool AutoIncreaseCapacity { get; set; } = false;
         public int TabSize { get; set; } = 4;
 
-        private bool _disposed = false;
-        public void Dispose()
+        protected override void Dispose(bool dispose)
         {
-            if (_disposed) { return; }
+            base.Dispose(dispose);
 
-            _drawable.Dispose();
-            _instanceData.Dispose();
-            GL.DeleteProgram(ShaderId);
-
-            _disposed = true;
-            GC.SuppressFinalize(this);
+            if (dispose)
+            {
+                _drawable.Dispose();
+                _instanceData.Dispose();
+            }
         }
 
         public void DrawCentred(ReadOnlySpan<char> text, Font font, double charSpace, double lineSpace)
@@ -198,6 +177,9 @@ namespace GUITest
             {
                 Capacity = compText.Length;
             }
+
+            charSpace += font.CharSpaceBase;
+            lineSpace += font.LineSpaceBase;
 
             // The widths of each line in text
             List<double> lineWidths = font.GetLineWidths(text, charSpace, TabSize);
@@ -304,27 +286,11 @@ namespace GUITest
             GL.UseProgram(this);
 
             // Set texture slot
-            GL.ProgramUniform1i(ShaderId, _uniformTexSlot, 0);
-            //GL.ProgramUniform1i(ShaderId, _uniformColourSource, 1);
+            SetUniformI(Uniforms[2], 0);
 
             font.BindTexture(0);
 
             _drawable.DrawMultiple(compText.Length);
-        }
-
-        public void Reload()
-        {
-            ShaderId = CustomShader.CreateShader(ShaderPresets.TextVert, File.ReadAllText("resources/textfrag.shader"));
-
-            // Fetch uniform locations
-            _uniformMatrix = GL.GetUniformLocation(ShaderId, "matrix");
-            _uniformColour = GL.GetUniformLocation(ShaderId, "uColour");
-            _uniformTexSlot = GL.GetUniformLocation(ShaderId, "uTextureSlot");
-
-            // Set matrices in shader to default
-            SetMatrices();
-            // Set colour to default
-            GL.ProgramUniform4f(ShaderId, _uniformColour, 1f, 1f, 1f, 1f);
         }
     }
 }

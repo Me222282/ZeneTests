@@ -1,35 +1,23 @@
 using System;
 using System.IO;
 using Zene.Graphics;
-using Zene.Graphics.Base;
 using Zene.Structs;
 
 namespace FXAA
 {
-    public class CircleShader : IShaderProgram
+    public class CircleShader : BaseShaderProgram
     {
         public CircleShader()
         {
-            Id = CustomShader.CreateShader(
-                File.ReadAllText("resources/circleVert.glsl"),
-                File.ReadAllText("resources/circleFrag.glsl")
-            );
-
-            _uniformMatrix = GL.GetUniformLocation(Id, "matrix");
-            _uniformSize = GL.GetUniformLocation(Id, "size");
-            _uniformRadius = GL.GetUniformLocation(Id, "radius");
-            _uniformMinRadius = GL.GetUniformLocation(Id, "minRadius");
-            _uniformColour = GL.GetUniformLocation(Id, "uColour");
+            Create(File.ReadAllText("resources/circleVert.glsl"),
+                File.ReadAllText("resources/circleFrag.glsl"),
+                "matrix", "size", "radius", "minRadius", "uColour");
 
             // Set matrix to "0"
-            GL.ProgramUniformMatrix4fv(Id, _uniformMatrix, false, Matrix4.Identity.GetGLData());
+            SetMatrices();
             // Set size to "1"
             Size = 1.0;
         }
-        
-        public uint Id { get; }
-        
-        private int _uniformMatrix;
 
         private Matrix4 _m1 = Matrix4.Identity;
         public Matrix4 Matrix1
@@ -72,12 +60,9 @@ namespace FXAA
         }
         private void SetMatrices()
         {
-            GL.ProgramUniformMatrix4fv(Id, _uniformMatrix, false, (_m1 * _m2 * _m3).GetGLData());
+            Matrix4 matrix = _m1 * _m2 * _m3;
+            SetUniformF(Uniforms[0], ref matrix);
         }
-        
-        private int _uniformSize;
-        private int _uniformRadius;
-        private int _uniformMinRadius;
         
         private double _size;
         public double Size
@@ -86,9 +71,9 @@ namespace FXAA
             set
             {
                 _size = value;
-                
-                GL.ProgramUniform1f(Id, _uniformSize, (float)value);
-                GL.ProgramUniform1f(Id, _uniformRadius, (float)(value * value * 0.25));
+
+                SetUniformF(Uniforms[1], value);
+                SetUniformF(Uniforms[2], value * value * 0.25);
             }
         }
         
@@ -101,12 +86,11 @@ namespace FXAA
                 _lWidth = value;
                 
                 double len = (_size * 0.5) - value;
-                
-                GL.ProgramUniform1f(Id, _uniformMinRadius, (float)(len * len));
+
+                SetUniformF(Uniforms[3], len * len);
             }
         }
         
-        private int _uniformColour;
         private ColourF _colour;
         public ColourF Colour
         {
@@ -114,23 +98,9 @@ namespace FXAA
             set
             {
                 _colour = value;
-                
-                GL.ProgramUniform4f(Id, _uniformColour, (float)value.R, (float)value.G, (float)value.G, (float)value.A);
+
+                SetUniformF(Uniforms[4], (Vector4)value);
             }
         }
-        
-        private bool _disposed = false;
-        public void Dispose()
-        {
-            if (_disposed) { return; }
-            
-            GL.DeleteProgram(Id);
-            
-            _disposed = true;
-            GC.SuppressFinalize(this);
-        }
-
-        public void Bind() => GL.UseProgram(this);
-        public void Unbind() => GL.UseProgram(null);
     }
 }

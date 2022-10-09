@@ -35,7 +35,7 @@ namespace ImplicitFunctions
         }
 
         private readonly DrawObject<double, byte> _drawable;
-        private readonly IFShader _shader;
+        private IFShader _shader;
 
         protected override void Dispose(bool dispose)
         {
@@ -78,7 +78,8 @@ namespace ImplicitFunctions
             }
             if (e[Keys.F5])
             {
-                _shader.Recreate();
+                _shader.Dispose();
+                _shader = new IFShader();
                 return;
             }
         }

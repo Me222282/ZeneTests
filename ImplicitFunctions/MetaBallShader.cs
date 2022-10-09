@@ -1,86 +1,56 @@
 ﻿using System;
 using System.IO;
 using Zene.Graphics;
-using Zene.Graphics.Base;
 using Zene.Structs;
 
 namespace ImplicitFunctions
 {
-    public class MetaBallShader : IShaderProgram
+    public class MetaBallShader : BaseShaderProgram
     {
         public MetaBallShader(int nBalls)
         {
             string fSource = File.ReadAllText("resources/MetaBallFrag.shader");
 
-            Id = CustomShader.CreateShader(
-                File.ReadAllText("resources/MetaBallVert.shader"),
-                fSource.Replace("@SIZE", nBalls.ToString()));
+            Create(File.ReadAllText("resources/MetaBallVert.shader"),
+                fSource.Replace("@SIZE", nBalls.ToString()),
+                "scale", "offset", "balls");
 
-            _uniformScale = GL.GetUniformLocation(Id, "scale");
-            _uniformOffset = GL.GetUniformLocation(Id, "offset");
-
-            _uniformBall = GL.GetUniformLocation(Id, "balls");
-            _balls = new Vector3<float>[nBalls];
+            _balls = new Vector3[nBalls];
         }
 
-        public uint Id { get; }
-
-        private readonly int _uniformBall;
-        private readonly Vector3<float>[] _balls;
+        private readonly Vector3[] _balls;
         public Vector3 this[int index]
         {
-            get
-            {
-                return new Vector3(_balls[index].X, _balls[index].Y, _balls[index].Z);
-            }
+            get => _balls[index];
             set
             {
-                _balls[index] = new Vector3<float>((float)value.X, (float)value.Y, (float)value.Z);
-            }
-        }
-        public unsafe void ParseBalls()
-        {
-            fixed (Vector3<float>* ptr = _balls)
-            {
-                GL.ProgramUniform3fv(Id, _uniformBall, _balls.Length, (float*)ptr);
+                _balls[index] = value;
+
+                SetUniformF(Uniforms[2], index, value);
             }
         }
 
-        private readonly int _uniformScale;
+        private Vector2 _scale = Vector2.Zero;
         public Vector2 Scale
         {
+            get => _scale;
             set
             {
-                GL.ProgramUniform2f(Id, _uniformScale, (float)value.X, (float)value.Y);
+                _scale = value;
+
+                SetUniformF(Uniforms[0], value);
             }
         }
-        private readonly int _uniformOffset;
+        private Vector2 _offset = Vector2.Zero;
         public Vector2 Offset
         {
+            get => _offset;
             set
             {
-                GL.ProgramUniform2f(Id, _uniformOffset, (float)value.X, (float)value.Y);
+                _offset = value;
+
+                SetUniformF(Uniforms[1], value);
             }
-        }
-
-        private bool _disposed = false;
-        public void Dispose()
-        {
-            if (_disposed) { return; }
-
-            GL.DeleteProgram(Id);
-
-            _disposed = true;
-            GC.SuppressFinalize(this);
-        }
-
-        public void Bind()
-        {
-            GL.UseProgram(this);
-        }
-        public void Unbind()
-        {
-            GL.UseProgram(null);
         }
     }
 }
