@@ -63,10 +63,16 @@ namespace GUITest
                 Projection = Matrix4.CreateOrthographic(10, 10, 0, -1)
             };
 
+            _textRender3 = new NewTextRenderer()
+            {
+                Projection = Matrix4.CreateOrthographic(10, 10, 0, -1)
+            };
+
             //_font = new FontMeme("Resources/fontB.png");
             //_font = new FontA();
             //_font = new IntelligentFont();
-            _font = new DFFont();
+            //_font = new DFFont();
+            _font = new DFFont2();
 
             _drawingBox = new DrawObject<double, byte>(new double[]
             {
@@ -103,6 +109,7 @@ namespace GUITest
 
         private readonly TextRenderer _textRender;
         private readonly TestTextRender _textRender2;
+        private readonly NewTextRenderer _textRender3;
         private readonly Font _font;
         private readonly StringBuilder _text = new StringBuilder();
 
@@ -124,8 +131,8 @@ namespace GUITest
             Framebuffer.Clear(BufferBit.Colour | BufferBit.Depth);
 
             // Text
-            _textRender2.Model = Matrix4.CreateScale(_fontSize, _fontSize, 0);
-            _textRender2.DrawCentred(_text.ToString(), _font, 0.05, 0.05);
+            _textRender3.Model = Matrix4.CreateScale(_fontSize, _fontSize, 0);
+            _textRender3.DrawCentred(_text.ToString(), _font, 0d, 0d);
 
             double dp = 1 / _panels.Count;
 
@@ -204,6 +211,7 @@ namespace GUITest
 
             _textRender.Projection = matrix;
             _textRender2.Projection = matrix;
+            _textRender3.Projection = matrix;
             _shader.Matrix3 = matrix;
         }
 

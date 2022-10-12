@@ -3,10 +3,10 @@ using Zene.Structs;
 
 namespace GUITest
 {
-    public class DFFont : Font
+    public class DFFont2 : Font
     {
-        public DFFont()
-            : base(0.65, 1d, -0.31, -0.10)
+        public DFFont2()
+            : base(0.65, 1d, 0d, 0d)
         {
             // Load font image
             byte[] byteData = Bitmap.ExtractData("resources/DFFont.png", out int w, out int h);
@@ -64,7 +64,7 @@ namespace GUITest
         private static readonly CharFontData[] _characterData = new CharFontData[]
         {
             // !
-            GetChar(2, 483, 12, 27),
+            GetChar(6, 487, 4, 19),
             /*
             new CharFontData(
                 Vector2.Zero,
@@ -72,7 +72,7 @@ namespace GUITest
                 new Vector2(20),
                 Vector2.Zero),*/
             // "
-            GetChar(16, 494, 16, 16, 10),
+            GetChar(20, 498, 8, 8, 18),
             // #
             GetChar(34, 484, 23, 26),
             // $

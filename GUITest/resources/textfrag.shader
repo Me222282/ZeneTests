@@ -33,6 +33,7 @@ float median(float r, float g, float b)
 }
 
 const float smoothing = 1.0 / 64.0;
+//const float smoothing = 0.0;
 const float thickness = 0.25;
 
 void main()
