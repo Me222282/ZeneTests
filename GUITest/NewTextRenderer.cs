@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Zene.Graphics;
-using Zene.Graphics.Base;
 using Zene.Structs;
 
 namespace GUITest
@@ -74,6 +71,7 @@ namespace GUITest
 
             _frame = new TextureRenderer(1, 1);
             _frame.SetColourAttachment(0, TextureFormat.R8);
+            _frame.ClearColour = new ColourF(0f, 0f, 0f, 0f);
             _source = new Framebuffer();
 
             //
@@ -104,7 +102,7 @@ namespace GUITest
             }
         }
 
-        public void DrawCentred(ReadOnlySpan<char> text, Font font, double charSpace, double lineSpace)
+        public void DrawLeftBound(ReadOnlySpan<char> text, NewFont font, int charSpace, int lineSpace)
         {
             if (font == null)
             {
@@ -130,28 +128,12 @@ namespace GUITest
             ITexture fontTexture = State.GetBoundTexture(0, TextureTarget.Texture2D);
             _source[0] = fontTexture;
 
-            Vector2I texutreSize = (fontTexture.Properties.Width, fontTexture.Properties.Height);
-            Vector2I pixelPerDouble = (Vector2I)((font.GetCharacterData('M').TextureRefSize * texutreSize) / font.GetCharacterData('M').Size);
-
-            charSpace += font.CharSpaceBase;
-            lineSpace += font.LineSpaceBase;
-
-            // The widths of each line in text
-            List<double> lineWidths = font.GetLineWidths(text, charSpace, TabSize);
-
-            double maxWidth = lineWidths.Max();
-            double maxHeight = lineWidths.Count + ((lineWidths.Count - 1) * lineSpace);
-
             // Set frame size
-            _frame.Size = ((int)(maxWidth * pixelPerDouble.X), (int)(maxHeight * pixelPerDouble.Y));
+            _frame.Size = font.GetFrameSize(text, charSpace, lineSpace, TabSize);
 
-            _frame.ClearColour = new ColourF(1f, 0f, 0f, 0.5f);
             _frame.Clear(BufferBit.Colour);
 
-            GL.LogicOp(GLEnum.And);
-            State.LogicOPColour = true;
-
-            Vector2 offset = (0d, maxHeight);
+            Vector2I offset = (0, _frame.Height - font.LineHeight);
             int i = 0;
             int count = 0;
             while (count < compText.Length)
@@ -208,20 +190,21 @@ namespace GUITest
                     // Index in compressed text shouldn't be changed - it has no white space
                     continue;
                 }
-                CharFontData charData = font.GetCharacterData(text[i]);
+                NewCharFontData charData = font.GetCharacterData(text[i]);
 
                 if (!charData.Supported)
                 {
-                    throw new UnsupportedCharacterException(text[i], font);
+                    //throw new UnsupportedCharacterException(text[i], font);
+                    throw new Exception();
                 }
 
-                Vector2I src = (Vector2I)(charData.TextureCoordOffset * texutreSize);
-                Vector2I size = (Vector2I)(charData.TextureRefSize * texutreSize);
-                Vector2I pos = (Vector2I)((offset + charData.ExtraOffset) * pixelPerDouble);
+                Vector2I src = charData.TexturePosision;
+                Vector2I size = charData.Size;
+                Vector2I pos = offset + charData.ExtraOffset;
                 //Console.WriteLine($"{_frame.Height} | {size.Y}");
                 //_frame.CopyTexture(fontTexture, src.X, src.Y, 0, size.X, size.Y, pos.X, pos.Y);
                 _source.CopyFrameBuffer(_frame,
-                    new Rectangle((pos.X, pos.Y - (font.LineHeight * pixelPerDouble.Y)), size),
+                    new Rectangle(pos, size),
                     new Rectangle(src, size),
                     BufferBit.Colour, TextureSampling.Nearest);
 
@@ -232,8 +215,6 @@ namespace GUITest
                 i++;
             }
 
-            State.LogicOPColour = false;
-
             // Bind framebuffer to draw to
             drawFrame.Bind();
 
@@ -243,7 +224,7 @@ namespace GUITest
             // Set texture slot
             SetUniformI(Uniforms[2], 0);
 
-            Model = Matrix4.CreateScale(maxWidth, maxHeight) * Model;
+            Model = Matrix4.CreateScale(_frame.Size / (Vector2)font.LineHeight) * Model;
 
             //_frame.Bind(0);
             _frame.GetTexture(FrameAttachment.Colour0).Bind(0);

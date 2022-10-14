@@ -71,8 +71,8 @@ namespace GUITest
             //_font = new FontMeme("Resources/fontB.png");
             //_font = new FontA();
             //_font = new IntelligentFont();
-            //_font = new DFFont();
-            _font = new DFFont2();
+            _font = new DFFont();
+            _font2 = new DFFont2();
 
             _drawingBox = new DrawObject<double, byte>(new double[]
             {
@@ -111,6 +111,7 @@ namespace GUITest
         private readonly TestTextRender _textRender2;
         private readonly NewTextRenderer _textRender3;
         private readonly Font _font;
+        private readonly NewFont _font2;
         private readonly StringBuilder _text = new StringBuilder();
 
         private readonly DrawObject<double, byte> _drawingBox;
@@ -132,7 +133,7 @@ namespace GUITest
 
             // Text
             _textRender3.Model = Matrix4.CreateScale(_fontSize, _fontSize, 0);
-            _textRender3.DrawCentred(_text.ToString(), _font, 0d, 0d);
+            _textRender3.DrawLeftBound(_text.ToString(), _font2, 0, 0);
 
             double dp = 1 / _panels.Count;
 
@@ -169,6 +170,11 @@ namespace GUITest
                 if (_text.Length == 0) { return; }
 
                 _text.Remove(_text.Length - 1, 1);
+                return;
+            }
+            if (e[Keys.V] && this[Mods.Control])
+            {
+                _text.Append(ClipBoard);
                 return;
             }
         }
