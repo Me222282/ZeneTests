@@ -109,8 +109,6 @@ namespace CSGL
 
             // Hide mouse
             CursorMode = CursorMode.Disabled;
-
-            OnSizeChange(new SizeChangeEventArgs(width, height));
         }
 
         private readonly DrawObject<double, byte> _drawObject;

@@ -31,7 +31,7 @@ namespace NewPhysics
         public Radian Rotation { get; set; }
 
         public List<IForceController> Forces { get; } = new List<IForceController>();
-        public List<Collision> Collisions { get; } = new List<Collision>();
+        //public List<Collision> Collisions { get; } = new List<Collision>();
 
         public void PushForce(Vector2 force)
         {

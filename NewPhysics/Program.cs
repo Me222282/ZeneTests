@@ -41,6 +41,7 @@ namespace NewPhysics
             OnSizeChange(new SizeChangeEventArgs(width, height));
 
             _physics.Objects.Add(new PhysicsBox(0d, (5d, 5d), 1d));
+            _physics.Objects.Add(new PhysicsBox((0d, -200), (500d, 50d), 1d, true));
             _physics.GlobalForces.Add(new GravityForce(9.8));
         }
 

@@ -15,8 +15,6 @@ namespace CSGL
             })
         {
             SetUp();
-
-            OnSizeChange(new SizeChangeEventArgs(width, height));
         }
 
         protected override void Dispose(bool dispose)

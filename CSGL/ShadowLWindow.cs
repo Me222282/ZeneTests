@@ -19,9 +19,6 @@ namespace CSGL
 
             CursorMode = CursorMode.Disabled;
 
-            OnSizeChange(new SizeChangeEventArgs(width, height));
-            BaseFramebuffer.View = new RectangleI(0, 0, width, height);
-
             //FullScreen = true;
         }
 

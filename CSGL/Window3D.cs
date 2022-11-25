@@ -1,5 +1,5 @@
 ﻿using System;
-using Zene.Graphics.Base;
+//using Zene.Graphics.Base;
 using Zene.Graphics.Z3D;
 using Zene.Graphics;
 using Zene.Windowing;
@@ -25,10 +25,6 @@ namespace CSGL
             SetUp();
 
             CursorMode = CursorMode.Disabled;
-
-            // Trigger on size change when window starts
-            _actions.Push(() => OnSizePixelChangeReceive(new SizeChangeEventArgs(width, height)));
-            BaseFramebuffer.View = new RectangleI(0, 0, width, height);
 
             State.OutputDebug = false;
         }
@@ -64,7 +60,7 @@ namespace CSGL
         {
             base.GLError(type, message);
 
-            if (type == GLEnum.DebugTypeError && message != null)
+            if (type == Zene.Graphics.Base.GLEnum.DebugTypeError && message != null)
             {
                 _runTimeLog.Add($"GL Output: {message}");
             }
@@ -86,11 +82,9 @@ namespace CSGL
 
             Framebuffer.Bind();
 
-            GL.PolygonMode(GLEnum.FrontAndBack, _polygonMode);
-
+            State.PolygonMode = _polygonMode;
             Draw();
-
-            GL.PolygonMode(GLEnum.FrontAndBack, GLEnum.Fill);
+            State.PolygonMode = PolygonMode.Fill;
 
             Framebuffer.Draw();
 
@@ -224,7 +218,8 @@ namespace CSGL
             Floor.AddAttribute((int)LightingShader.Location.Tangents, 3, AttributeSize.D3); // Tangents
 
             State.Blending = true;
-            GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+            State.SourceScaleBlending = BlendFunction.SourceAlpha;
+            State.DestinationScaleBlending = BlendFunction.OneMinusSourceAlpha;
 
             //GL.PolygonMode(GLEnum.FrontAndBack, GLEnum.Line);
 
@@ -399,7 +394,7 @@ namespace CSGL
         private Colour cameraLightCC;
 
         private bool _postProcess = false;
-        private uint _polygonMode = GLEnum.Fill;
+        private PolygonMode _polygonMode = PolygonMode.Fill;
 
         private readonly ActionManager _actions = new ActionManager();
 
@@ -489,13 +484,13 @@ namespace CSGL
             }
             if (e[Keys.J])
             {
-                if (_polygonMode == GLEnum.Fill)
+                if (_polygonMode == PolygonMode.Fill)
                 {
-                    _polygonMode = GLEnum.Line;
+                    _polygonMode = PolygonMode.Line;
                     return;
                 }
 
-                _polygonMode = GLEnum.Fill;
+                _polygonMode = PolygonMode.Fill;
                 return;
             }
         }
