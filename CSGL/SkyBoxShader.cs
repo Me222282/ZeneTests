@@ -57,8 +57,7 @@ namespace CSGL
         }
         private void SetMatrices()
         {
-            Matrix4 matrix = _m1 * _m2 * _m3;
-            SetUniformF(Uniforms[1], ref matrix);
+            SetUniformF(Uniforms[1], _m1 * _m2 * _m3);
         }
     }
 }

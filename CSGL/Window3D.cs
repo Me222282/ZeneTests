@@ -238,7 +238,7 @@ namespace CSGL
             FarLightObject = new Light(new Vector3(500, 0, 500), 0.5, BufferUsage.DrawFrequent);
 
             cameraLightCC = cameraLight = new Colour(120, 110, 100);
-            Shader.SetSpotLight(0, new SpotLight((Colour3)cameraLight, Radian.Degrees(22.5), Radian.Degrees(40), 0.0045, 0.00075, Vector3.Zero, new Vector3(0, 0, 1)));
+            Shader.SetSpotLight(0, new SpotLight((Colour3)cameraLight, Radian.Degrees(22.5), Radian.Degrees(40), 0.0045, 0.00075, Vector3.Zero, new Vector3(0d, 0d, 1d)));
 
             _room = new Room(Shader);
 
@@ -303,6 +303,8 @@ namespace CSGL
             Shader.SetSpotLightPosition(0, -CameraPos);
             Shader.SetSpotLightDirection(0, new Vector3(0, 0, 1) *
                 Matrix3.CreateRotationX(rotateX - Radian.Percent(0.5)) * Matrix3.CreateRotationY(rotateY) * Matrix3.CreateRotationZ(rotateZ));
+
+            Shader.TEMP();
 
             State.DepthTesting = true;
 
@@ -560,7 +562,7 @@ namespace CSGL
         }
         private void OnScrollReceive(ScrollEventArgs e)
         {
-            _zoom -= e.DeltaY;
+            _zoom -= e.DeltaY * _zoom * 0.02;
 
             if (_zoom < 1)
             {
@@ -573,7 +575,7 @@ namespace CSGL
 
             Matrix4 matrix = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)Width / Height, _near, _far);
 
-            Shader.Matrix1 = matrix;
+            Shader.Matrix3 = matrix;
             _textDisplay.Projection = matrix;
         }
 
