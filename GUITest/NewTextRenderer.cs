@@ -124,9 +124,7 @@ namespace GUITest
 
             IFramebuffer drawFrame = State.GetBoundFramebuffer(FrameTarget.Draw);
 
-            font.BindTexture(0);
-            ITexture fontTexture = State.GetBoundTexture(0, TextureTarget.Texture2D);
-            _source[0] = fontTexture;
+            _source[0] = font.SourceTexture;
 
             // Set frame size
             _frame.Size = font.GetFrameSize(text, charSpace, lineSpace, TabSize);

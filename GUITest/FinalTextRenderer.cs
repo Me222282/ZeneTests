@@ -2,14 +2,60 @@
 using System.Collections.Generic;
 using System.IO;
 using Zene.Graphics;
-using Zene.Graphics.Base;
 using Zene.Structs;
 
 namespace GUITest
 {
-    public class TestTextRender : BaseShaderProgram
+    public class FinalTextRenderer : IDisposable
     {
-        public uint ShaderId => Id;
+        private class M1Shader : BaseShaderProgram
+        {
+            public M1Shader()
+            {
+                Create(ShaderPresets.BasicVertex, File.ReadAllText("resources/textfrag.shader"),
+                    "matrix", "uColour", "uTextureSlot");
+
+                // Set matrices in shader to default
+                SetMatrix(Matrix4.Identity);
+            }
+
+            public void SetMatrix(Matrix4 m)
+            {
+                SetUniformF(Uniforms[0], ref m);
+            }
+
+            public Colour Colour
+            {
+                set
+                {
+                    SetUniformF(Uniforms[1], (Vector4)(ColourF)value);
+                }
+            }
+        }
+        private class M2Shader : BaseShaderProgram
+        {
+            public M2Shader()
+            {
+                Create(ShaderPresets.TextVert, File.ReadAllText("resources/textfrag.shader"),
+                    "matrix", "uColour", "uTextureSlot");
+
+                // Set matrices in shader to default
+                SetMatrix(Matrix4.Identity);
+            }
+
+            public void SetMatrix(Matrix4 m)
+            {
+                SetUniformF(Uniforms[0], ref m);
+            }
+
+            public Colour Colour
+            {
+                set
+                {
+                    SetUniformF(Uniforms[1], (Vector4)(ColourF)value);
+                }
+            }
+        }
 
         private Matrix4 _m1 = Matrix4.Identity;
         public Matrix4 Model
@@ -18,7 +64,6 @@ namespace GUITest
             set
             {
                 _m1 = value;
-                SetMatrices();
             }
         }
         private Matrix4 _m2 = Matrix4.Identity;
@@ -28,7 +73,6 @@ namespace GUITest
             set
             {
                 _m2 = value;
-                SetMatrices();
             }
         }
         private Matrix4 _m3 = Matrix4.Identity;
@@ -38,13 +82,7 @@ namespace GUITest
             set
             {
                 _m3 = value;
-                SetMatrices();
             }
-        }
-        private void SetMatrices()
-        {
-            Matrix4 matrix = _m1 * _m2 * _m3;
-            SetUniformF(Uniforms[0], ref matrix);
         }
 
         private Colour _colour;
@@ -54,102 +92,95 @@ namespace GUITest
             set
             {
                 _colour = value;
-
-                SetUniformF(Uniforms[1], (Vector4)(ColourF)value);
+                _m1Shader.Colour = value;
+                _m2Shader.Colour = value;
             }
         }
 
-        private const int _blockSize = 4;
-
-        public TestTextRender(int capacity)
+        public FinalTextRenderer()
         {
-            _capacity = capacity;
+            //
+            // M1
+            //
 
             // Create drawable object
-            _drawable = new DrawObject<Vector2, byte>(new Vector2[]
+            _m1Drawable = new DrawObject<Vector2, byte>(new Vector2[]
+            {
+                new Vector2(-0.5, 0.5), new Vector2(0, 1),
+                new Vector2(-0.5, -0.5), new Vector2(0, 0),
+                new Vector2(0.5, -0.5), new Vector2(1, 0),
+                new Vector2(0.5, 0.5), new Vector2(1, 1)
+            }, new byte[] { 0, 1, 2, 2, 3, 0 }, 2, 0, AttributeSize.D2, BufferUsage.DrawFrequent);
+            _m1Drawable.AddAttribute(2, 1, AttributeSize.D2); // Texture Coordinates
+
+            _frame = new TextureRenderer(1, 1);
+            _frame.SetColourAttachment(0, TextureFormat.R8);
+            _frame.ClearColour = new ColourF(0f, 0f, 0f, 0f);
+            _source = new Framebuffer();
+
+            _m1Shader = new M1Shader();
+
+            //
+            // M2
+            //
+
+            _m2Capacity = 16;
+
+            // Create drawable object
+            _m2Drawable = new DrawObject<Vector2, byte>(new Vector2[]
             {
                 new Vector2(0d, 0d), new Vector2(0d, 1d),
                 new Vector2(0d, -1d), new Vector2(0d, 0d),
                 new Vector2(1d, -1d), new Vector2(1d, 0d),
                 new Vector2(1d, 0d), new Vector2(1d, 1d)
             }, new byte[] { 0, 1, 2, 2, 3, 0 }, 2, 0, AttributeSize.D2, BufferUsage.DrawFrequent);
-            _drawable.AddAttribute(1, 1, AttributeSize.D2); // Texture Coordinates
+            _m2Drawable.AddAttribute(1, 1, AttributeSize.D2); // Texture Coordinates
 
             // Setup instance offsets ready for drawing
             _instanceData = new ArrayBuffer<Vector2>(_blockSize, BufferUsage.DrawRepeated);
-            _instanceData.InitData(capacity * _blockSize);
+            _instanceData.InitData(_m2Capacity * _blockSize);
 
             // Add instance reference
-            _drawable.Vao.AddBuffer(_instanceData, 2, 0, DataType.Double, AttributeSize.D2);
-            _drawable.Vao.AddBuffer(_instanceData, 3, 1, DataType.Double, AttributeSize.D2);
-            _drawable.Vao.AddBuffer(_instanceData, 4, 2, DataType.Double, AttributeSize.D2);
-            _drawable.Vao.AddBuffer(_instanceData, 5, 3, DataType.Double, AttributeSize.D2);
+            _m2Drawable.Vao.AddInstanceBuffer(_instanceData, 2, 0, DataType.Double, AttributeSize.D2, 1);
+            _m2Drawable.Vao.AddInstanceBuffer(_instanceData, 3, 1, DataType.Double, AttributeSize.D2, 1);
+            _m2Drawable.Vao.AddInstanceBuffer(_instanceData, 4, 2, DataType.Double, AttributeSize.D2, 1);
+            _m2Drawable.Vao.AddInstanceBuffer(_instanceData, 5, 3, DataType.Double, AttributeSize.D2, 1);
             // Colour
-            //_drawable.Vao.AddBuffer(_instanceData, 6, 4, DataType.Double, AttributeSize.D4);
+            //_drawable.Vao.AddInstanceBuffer(_instanceData, 6, 4, DataType.Double, AttributeSize.D4, 1);
             // Set indexes as instance referances
-            _drawable.Vao.Bind();
-            GL.VertexAttribDivisor(2, 1);
-            GL.VertexAttribDivisor(3, 1);
-            GL.VertexAttribDivisor(4, 1);
-            GL.VertexAttribDivisor(5, 1);
-            //GL.VertexAttribDivisor(6, 1);
-            _drawable.Vao.Unbind();
 
-            //
-            // Shader
-            //
+            _m2Shader = new M2Shader();
 
-            Create(ShaderPresets.TextVert, File.ReadAllText("resources/textfrag.shader"),
-                "matrix", "uColour", "uTextureSlot");
-
-            // Set matrices in shader to default
-            SetMatrices();
-            // Set colour to default
+            // Default colour
             Colour = new Colour(255, 255, 255);
         }
-        private readonly DrawObject<Vector2, byte> _drawable;
-        private readonly ArrayBuffer<Vector2> _instanceData;
+        private readonly DrawObject<Vector2, byte> _m1Drawable;
+        private readonly M1Shader _m1Shader;
+        private readonly TextureRenderer _frame;
+        private readonly Framebuffer _source;
 
-        private int _capacity;
-        public int Capacity
-        {
-            get
-            {
-                return _capacity;
-            }
-            set
-            {
-                _capacity = value;
-
-                //_instanceData = new ArrayBuffer<Vector2>(_blockSize, BufferUsage.DrawRepeated);
-                _instanceData.InitData(_capacity * _blockSize);
-                /*
-                _drawable.Vao.Bind();
-                // Add instance reference
-                _drawable.Vao.AddBuffer(_instanceData, 2, 0, DataType.Double, AttributeSize.D2);
-                _drawable.Vao.AddBuffer(_instanceData, 3, 1, DataType.Double, AttributeSize.D2);
-                _drawable.Vao.AddBuffer(_instanceData, 4, 2, DataType.Double, AttributeSize.D2);
-                _drawable.Vao.AddBuffer(_instanceData, 5, 3, DataType.Double, AttributeSize.D2);
-
-                _drawable.Vao.Unbind();*/
-            }
-        }
-
-        public bool AutoIncreaseCapacity { get; set; } = false;
         public int TabSize { get; set; } = 4;
 
-        protected override void Dispose(bool dispose)
+        private bool _disposed = false;
+        public void Dispose()
         {
-            base.Dispose(dispose);
+            if (_disposed) { return; }
 
-            if (dispose)
-            {
-                _drawable.Dispose();
-                _instanceData.Dispose();
-            }
+            _disposed = true;
+
+            _m1Drawable.Dispose();
+            _m1Shader.Dispose();
+            _frame.Dispose();
+            _source.Dispose();
+
+            _m2Drawable.Dispose();
+            _m2Shader.Dispose();
+            _instanceData.Dispose();
+
+            GC.SuppressFinalize(this);
         }
 
-        public void DrawCentred(ReadOnlySpan<char> text, Font font, double charSpace, double lineSpace)
+        public void DrawLeftBound(ReadOnlySpan<char> text, NewFont font, int charSpace, int lineSpace)
         {
             if (font == null)
             {
@@ -169,37 +200,18 @@ namespace GUITest
             // No visable characters are drawn
             if (compText == "") { return; }
 
-            if (compText.Length > _capacity && !AutoIncreaseCapacity)
-            {
-                throw new Exception($"{nameof(text)} has too many drawable characters. Must be less than, or equal to, {nameof(Capacity)} (White space doesn't count).");
-            }
-            else if (compText.Length > _capacity)
-            {
-                Capacity = compText.Length;
-            }
+            IFramebuffer drawFrame = State.GetBoundFramebuffer(FrameTarget.Draw);
 
-            charSpace += font.CharSpaceBase;
-            lineSpace += font.LineSpaceBase;
+            _source[0] = font.SourceTexture;
 
-            // The widths of each line in text
-            List<double> lineWidths = font.GetLineWidths(text, charSpace, TabSize);
+            // Set frame size
+            _frame.Size = font.GetFrameSize(text, charSpace, lineSpace, TabSize);
 
-            // The current character offset
-            Vector2 offsetCurrent = new Vector2(
-                lineWidths[0] * -0.5,
-                // The offset for Y
-                (
-                    (font.LineHeight * lineWidths.Count) +
-                    ((lineWidths.Count - 1) * lineSpace)
-                ) * 0.5);
-            // The instance data containing offsets for each character
-            Vector2[] data = new Vector2[compText.Length * _blockSize];
+            _frame.Clear(BufferBit.Colour);
 
-            // Special for loop with two counters
+            Vector2I offset = (0, _frame.Height - font.LineHeight);
             int i = 0;
             int count = 0;
-            // The current line in the text that is being calculated
-            int lineCurrent = 0;
             while (count < compText.Length)
             {
                 // No character
@@ -212,14 +224,14 @@ namespace GUITest
                 // Character should be skipped to add space
                 if (text[i] == ' ')
                 {
-                    offsetCurrent.X += font.SpaceWidth + charSpace;
+                    offset.X += font.SpaceWidth + charSpace;
                     i++;
                     // Index in compressed text shouldn't be changed - it has no white space
                     continue;
                 }
                 if (text[i] == '\t')
                 {
-                    offsetCurrent.X += (font.SpaceWidth * TabSize) + charSpace;
+                    offset.X += (font.SpaceWidth * TabSize) + charSpace;
                     i++;
                     // Index in compressed text shouldn't be changed - it has no white space
                     continue;
@@ -234,9 +246,8 @@ namespace GUITest
                         continue;
                     }
 
-                    offsetCurrent.Y -= font.LineHeight + lineSpace;
-                    lineCurrent++;
-                    offsetCurrent.X = lineWidths[lineCurrent] * -0.5;
+                    offset.Y -= font.LineHeight + lineSpace;
+                    offset.X = 0;
                     i++;
                     // Index in compressed text shouldn't be changed - it has no white space
                     continue;
@@ -247,50 +258,68 @@ namespace GUITest
                     // Sometimes there is both
                     if (text.Length > (i + 1) && text[i + 1] != '\n')
                     {
-                        offsetCurrent.Y -= font.LineHeight + lineSpace;
-                        lineCurrent++;
-                        offsetCurrent.X = lineWidths[lineCurrent] * -0.5;
+                        offset.Y -= font.LineHeight + lineSpace;
+                        offset.X = 0;
                     }
 
                     i++;
                     // Index in compressed text shouldn't be changed - it has no white space
                     continue;
                 }
-                CharFontData charData = font.GetCharacterData(text[i]);
+                NewCharFontData charData = font.GetCharacterData(text[i]);
 
                 if (!charData.Supported)
                 {
-                    throw new UnsupportedCharacterException(text[i], font);
+                    //throw new UnsupportedCharacterException(text[i], font);
+                    throw new Exception();
                 }
 
-                // Set drawing offset data
-                data[count * _blockSize] = offsetCurrent + charData.ExtraOffset;
-                data[(count * _blockSize) + 1] = charData.TextureCoordOffset;
-                data[(count * _blockSize) + 2] = charData.TextureRefSize;
-                data[(count * _blockSize) + 3] = charData.Size;
+                Vector2I src = charData.TexturePosision;
+                Vector2I size = charData.Size;
+                Vector2I pos = offset + charData.ExtraOffset;
+                //Console.WriteLine($"{_frame.Height} | {size.Y}");
+                //_frame.CopyTexture(fontTexture, src.X, src.Y, 0, size.X, size.Y, pos.X, pos.Y);
+                _source.CopyFrameBuffer(_frame,
+                    new Rectangle(pos, size),
+                    new Rectangle(src, size),
+                    BufferBit.Colour, TextureSampling.Nearest);
 
                 // Adjust offset for next character
-                offsetCurrent.X += charData.Size.X + charData.Buffer + charSpace;
+                offset.X += charData.Size.X + charData.Buffer + charSpace;
                 // Continue counters
                 count++;
                 i++;
             }
-            // Pass instance data to gpu
-            _instanceData.EditData(0, data);
 
-            //
-            // Draw object
-            //
+            // Bind framebuffer to draw to
+            drawFrame.Bind();
 
             // Bind shader
-            GL.UseProgram(this);
+            _m1Shader.Bind();
 
-            // Set texture slot
-            SetUniformI(Uniforms[2], 0);
+            // Set texture slot - already 0
+            //_m1Shader.SetUniformI(Uniforms[2], 0);
 
-            font.BindTexture(0);
+            Matrix4 m1 = Matrix4.CreateScale(_frame.Size / (Vector2)font.LineHeight) * _m1;
+            _m1Shader.SetMatrix(m1 * _m2 * _m3);
 
-            _drawable.DrawMultiple(compText.Length);
+            //_frame.Bind(0);
+            _frame.GetTexture(FrameAttachment.Colour0).Bind(0);
+
+            _m1Drawable.Draw();
+        }
+
+        private readonly DrawObject<Vector2, byte> _m2Drawable;
+        private readonly M2Shader _m2Shader;
+        private readonly ArrayBuffer<Vector2> _instanceData;
+
+        private const int _blockSize = 4;
+        private int _m2Capacity;
+        private void SetCap(int v)
+        {
+            _m2Capacity = v;
+
+            _instanceData.InitData(_m2Capacity * _blockSize);
         }
 
         public void DrawCentred(ReadOnlySpan<char> text, NewFont font, int charSpace, int lineSpace)
@@ -313,13 +342,9 @@ namespace GUITest
             // No visable characters are drawn
             if (compText == "") { return; }
 
-            if (compText.Length > _capacity && !AutoIncreaseCapacity)
+            if (compText.Length > _m2Capacity)
             {
-                throw new Exception($"{nameof(text)} has too many drawable characters. Must be less than, or equal to, {nameof(Capacity)} (White space doesn't count).");
-            }
-            else if (compText.Length > _capacity)
-            {
-                Capacity = compText.Length;
+                SetCap(compText.Length);
             }
 
             // Pixel space to normalised space
@@ -437,14 +462,14 @@ namespace GUITest
             //
 
             // Bind shader
-            GL.UseProgram(this);
+            _m2Shader.Bind();
+            _m2Shader.SetMatrix(_m1 * _m2 * _m3);
 
-            // Set texture slot
-            SetUniformI(Uniforms[2], 0);
-
+            // Set texture slot - already 0
+            //SetUniformI(Uniforms[2], 0);
             font.SourceTexture.Bind(0);
 
-            _drawable.DrawMultiple(compText.Length);
+            _m2Drawable.DrawMultiple(compText.Length);
         }
     }
 }

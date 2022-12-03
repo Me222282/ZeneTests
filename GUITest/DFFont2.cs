@@ -17,21 +17,19 @@ namespace GUITest
                 texData[i] = new Vector2<byte>(byteData[i * 4], 0);
             }
             // Create and setup texture
-            _texture = new Texture2D(TextureFormat.R8, TextureData.Byte)
+            SourceTexture = new Texture2D(TextureFormat.R8, TextureData.Byte)
             {
                 WrapStyle = WrapStyle.EdgeClamp,
                 MinFilter = TextureSampling.Blend,
                 MagFilter = TextureSampling.Blend
             };
             // Assign data
-            _texture.SetData(w, h, BaseFormat.Rg, texData);
+            SourceTexture.SetData(w, h, BaseFormat.Rg, texData);
 
-            _texture.CreateMipMap();
+            SourceTexture.CreateMipMap();
         }
 
-        private readonly Texture2D _texture;
-
-        public override void BindTexture(uint slot) => _texture.Bind(slot);
+        public override Texture2D SourceTexture { get; }
 
         private static NewCharFontData GetChar(int ox, int oy, int sx, int sy)
         {

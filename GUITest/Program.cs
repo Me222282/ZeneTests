@@ -51,28 +51,12 @@ namespace GUITest
         public Program(int width, int height, string title)
             : base(width, height, title, 4.3)
         {
-            _textRender = new TextRenderer(100)
-            {
-                AutoIncreaseCapacity = true,
-                Projection = Matrix4.CreateOrthographic(10, 10, 0, -1)
-            };
-
-            _textRender2 = new TestTextRender(100)
-            {
-                AutoIncreaseCapacity = true,
-                Projection = Matrix4.CreateOrthographic(10, 10, 0, -1)
-            };
-
-            _textRender3 = new NewTextRenderer()
+            _textRender = new FinalTextRenderer()
             {
                 Projection = Matrix4.CreateOrthographic(10, 10, 0, -1)
             };
 
-            //_font = new FontMeme("Resources/fontB.png");
-            //_font = new FontA();
-            //_font = new IntelligentFont();
-            _font = new DFFont();
-            _font2 = new DFFont2();
+            _font = new DFFont2();
 
             _drawingBox = new DrawObject<double, byte>(new double[]
             {
@@ -98,20 +82,18 @@ namespace GUITest
 
             // Enabling transparency
             State.Blending = true;
-            Zene.Graphics.Base.GL.BlendFunc(Zene.Graphics.Base.GLEnum.SrcAlpha, Zene.Graphics.Base.GLEnum.OneMinusSrcAlpha);
+            State.SourceScaleBlending = BlendFunction.SourceAlpha;
+            State.DestinationScaleBlending = BlendFunction.OneMinusSourceAlpha;
 
             OnSizePixelChange(new SizeChangeEventArgs(width, height));
 
             // Something that used to happen before the while loop
             State.DepthTesting = true;
-            Zene.Graphics.Base.GL.DepthFunc(Zene.Graphics.Base.GLEnum.Less);
+            State.DepthFunction = DepthFunction.Less;
         }
 
-        private readonly TextRenderer _textRender;
-        private readonly TestTextRender _textRender2;
-        private readonly NewTextRenderer _textRender3;
-        private readonly Font _font;
-        private readonly NewFont _font2;
+        private readonly FinalTextRenderer _textRender;
+        private readonly NewFont _font;
         private readonly StringBuilder _text = new StringBuilder();
 
         private readonly DrawObject<double, byte> _drawingBox;
@@ -123,6 +105,7 @@ namespace GUITest
         private readonly List<Panel> _panels;
 
         private double _fontSize = 10d;
+        private bool _oldTextRender = false;
         protected override void OnUpdate(EventArgs e)
         {
             base.OnUpdate(e);
@@ -132,8 +115,17 @@ namespace GUITest
             Framebuffer.Clear(BufferBit.Colour | BufferBit.Depth);
 
             // Text
-            _textRender3.Model = Matrix4.CreateScale(_fontSize, _fontSize, 0);
-            _textRender3.DrawLeftBound(_text.ToString(), _font2, 0, 0);
+            //_textRender3.Model = Matrix4.CreateScale(_fontSize, _fontSize, 0);
+            //_textRender3.DrawLeftBound(_text.ToString(), _font2, 0, 0);
+            _textRender.Model = Matrix4.CreateScale(_fontSize, _fontSize, 0);
+            if (_oldTextRender)
+            {
+                _textRender.DrawCentred(_text.ToString(), _font, 0, 0);
+            }
+            else
+            {
+                _textRender.DrawLeftBound(_text.ToString(), _font, 0, 0);
+            }
 
             double dp = 1 / _panels.Count;
 
@@ -149,11 +141,6 @@ namespace GUITest
         {
             base.OnKeyDown(e);
 
-            if (e[Keys.F1])
-            {
-                //_textRender2.Reload();
-                return;
-            }
             if (e[Keys.Enter] || e[Keys.NumPadEnter])
             {
                 _text.Append('\n');
@@ -175,6 +162,11 @@ namespace GUITest
             if (e[Keys.V] && this[Mods.Control])
             {
                 _text.Append(ClipBoard);
+                return;
+            }
+            if (e[Keys.E] && this[Mods.Control])
+            {
+                _oldTextRender = !_oldTextRender;
                 return;
             }
         }
@@ -216,8 +208,6 @@ namespace GUITest
             Matrix4 matrix = Matrix4.CreateOrthographic(Width, Height, 0, -2);
 
             _textRender.Projection = matrix;
-            _textRender2.Projection = matrix;
-            _textRender3.Projection = matrix;
             _shader.Matrix3 = matrix;
         }
 

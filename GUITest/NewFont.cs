@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Zene.Graphics;
 using Zene.Structs;
 
 namespace GUITest
@@ -14,7 +16,7 @@ namespace GUITest
             Name = GetType().Name;
         }
 
-        public abstract void BindTexture(uint slot);
+        public abstract ITexture SourceTexture { get; }
 
         public int SpaceWidth { get; }
         public int LineHeight { get; }
@@ -103,6 +105,53 @@ namespace GUITest
             }
 
             return (maxWidth, maxHeight + extraHeight + BaseLineSpace);
+        }
+
+        internal List<double> GetLineWidths(ReadOnlySpan<char> text, double charSpace, int tabSize, double multiplier)
+        {
+            // No text
+            if (text.Length == 0) { return new List<double>(); }
+
+            double sw = SpaceWidth * multiplier;
+
+            // Width of line - starts with all the line spaces between each charater
+            List<double> result = new List<double>()
+            {
+                -charSpace
+            };
+
+            // The current index in the result to reference
+            int currentLine = 0;
+            for (int i = 0; i < text.Length; i++)
+            {
+                // No character - it is null
+                if (text[i] == '\0') { continue; }
+
+                if (text[i] == ' ')
+                {
+                    result[currentLine] += sw + charSpace;
+                    continue;
+                }
+                if (text[i] == '\t')
+                {
+                    result[currentLine] += (sw * tabSize) + charSpace;
+                    continue;
+                }
+                // End of line
+                if (text[i] == '\n')
+                {
+                    currentLine++;
+                    result.Add(-charSpace);
+                    continue;
+                }
+
+                NewCharFontData charData = GetCharacterData(text[i]);
+
+                // Add charater width
+                result[currentLine] += ((charData.Size.X + charData.Buffer) * multiplier) + charSpace;
+            }
+
+            return result;
         }
     }
 }
