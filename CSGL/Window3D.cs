@@ -246,11 +246,8 @@ namespace CSGL
 
             loadObject = Object3D.FromObj("Resources/Sphere.obj", (uint)LightingShader.Location.TextureCoords, (uint)LightingShader.Location.Normal);
 
-            _textDisplay = new TextRenderer(12)
-            {
-                AutoIncreaseCapacity = true
-            };
-            _font = new FontA();
+            _textDisplay = new TextRenderer();
+            _font = new SampleFont();
 
             _loadObjectImage = Texture2D.Create(new GLArray<Colour>(1, 1, 1, new Colour(134, 94, 250)), WrapStyle.EdgeClamp, TextureSampling.Blend, false);
         }
@@ -383,8 +380,8 @@ namespace CSGL
             _room.Draw();
 
             _textDisplay.Model = Matrix4.CreateTranslation(0, 0, -5.1) * Matrix4.CreateRotationX(Radian.Percent(objectRotation));
-            _textDisplay.DrawCentred($"{Core.Time:N3}\n", _font, -0.15, 0);
-            _textDisplay.DrawCentred($"\n{CameraPos.SquaredLength:N3}", _font, -0.15, 0);
+            _textDisplay.DrawCentred($"{Core.Time:N3}\n", _font, 0, 0);
+            _textDisplay.DrawCentred($"\n{CameraPos.SquaredLength:N3}", _font, 0, 0);
         }
 
         private int _fpsCounter = 0;

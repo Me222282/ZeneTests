@@ -66,7 +66,8 @@ namespace CSGL
             DrawObject.AddAttribute(1, 2, AttributeSize.D3); // Colour attribute
 
             State.Blending = true;
-            GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+            State.SourceScaleBlending = BlendFunction.SourceAlpha;
+            State.DestinationScaleBlending = BlendFunction.OneMinusSourceAlpha;
 
             scale = 100;
 

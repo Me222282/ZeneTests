@@ -21,9 +21,6 @@
     <None Update="Resources\arrow.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\FontA.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Resources\Fragment.shader">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

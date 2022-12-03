@@ -59,7 +59,8 @@ namespace CSGL
             _drawObject.AddAttribute((int)BasicShader.Location.TextureCoords, 3, AttributeSize.D2); // Texture Coordinates
 
             GL.Enable(GLEnum.Blend);
-            GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+            State.SourceScaleBlending = BlendFunction.SourceAlpha;
+            State.DestinationScaleBlending = BlendFunction.OneMinusSourceAlpha;
             GL.Enable(GLEnum.DepthTest);
 
             _room = new Room();

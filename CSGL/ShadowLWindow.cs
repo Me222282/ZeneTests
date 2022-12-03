@@ -168,7 +168,8 @@ namespace CSGL
             Floor.AddAttribute((uint)LightingShader.Location.Tangents, 3, AttributeSize.D3); // Tangents
 
             State.Blending = true;
-            GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+            State.SourceScaleBlending = BlendFunction.SourceAlpha;
+            State.DestinationScaleBlending = BlendFunction.OneMinusSourceAlpha;
 
             Shader.AmbientLight = new Colour(12, 12, 15);
 
