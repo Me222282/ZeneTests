@@ -51,12 +51,12 @@ namespace GUITest
         public Program(int width, int height, string title)
             : base(width, height, title, 4.3)
         {
-            _textRender = new FinalTextRenderer()
+            _textRender = new TextRenderer()
             {
                 Projection = Matrix4.CreateOrthographic(10, 10, 0, -1)
             };
 
-            _font = new DFFont2();
+            _font = new SampleFont();
 
             _drawingBox = new DrawObject<double, byte>(new double[]
             {
@@ -92,8 +92,8 @@ namespace GUITest
             State.DepthFunction = DepthFunction.Less;
         }
 
-        private readonly FinalTextRenderer _textRender;
-        private readonly NewFont _font;
+        private readonly TextRenderer _textRender;
+        private readonly Font _font;
         private readonly StringBuilder _text = new StringBuilder();
 
         private readonly DrawObject<double, byte> _drawingBox;
