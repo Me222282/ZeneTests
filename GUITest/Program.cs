@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Zene.Graphics;
 using Zene.Structs;
 using Zene.Windowing;
+using Zene.GUI;
 
 namespace GUITest
 {
@@ -14,260 +13,35 @@ namespace GUITest
             // Start glfw
             Core.Init();
 
-            Program window = new Program(800, 500, "Work");
-            
-            try
-            {
-                window.Run();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                Console.ReadLine();
-            }
+            Window window = new Program(800, 500, "Work");
+            window.Run();
 
             // End glfw
             Core.Terminate();
         }
 
-        protected override void Dispose(bool dispose)
-        {
-            base.Dispose(dispose);
-
-            if (dispose)
-            {
-                _textRender.Dispose();
-                _drawingBox.Dispose();
-                _shader.Dispose();
-                Framebuffer.Dispose();
-
-                foreach (Panel panel in _panels)
-                {
-                    panel.Dispose();
-                }
-            }
-        }
-
         public Program(int width, int height, string title)
             : base(width, height, title, 4.3)
         {
-            _textRender = new TextRenderer()
+            _em = new ElementManager(this);
+            _element = new TestElement(new Rectangle(-50, 50, 100, 100))
             {
-                Projection = Matrix4.CreateOrthographic(10, 10, 0, -1)
+                CursorStyle = Cursor.Hand
             };
 
-            _font = new SampleFont();
-
-            _drawingBox = new DrawObject<double, byte>(new double[]
-            {
-                // Pos          Tex
-                0.5, 0.5, 1,    1, 1,
-                0.5, -0.5, 1,   1, 0,
-                -0.5, -0.5, 1,  0, 0,
-                -0.5, 0.5, 1,   0, 1
-            }, new byte[] { 0, 1, 2, 2, 3, 0 }, 5, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
-            _drawingBox.AddAttribute((uint)BasicShader.Location.TextureCoords, 3, AttributeSize.D2);
-
-            _shader = new BasicShader();
-
-            Framebuffer = new TextureRenderer(width, height);
-            Framebuffer.SetColourAttachment(0, TextureFormat.Rgba8);
-            Framebuffer.SetDepthAttachment(TextureFormat.DepthComponent16, false);
-
-            _panels = new List<Panel>()
-            {
-                new Panel(this, new Box(Vector2.Zero, new Vector2(75, 200)), _drawingBox, _shader),
-                new Panel(this, new Box(Vector2.Zero, new Vector2(150, 225)), _drawingBox, _shader)
-            };
-
-            // Enabling transparency
-            State.Blending = true;
-            State.SourceScaleBlending = BlendFunction.SourceAlpha;
-            State.DestinationScaleBlending = BlendFunction.OneMinusSourceAlpha;
-
-            OnSizePixelChange(new SizeChangeEventArgs(width, height));
-
-            // Something that used to happen before the while loop
-            State.DepthTesting = true;
-            State.DepthFunction = DepthFunction.Less;
+            _em.AddElement(_element);
         }
 
-        private readonly TextRenderer _textRender;
-        private readonly Font _font;
-        private readonly StringBuilder _text = new StringBuilder();
+        private readonly ElementManager _em;
+        private readonly TestElement _element;
 
-        private readonly DrawObject<double, byte> _drawingBox;
-        private readonly BasicShader _shader;
-
-        public void BindFramebuffer() => Framebuffer.Bind();
-
-        public override TextureRenderer Framebuffer { get; }
-        private readonly List<Panel> _panels;
-
-        private double _fontSize = 10d;
-        private bool _oldTextRender = false;
         protected override void OnUpdate(EventArgs e)
         {
             base.OnUpdate(e);
 
-            Framebuffer.Bind();
-
             Framebuffer.Clear(BufferBit.Colour | BufferBit.Depth);
 
-            // Text
-            //_textRender3.Model = Matrix4.CreateScale(_fontSize, _fontSize, 0);
-            //_textRender3.DrawLeftBound(_text.ToString(), _font2, 0, 0);
-            _textRender.Model = Matrix4.CreateScale(_fontSize, _fontSize, 0);
-            if (_oldTextRender)
-            {
-                _textRender.DrawCentred(_text.ToString(), _font, 0, 0);
-            }
-            else
-            {
-                _textRender.DrawLeftBound(_text.ToString(), _font, 0, 0);
-            }
-
-            double dp = 1 / _panels.Count;
-
-            for (int i = 0; i < _panels.Count; i++)
-            {
-                _panels[i].Draw(dp * i);
-            }
-
-            Framebuffer.CopyFrameBuffer(Framebuffer.View, BufferBit.Colour, TextureSampling.Nearest);
-        }
-
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            base.OnKeyDown(e);
-
-            if (e[Keys.Enter] || e[Keys.NumPadEnter])
-            {
-                _text.Append('\n');
-                return;
-            }
-            if (e[Keys.Tab])
-            {
-                _text.Append('\t');
-                return;
-            }
-            if (e[Keys.BackSpace])
-            {
-                // Nothing to remove
-                if (_text.Length == 0) { return; }
-
-                _text.Remove(_text.Length - 1, 1);
-                return;
-            }
-            if (e[Keys.V] && this[Mods.Control])
-            {
-                _text.Append(ClipBoard);
-                return;
-            }
-            if (e[Keys.E] && this[Mods.Control])
-            {
-                _oldTextRender = !_oldTextRender;
-                return;
-            }
-        }
-        protected override void OnTextInput(TextInputEventArgs e)
-        {
-            base.OnTextInput(e);
-
-            // ' ' and '\t' arn't managed by fonts
-            if ((e.Character != ' ') && (e.Character != '\t'))
-            {
-                // Character not supported
-                if (!_font.GetCharacterData(e.Character).Supported)
-                {
-                    Console.WriteLine($"\'{e.Character}\' is not supported by font {_font.Name}.");
-                    return;
-                }
-            }
-
-            _text.Append(e.Character);
-        }
-
-        protected override void OnSizePixelChange(SizeChangeEventArgs e)
-        {
-            base.OnSizePixelChange(e);
-
-            //IFrameBuffer.View(Width, Height);
-
-            SetProjection();
-
-            if (e.Width > 0 && e.Height > 0)
-            {
-                Framebuffer.Size = new Vector2I(Width, Height);
-                Framebuffer.ViewSize = new Vector2I(Width, Height);
-            }
-        }
-
-        public void SetProjection()
-        {
-            Matrix4 matrix = Matrix4.CreateOrthographic(Width, Height, 0, -2);
-
-            _textRender.Projection = matrix;
-            _shader.Matrix3 = matrix;
-        }
-
-        private Vector2 _mousePos = Vector2.One;
-
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            base.OnMouseMove(e);
-
-            _mousePos = new Vector2(e.Location.X - (Width * 0.5), (Height * 0.5) - e.Location.Y);
-
-            MouseEventArgs panelEvent = new MouseEventArgs(_mousePos, e.Button, e.Modifier);
-
-            // The cursor to set
-            Cursor cursor = null;
-            foreach (Panel panel in _panels)
-            {
-                Cursor c = panel.MouseMove(panelEvent, cursor == null);
-
-                if ((c != null) && (cursor == null))
-                {
-                    cursor = c;
-                }
-            }
-
-            CursorStyle = cursor;
-        }
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            base.OnMouseDown(e);
-
-            MouseEventArgs panelEvent = new MouseEventArgs(_mousePos, e.Button, e.Modifier);
-
-            foreach (Panel panel in _panels)
-            {
-                // Top panel
-                if (panel.MouseDown(panelEvent))
-                {
-                    // Move panel to from of list
-                    _panels.Remove(panel);
-                    _panels.Insert(0, panel);
-                    break;
-                }
-            }
-        }
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            base.OnMouseUp(e);
-
-            MouseEventArgs panelEvent = new MouseEventArgs(_mousePos, e.Button, e.Modifier);
-
-            foreach (Panel panel in _panels)
-            {
-                panel.MouseUp(panelEvent);
-            }
-        }
-
-        protected override void OnScroll(ScrollEventArgs e)
-        {
-            _fontSize += e.DeltaY;
+            _em.Render();
         }
     }
 }

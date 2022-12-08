@@ -368,9 +368,9 @@ namespace GUITest
             }
 
             // Program framebuffer - draw to main framebuffer
-            _handle.BindFramebuffer();
+            //_handle.BindFramebuffer();
 
-            _handle.SetProjection();
+            //_handle.SetProjection();
 
             _shader.Bind();
             _shader.ColourSource = ColourSource.Texture;
