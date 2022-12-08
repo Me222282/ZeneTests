@@ -55,8 +55,7 @@ namespace ImplicitFunctions
         }
         private void SetMatrix()
         {
-            Matrix4 matrix = _m1 * _m2 * _m3;
-            SetUniformF(Uniforms[0], ref matrix);
+            SetUniformF(Uniforms[0], _m1 * _m2 * _m3);
         }
     }
 }
