@@ -10,10 +10,10 @@ namespace GUITest
         public TestElement(IBox bounds)
             : base(bounds)
         {
-            Shader = new BasicShader();
+            
         }
 
-        public override IBasicShader Shader { get; }
+        public override IBasicShader Shader => Parent.Shader;
 
         protected override void OnUpdate(FrameEventArgs e)
         {
