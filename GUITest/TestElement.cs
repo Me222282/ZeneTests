@@ -13,11 +13,15 @@ namespace GUITest
             
         }
 
-        public override IBasicShader Shader => Parent.Shader;
-
         protected override void OnUpdate(FrameEventArgs e)
         {
             base.OnUpdate(e);
+
+            if (MouseSelect)
+            {
+                e.Framebuffer.Clear(new Colour(199, 144, 202));
+                return;
+            }
 
             if (MouseHover)
             {

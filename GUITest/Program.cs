@@ -26,7 +26,8 @@ namespace GUITest
             _em = new ElementManager(this);
             _element = new TestElement(new Rectangle(-50, 50, 100, 100))
             {
-                CursorStyle = Cursor.Hand
+                CursorStyle = Cursor.Hand,
+                Layout = new Layout(new Box(Vector2.Zero, (1d, 1d)))
             };
 
             _em.AddElement(_element);
