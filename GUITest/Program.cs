@@ -30,7 +30,7 @@ namespace GUITest
                 Layout = new Layout(new Box(Vector2.Zero, (1d, 1d)))
             };
 
-            _em.AddElement(_element);
+            _em.AddChild(_element);
         }
 
         private readonly ElementManager _em;
