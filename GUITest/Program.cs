@@ -24,13 +24,15 @@ namespace GUITest
             : base(width, height, title, 4.3)
         {
             _em = new ElementManager(this);
+            Element p = new Element(new Layout(0d, 0d, 2d, 2d), false);
             _element = new TestElement(new Rectangle(-50, 50, 100, 100))
             {
                 CursorStyle = Cursor.Hand,
                 Layout = new Layout(new Box(Vector2.Zero, (1d, 1d)))
             };
+            p.AddChild(_element);
 
-            _em.AddChild(_element);
+            _em.AddChild(p);
         }
 
         private readonly ElementManager _em;
