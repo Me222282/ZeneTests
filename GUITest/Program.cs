@@ -14,25 +14,25 @@ namespace GUITest
             Core.Init();
 
             Window window = new Program(800, 500, "Work");
-            window.Run();
+            window.RunMultithread();
 
             // End glfw
             Core.Terminate();
         }
 
         public Program(int width, int height, string title)
-            : base(width, height, title, 4.3)
+            : base(width, height, title, 4.3, true)
         {
             _em = new ElementManager(this);
-            Element p = new Element(new Layout(0d, 0d, 2d, 2d), false);
+            Container c = new Container(new Layout(0d, 0d, 2d, 2d));
             _element = new TestElement(new Rectangle(-50, 50, 100, 100))
             {
                 CursorStyle = Cursor.Hand,
                 Layout = new Layout(new Box(Vector2.Zero, (1d, 1d)))
             };
-            p.AddChild(_element);
+            c.AddChild(_element);
 
-            _em.AddChild(p);
+            _em.AddChild(c);
         }
 
         private readonly ElementManager _em;
