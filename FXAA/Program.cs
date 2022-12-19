@@ -54,8 +54,6 @@ namespace FXAA
             _texture.Filter = TextureSampling.Blend;
             _texture.WrapStyle = WrapStyle.EdgeClamp;
             //_fxaa.Size = new Vector2(_texture.Width, _texture.Height);
-            
-            base.Framebuffer.ViewSize = new Vector2I(width, height);
         }
         
         private FXAAShader2 _fxaa;
@@ -99,8 +97,6 @@ namespace FXAA
             
             Framebuffer.ViewSize = e.Size;
             Framebuffer.Size = e.Size;
-            
-            base.Framebuffer.ViewSize = e.Size;
             
             //_fxaa.TexelStep = new Vector2(1.0 / e.Width, 1.0 / e.Height);
             _fxaa.Size = e.Size;

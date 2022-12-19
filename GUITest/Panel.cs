@@ -8,7 +8,7 @@ namespace GUITest
 {
     internal class Panel : IDisposable
     {
-        public Panel(Program handle, Box bounds, DrawObject<double, byte> draw, BasicShader shader)
+        public Panel(Box bounds, BasicShader shader)
         {
             _frame = new TextureRenderer((int)bounds.Width, (int)bounds.Height);
             _frame.SetColourAttachment(0, TextureFormat.Rgba8);
@@ -19,10 +19,7 @@ namespace GUITest
             _tabBox = bounds;
             _tabBox.Bottom = _tabBox.Top - TabSize;
 
-            _drawable = draw;
             _shader = shader;
-
-            _handle = handle;
         }
 
         private Box _bounds;
@@ -62,8 +59,6 @@ namespace GUITest
 
         public double ResizeRange { get; set; } = 10;
 
-        private readonly Program _handle;
-        private readonly DrawObject<double, byte> _drawable;
         private readonly BasicShader _shader;
 
         private readonly TextureRenderer _frame;
@@ -362,7 +357,7 @@ namespace GUITest
 
                 _shader.Matrix1 = Matrix4.CreateScale(_bounds.Width, _tabBox.Height, depth)
                     * Matrix4.CreateTranslation((Vector3)(_tabBox.Centre - _bounds.Centre));
-                _drawable.Draw();
+                Shapes.Square.Draw();
 
                 _redraw = false;
             }
@@ -382,7 +377,7 @@ namespace GUITest
 
             // Bind framebuffer colour texture
             _frame.GetTexture(FrameAttachment.Colour0).Bind(0);
-            _drawable.Draw();
+            Shapes.Square.Draw();
         }
 
         private bool _disposed;

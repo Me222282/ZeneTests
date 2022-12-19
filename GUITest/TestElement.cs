@@ -8,8 +8,8 @@ namespace GUITest
 {
     class TestElement : Element
     {
-        public TestElement(IBox bounds)
-            : base(bounds)
+        public TestElement(ILayout layout)
+            : base(layout)
         {
             Shader = new BorderShader
             {

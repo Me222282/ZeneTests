@@ -196,8 +196,7 @@ namespace CSGL
             bw = (double)1000 / heightMap.Width;
             bh = (double)1000 / heightMap.Height;
 
-            sphere = Object3D.FromObj("Resources/Sphere.obj", (uint)LightingShader.Location.TextureCoords,
-                (uint)LightingShader.Location.NormalMapTextureCoords, (uint)LightingShader.Location.Normal, (uint)LightingShader.Location.Tangents);
+            sphere = Object3D.FromObjNMT("Resources/Sphere.obj");
         }
 
         private Vector3 CameraPos = Vector3.Zero;

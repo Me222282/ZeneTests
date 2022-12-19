@@ -42,8 +42,8 @@ namespace CSGL
 
             _object.AddAttribute((uint)LightingShader.Location.Normal, 1, AttributeSize.D3); // Normals*/
 
-            _object = Object3D.FromObj("Resources/Bean.obj", (uint)LightingShader.Location.TextureCoords, (uint)LightingShader.Location.Normal);
-            _objectSmall = Object3D.FromObj("Resources/SmallBean.obj", (uint)LightingShader.Location.TextureCoords, (uint)LightingShader.Location.Normal);
+            _object = Object3D.FromObjNT("Resources/Bean.obj");
+            _objectSmall = Object3D.FromObjNT("Resources/SmallBean.obj");
 
             Small = false;
 

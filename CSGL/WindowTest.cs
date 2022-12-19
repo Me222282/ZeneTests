@@ -56,12 +56,12 @@ namespace CSGL
             _texture = Texture2D.Create("Resources/CharacterLeftN.png", WrapStyle.EdgeClamp, TextureSampling.Nearest, false);
 
             _drawObject = new DrawObject<float, byte>(vertData, indices, 5, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
-            _drawObject.AddAttribute((int)BasicShader.Location.TextureCoords, 3, AttributeSize.D2); // Texture Coordinates
+            _drawObject.AddAttribute(ShaderLocation.TextureCoords, 3, AttributeSize.D2); // Texture Coordinates
 
-            GL.Enable(GLEnum.Blend);
+            State.Blending = true;
             State.SourceScaleBlending = BlendFunction.SourceAlpha;
             State.DestinationScaleBlending = BlendFunction.OneMinusSourceAlpha;
-            GL.Enable(GLEnum.DepthTest);
+            State.DepthTesting = true;
 
             _room = new Room();
             BaseFramebuffer.ClearColour = new ColourF(1f, 1f, 1f);

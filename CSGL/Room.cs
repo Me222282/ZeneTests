@@ -15,11 +15,11 @@ namespace CSGL
             Object3D.AddNormalTangents(wallVerts, 2, 1, wallIndices, out List<Vector3> nwv, out List<uint> nwi);
 
             wallSide = new DrawObject<Vector3, uint>(nwv.ToArray(), nwi.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
-            wallSide.AddAttribute((uint)LightingShader.Location.TextureCoords, 1, AttributeSize.D3); // Texture Coords
+            wallSide.AddAttribute(ShaderLocation.TextureCoords, 1, AttributeSize.D3); // Texture Coords
             wallSide.AddAttribute((uint)LightingShader.Location.AmbientLightTextureCoords, 1, AttributeSize.D3); // Diffuse Light Textrue
-            wallSide.AddAttribute((uint)LightingShader.Location.NormalMapTextureCoords, 1, AttributeSize.D3); // Normal Map Coords
-            wallSide.AddAttribute((uint)LightingShader.Location.Normal, 2, AttributeSize.D3); // Normals
-            wallSide.AddAttribute((uint)LightingShader.Location.Tangents, 3, AttributeSize.D3); // Tangents
+            wallSide.AddAttribute(ShaderLocation.NormalTexture, 1, AttributeSize.D3); // Normal Map Coords
+            wallSide.AddAttribute(ShaderLocation.Normal, 2, AttributeSize.D3); // Normals
+            wallSide.AddAttribute(ShaderLocation.Tangent, 3, AttributeSize.D3); // Tangents
 
             wallTexture = Texture2D.Create("Resources/Room/wallTex.png", WrapStyle.Repeated, TextureSampling.NearestMipMapBlend, true);
             wallNormal = Texture2D.Create("Resources/Room/wallNor.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
@@ -28,11 +28,11 @@ namespace CSGL
             Object3D.AddNormalTangents(wallTopVerts, 2, 1, wallTopIndices, out List<Vector3> nwtv, out List<uint> nwti);
 
             wallTop = new DrawObject<Vector3, uint>(nwtv.ToArray(), nwti.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
-            wallTop.AddAttribute((uint)LightingShader.Location.TextureCoords, 1, AttributeSize.D3); // Texture Coords
+            wallTop.AddAttribute(ShaderLocation.TextureCoords, 1, AttributeSize.D3); // Texture Coords
             wallTop.AddAttribute((uint)LightingShader.Location.AmbientLightTextureCoords, 1, AttributeSize.D3); // Diffuse Light Textrue
-            wallTop.AddAttribute((uint)LightingShader.Location.NormalMapTextureCoords, 1, AttributeSize.D3); // Normal Map Coords
-            wallTop.AddAttribute((uint)LightingShader.Location.Normal, 2, AttributeSize.D3); // Normals
-            wallTop.AddAttribute((uint)LightingShader.Location.Tangents, 3, AttributeSize.D3); // Tangents
+            wallTop.AddAttribute(ShaderLocation.NormalTexture, 1, AttributeSize.D3); // Normal Map Coords
+            wallTop.AddAttribute(ShaderLocation.Normal, 2, AttributeSize.D3); // Normals
+            wallTop.AddAttribute(ShaderLocation.Tangent, 3, AttributeSize.D3); // Tangents
 
             wallTopTexture = Texture2D.Create("Resources/Room/wallTopTex.png", WrapStyle.Repeated, TextureSampling.NearestMipMapBlend, true);
             wallTopNormal = Texture2D.Create("Resources/Room/wallTopNor.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
@@ -41,11 +41,11 @@ namespace CSGL
             Object3D.AddNormalTangents(floorVerts, 2, 1, floorIndices, out List<Vector3> nfv, out List<uint> nfi);
 
             floor = new DrawObject<Vector3, uint>(nfv.ToArray(), nfi.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
-            floor.AddAttribute((uint)LightingShader.Location.TextureCoords, 1, AttributeSize.D3); // Texture Coords
+            floor.AddAttribute(ShaderLocation.TextureCoords, 1, AttributeSize.D3); // Texture Coords
             floor.AddAttribute((uint)LightingShader.Location.AmbientLightTextureCoords, 1, AttributeSize.D3); // Diffuse Light Textrue
-            floor.AddAttribute((uint)LightingShader.Location.NormalMapTextureCoords, 1, AttributeSize.D3); // Normal Map Coords
-            floor.AddAttribute((uint)LightingShader.Location.Normal, 2, AttributeSize.D3); // Normals
-            floor.AddAttribute((uint)LightingShader.Location.Tangents, 3, AttributeSize.D3); // Tangents
+            floor.AddAttribute(ShaderLocation.NormalTexture, 1, AttributeSize.D3); // Normal Map Coords
+            floor.AddAttribute(ShaderLocation.Normal, 2, AttributeSize.D3); // Normals
+            floor.AddAttribute(ShaderLocation.Tangent, 3, AttributeSize.D3); // Tangents
 
             floorTexture = Texture2D.Create("Resources/Room/floorTex.png", WrapStyle.Repeated, TextureSampling.NearestMipMapBlend, true);
             floorNormal = Texture2D.Create("Resources/Room/floorNor.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
@@ -63,7 +63,7 @@ namespace CSGL
             Object3D.AddNormalTangents(wallVerts, 2, 1, wallIndices, out List<Vector3> nwv, out List<uint> nwi);
 
             wallSide = new DrawObject<Vector3, uint>(nwv.ToArray(), nwi.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
-            wallSide.AddAttribute((uint)BasicShader.Location.TextureCoords, 1, AttributeSize.D3); // Texture Coords
+            wallSide.AddAttribute(ShaderLocation.TextureCoords, 1, AttributeSize.D3); // Texture Coords
 
             wallTexture = Texture2D.Create("Resources/Room/wallTex.png", WrapStyle.Repeated, TextureSampling.NearestMipMapBlend, true);
             wallNormal = Texture2D.Create("Resources/Room/wallNor.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
@@ -72,7 +72,7 @@ namespace CSGL
             Object3D.AddNormalTangents(wallTopVerts, 2, 1, wallTopIndices, out List<Vector3> nwtv, out List<uint> nwti);
 
             wallTop = new DrawObject<Vector3, uint>(nwtv.ToArray(), nwti.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
-            wallTop.AddAttribute((uint)BasicShader.Location.TextureCoords, 1, AttributeSize.D3); // Texture Coords
+            wallTop.AddAttribute(ShaderLocation.TextureCoords, 1, AttributeSize.D3); // Texture Coords
 
             wallTopTexture = Texture2D.Create("Resources/Room/wallTopTex.png", WrapStyle.Repeated, TextureSampling.NearestMipMapBlend, true);
             wallTopNormal = Texture2D.Create("Resources/Room/wallTopNor.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
@@ -81,7 +81,7 @@ namespace CSGL
             Object3D.AddNormalTangents(floorVerts, 2, 1, floorIndices, out List<Vector3> nfv, out List<uint> nfi);
 
             floor = new DrawObject<Vector3, uint>(nfv.ToArray(), nfi.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
-            floor.AddAttribute((uint)BasicShader.Location.TextureCoords, 1, AttributeSize.D3); // Texture Coords
+            floor.AddAttribute(ShaderLocation.TextureCoords, 1, AttributeSize.D3); // Texture Coords
 
 
             floorTexture = Texture2D.Create("Resources/Room/floorTex.png", WrapStyle.Repeated, TextureSampling.NearestMipMapBlend, true);

@@ -25,12 +25,16 @@ namespace GUITest
         {
             _em = new ElementManager(this);
             Container c = new Container(new Layout(0d, 0d, 2d, 2d));
-            _element = new TestElement(new Rectangle(-50, 50, 100, 100))
+            _element = new TestElement(new Layout(0d, 0d, 1d, 1d))
             {
-                CursorStyle = Cursor.Hand,
-                Layout = new Layout(new Box(Vector2.Zero, (1d, 1d)))
+                CursorStyle = Cursor.Hand
             };
             c.AddChild(_element);
+            c.AddChild(new Button(new Layout(0.7, 0.7, 0.25, 0.25))
+            {
+                Font = new SampleFont(),
+                Text = "Beans?"
+            });
 
             _em.AddChild(c);
         }

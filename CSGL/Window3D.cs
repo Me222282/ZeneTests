@@ -80,6 +80,7 @@ namespace CSGL
 
             _actions.Flush();
 
+            //base.Framebuffer.Bind();
             Framebuffer.Bind();
 
             State.PolygonMode = _polygonMode;
@@ -196,8 +197,8 @@ namespace CSGL
 
             DrawObject = new DrawObject<Vector3, uint>(vertices.ToArray(), indices.ToArray(), 3, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
 
-            DrawObject.AddAttribute((int)LightingShader.Location.ColourAttribute, 1, AttributeSize.D3); // Colour attribute
-            DrawObject.AddAttribute((int)LightingShader.Location.Normal, 2, AttributeSize.D3); // Normals
+            DrawObject.AddAttribute(ShaderLocation.Colour, 1, AttributeSize.D3); // Colour attribute
+            DrawObject.AddAttribute(ShaderLocation.Normal, 2, AttributeSize.D3); // Normals
 
             Object3D.AddNormalTangents(new Vector3[] { new Vector3(-500, 10, -500), new Vector3(0, 0, 0),
                 new Vector3(500, 10, -500), new Vector3(100, 0, 0),
@@ -212,10 +213,10 @@ namespace CSGL
             Shader.NormalMapSlot = 1;
             FloorNormalMap = Texture2D.LoadSync("Resources/woodNor.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
 
-            Floor.AddAttribute((int)LightingShader.Location.TextureCoords, 1, AttributeSize.D3); // Texture Coordinates
-            Floor.AddAttribute((int)LightingShader.Location.NormalMapTextureCoords, 1, AttributeSize.D3); // Normal Map Coordinates
-            Floor.AddAttribute((int)LightingShader.Location.Normal, 2, AttributeSize.D3); // Normals
-            Floor.AddAttribute((int)LightingShader.Location.Tangents, 3, AttributeSize.D3); // Tangents
+            Floor.AddAttribute(ShaderLocation.TextureCoords, 1, AttributeSize.D3); // Texture Coordinates
+            Floor.AddAttribute(ShaderLocation.NormalTexture, 1, AttributeSize.D3); // Normal Map Coordinates
+            Floor.AddAttribute(ShaderLocation.Normal, 2, AttributeSize.D3); // Normals
+            Floor.AddAttribute(ShaderLocation.Tangent, 3, AttributeSize.D3); // Tangents
 
             State.Blending = true;
             State.SourceScaleBlending = BlendFunction.SourceAlpha;
@@ -244,7 +245,7 @@ namespace CSGL
 
             Shader.IngorBlackLight = true;
 
-            loadObject = Object3D.FromObj("Resources/Sphere.obj", (uint)LightingShader.Location.TextureCoords, (uint)LightingShader.Location.Normal);
+            loadObject = Object3D.FromObjNT("Resources/Sphere.obj");
 
             _textDisplay = new TextRenderer();
             _font = new SampleFont();
@@ -600,11 +601,11 @@ namespace CSGL
 
             try
             {
-                loadObject = Object3D.FromObj(e.Paths[0], (uint)LightingShader.Location.TextureCoords, (uint)LightingShader.Location.Normal);
+                loadObject = Object3D.FromObjNT(e.Paths[0]);
             }
             catch (Exception)
             {
-                loadObject = Object3D.FromObj(e.Paths[0], (uint)LightingShader.Location.Normal);
+                loadObject = Object3D.FromObjN(e.Paths[0]);
             }
         }
     }

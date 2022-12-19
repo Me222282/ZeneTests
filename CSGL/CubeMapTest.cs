@@ -210,8 +210,6 @@ namespace CSGL
 
             // Invalide size
             if (e.Width <= 0 || e.Height <= 0) { return; }
-
-            Framebuffer.ViewSize = new Vector2I(e.Width, e.Height);
         }
         protected override void OnKeyDown(KeyEventArgs e)
         {
