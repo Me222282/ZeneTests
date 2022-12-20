@@ -38,12 +38,29 @@ namespace GUITest
                 Font = sample,
                 Text = "BEANS!"
             });
-            c.AddChild(new Label(new TextLayout(5, 5, -0.7, 0.7))
+            Label l;
+            c.AddChild(l = new Label(new TextLayout(5, 5, -0.7, 0.7))
             {
                 TextSize = 15,
                 Font = sample,
-                Text = "What's in his Shoe?"
+                Text = "What's in his Shoe?",
+                CursorStyle = Cursor.IBeam
             });
+            l.MouseUp += (_, _) =>
+            {
+                if (l.Text == "What's in his Shoe?")
+                {
+                    l.Text = "Not beans.";
+                    return;
+                }
+                if (l.Text == "Not beans.")
+                {
+                    l.Text = "feet (Tim)";
+                    return;
+                }
+
+                l.Text = "What's in his Shoe?";
+            };
 
             _em.AddChild(c);
         }
