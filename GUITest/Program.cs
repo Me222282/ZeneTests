@@ -14,8 +14,8 @@ namespace GUITest
             Core.Init();
 
             Window window = new Program(800, 500, "Work");
-            //window.RunMultithread();
-            window.Run();
+            window.RunMultithread();
+            //window.Run();
 
             // End glfw
             Core.Terminate();
@@ -46,7 +46,7 @@ namespace GUITest
                 Text = "What's in his Shoe?",
                 CursorStyle = Cursor.IBeam
             });
-            l.MouseUp += (_, _) =>
+            l.Click += (_, _) =>
             {
                 if (l.Text == "What's in his Shoe?")
                 {

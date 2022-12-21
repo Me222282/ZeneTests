@@ -27,15 +27,15 @@ namespace GUITest
         {
             base.OnUpdate(e);
 
-            Colour c = new Colour(255, 244, 233);
+            Colour c = new Colour(166, 188, 199);
 
             if (MouseSelect)
             {
-                c = new Colour(199, 144, 202);
+                c = new Colour(255, 244, 233);
             }
             else if (MouseHover)
             {
-                c = new Colour(166, 188, 199);
+                c = new Colour(199, 144, 202);
             }
 
             e.Framebuffer.Clear(c);
