@@ -24,7 +24,7 @@ namespace GUITest
         public Program(int width, int height, string title)
             : base(width, height, title, 4.3, true)
         {
-            _em = new ElementManager(this);
+            _em = new RootElement(this);
             Container c = new Container(new Layout(0d, 0d, 2d, 2d));
             _element = new TestElement(new Layout(0d, 0d, 1d, 1d))
             {
@@ -61,7 +61,7 @@ namespace GUITest
             _em.AddChild(c);
         }
 
-        private readonly ElementManager _em;
+        private readonly RootElement _em;
         private readonly TestElement _element;
 
         protected override void OnUpdate(EventArgs e)
