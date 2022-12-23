@@ -165,16 +165,16 @@ namespace CSGL
             }
         }
 
-        protected override void OnSizeChange(SizeChangeEventArgs e)
+        protected override void OnSizeChange(VectorIEventArgs e)
         {
             base.OnSizeChange(e);
 
             double mWidth;
             double mHeight;
 
-            if (e.Width > e.Height)
+            if (e.X > e.Y)
             {
-                double heightPercent = (double)e.Height / e.Width;
+                double heightPercent = (double)e.Y / e.X;
 
                 mWidth = 1600;
 
@@ -182,7 +182,7 @@ namespace CSGL
             }
             else
             {
-                double widthPercent = (double)e.Width / e.Height;
+                double widthPercent = (double)e.X / e.Y;
 
                 mHeight = 900;
 
@@ -191,13 +191,6 @@ namespace CSGL
 
             orthoWidth = mWidth;
             orthoHeight = mHeight;
-        }
-
-        protected override void OnSizePixelChange(SizeChangeEventArgs e)
-        {
-            base.OnSizePixelChange(e);
-
-            BaseFramebuffer.ViewSize = new Vector2I(e.Width, e.Height);
         }
     }
 }

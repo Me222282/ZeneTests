@@ -514,29 +514,28 @@ namespace CSGL
 
         private const double _near = 0.1;
         private const double _far = 3000;
-        protected override void OnSizePixelChange(SizeChangeEventArgs e)
+        protected override void OnSizePixelChange(VectorIEventArgs e)
         {
             base.OnSizePixelChange(e);
 
             _actions.Push(() => OnSizePixelChangeReceive(e));
         }
-        private void OnSizePixelChangeReceive(SizeChangeEventArgs e)
+        private void OnSizePixelChangeReceive(VectorIEventArgs e)
         {
             // Matrices
-            Matrix4 matrix = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)e.Width / e.Height, _near, _far);
+            Matrix4 matrix = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)e.X / e.Y, _near, _far);
 
             Shader.Matrix3 = matrix;
             _textDisplay.Projection = matrix;
 
-            Framebuffer.Size = e.Size;
-            BaseFramebuffer.ViewSize = e.Size;
+            Framebuffer.Size = e.Value;
 
             double mWidth;
             double mHeight;
 
-            if (e.Width > e.Height)
+            if (e.X > e.Y)
             {
-                double heightPercent = (double)e.Height / e.Width;
+                double heightPercent = (double)e.Y / e.X;
 
                 mWidth = 400;
 
@@ -544,7 +543,7 @@ namespace CSGL
             }
             else
             {
-                double widthPercent = (double)e.Width / e.Height;
+                double widthPercent = (double)e.X / e.Y;
 
                 mHeight = 56.25 * 4;
 

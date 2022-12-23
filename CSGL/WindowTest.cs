@@ -235,17 +235,11 @@ namespace CSGL
             }
         }
 
-        protected override void OnSizeChange(SizeChangeEventArgs e)
+        protected override void OnSizeChange(VectorIEventArgs e)
         {
             base.OnSizeChange(e);
 
-            _shader.Matrix3 = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(65), (double)e.Width / e.Height, 0.1, 1000);
-        }
-        protected override void OnSizePixelChange(SizeChangeEventArgs e)
-        {
-            base.OnSizePixelChange(e);
-
-            BaseFramebuffer.ViewSize = new Vector2I((int)e.Width, (int)e.Height);
+            _shader.Matrix3 = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(65), (double)e.X / e.Y, 0.1, 1000);
         }
 
         private Vector2 _mouseLocation = Vector2.Zero;

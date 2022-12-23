@@ -234,16 +234,14 @@ namespace ImplicitFunctions
             _player.Draw(frameTime);
         }
 
-        protected override void OnSizeChange(SizeChangeEventArgs e)
+        protected override void OnSizeChange(VectorIEventArgs e)
         {
             base.OnSizeChange(e);
 
-            BaseFramebuffer.ViewSize = new Vector2I(e.Width, e.Height);
+            _shader.Scale = new Vector2(e.X * 2, e.Y * 2);
+            _bounds = new Box(-e.X * 2, e.X * 2, e.Y * 2, -e.Y * 2);
 
-            _shader.Scale = new Vector2(e.Width * 2, e.Height * 2);
-            _bounds = new Box(-e.Width * 2, e.Width * 2, e.Height * 2, -e.Height * 2);
-
-            _player.SizeChange(e.Width * 4, e.Height * 4);
+            _player.SizeChange(e.X * 4, e.Y * 4);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)

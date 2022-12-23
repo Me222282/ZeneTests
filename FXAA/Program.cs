@@ -91,15 +91,15 @@ namespace FXAA
             //Framebuffer.CopyFrameBuffer(base.Framebuffer, BufferBit.Colour, TextureSampling.Nearest);
         }
         
-        protected override void OnSizePixelChange(SizeChangeEventArgs e)
+        protected override void OnSizePixelChange(VectorIEventArgs e)
         {
             base.OnSizePixelChange(e);
             
-            Framebuffer.ViewSize = e.Size;
-            Framebuffer.Size = e.Size;
+            Framebuffer.ViewSize = e.Value;
+            Framebuffer.Size = e.Value;
             
             //_fxaa.TexelStep = new Vector2(1.0 / e.Width, 1.0 / e.Height);
-            _fxaa.Size = e.Size;
+            _fxaa.Size = e.Value;
         }
     }
 }

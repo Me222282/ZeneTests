@@ -47,14 +47,15 @@ namespace PhysicsTest
 
             _background = new Background();
 
-            _textDraw = new TextRenderer(30);
-            _font = new FontA();
+            _textDraw = new TextRenderer();
+            _font = SampleFont.GetInstance();
 
             // Enabling transparency
-            Zene.Graphics.Base.GL.Enable(Zene.Graphics.Base.GLEnum.Blend);
-            Zene.Graphics.Base.GL.BlendFunc(Zene.Graphics.Base.GLEnum.SrcAlpha, Zene.Graphics.Base.GLEnum.OneMinusSrcAlpha);
+            State.Blending = true;
+            State.SourceScaleBlending = BlendFunction.SourceAlpha;
+            State.DestinationScaleBlending = BlendFunction.OneMinusSourceAlpha;
 
-            OnSizeChange(new SizeChangeEventArgs(width, height));
+            OnSizeChange(new VectorIEventArgs(width, height));
         }
 
         protected override void Dispose(bool dispose)
@@ -132,10 +133,10 @@ namespace PhysicsTest
             _planets.Draw(Box.Infinity);
             _rocket.Display.Draw(_rocket);
 
-            _textDraw.DrawLeftBound($"Speed:{_rocket.Velocity.Speed:N3}", _font, -0.15, 0);
-            _textDraw.DrawLeftBound($"\nAngle:{GetAngle(_rocket.Velocity.Direction):N3}", _font, -0.15, 0);
-            _textDraw.DrawLeftBound($"\n\nX:{_rocket.Location.X:N3}", _font, -0.15, 0);
-            _textDraw.DrawLeftBound($"\n\n\nY:{_rocket.Location.Y:N3}", _font, -0.15, 0);
+            _textDraw.DrawLeftBound($"Speed:{_rocket.Velocity.Speed:N3}", _font, 0, 0);
+            _textDraw.DrawLeftBound($"\nAngle:{GetAngle(_rocket.Velocity.Direction):N3}", _font, 0, 0);
+            _textDraw.DrawLeftBound($"\n\nX:{_rocket.Location.X:N3}", _font, 0, 0);
+            _textDraw.DrawLeftBound($"\n\n\nY:{_rocket.Location.Y:N3}", _font, 0, 0);
         }
 
         private static double GetAngle(Vector2 direction)
@@ -148,16 +149,16 @@ namespace PhysicsTest
         }
 
         private double _mSize = 600;
-        protected override void OnSizeChange(SizeChangeEventArgs e)
+        protected override void OnSizeChange(VectorIEventArgs e)
         {
             base.OnSizeChange(e);
 
             double mWidth;
             double mHeight;
 
-            if (e.Width < e.Height)
+            if (e.X < e.Y)
             {
-                double heightPercent = e.Height / e.Width;
+                double heightPercent = e.Y / e.X;
 
                 mWidth = _viewSize.X;
 
@@ -165,7 +166,7 @@ namespace PhysicsTest
             }
             else
             {
-                double widthPercent = e.Width / e.Height;
+                double widthPercent = e.X / e.Y;
 
                 mHeight = _viewSize.Y;
 
@@ -185,12 +186,12 @@ namespace PhysicsTest
 
             // Set text manipulation to be in the top-left corner
             // and a width of 0.013% of window width
-            _textDraw.Projection = Matrix4.CreateOrthographic(e.Width, e.Height, 0, -1);
+            _textDraw.Projection = Matrix4.CreateOrthographic(e.X, e.Y, 0, -1);
             double charSize = Width * 0.015;
             _textDraw.Model = Matrix4.CreateScale(charSize, charSize, 1) * 
                 Matrix4.CreateTranslation(
-                    (-e.Width * 0.5) + charSize * 0.15, 
-                    (e.Height * 0.5) - charSize * 0.3, 0);
+                    (-e.X * 0.5) + charSize * 0.15, 
+                    (e.Y * 0.5) - charSize * 0.3, 0);
         }
         private Vector2 _viewSizeTemp;
         private bool _fullView = false;
@@ -345,6 +346,6 @@ namespace PhysicsTest
             UpdateViewSize();
         }
 
-        private void UpdateViewSize() => OnSizeChange(new SizeChangeEventArgs(Width, Height));
+        private void UpdateViewSize() => OnSizeChange(new VectorIEventArgs(Width, Height));
     }
 }

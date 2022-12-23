@@ -26,7 +26,7 @@ namespace GUITest
         {
             _em = new RootElement(this);
             Container c = new Container(new Layout(0d, 0d, 2d, 2d));
-            _element = new TestElement(new Layout(0d, 0d, 1d, 1d))
+            _element = new TestElement()
             {
                 CursorStyle = Cursor.Hand
             };
@@ -36,7 +36,7 @@ namespace GUITest
                 Text = "BEANS!"
             });
             Label l;
-            c.AddChild(l = new Label(new TextLayout(5, 5, -0.7, 0.7))
+            _em.AddChild(l = new Label(new TextLayout(5d, 5d, -0.7, 0.7))
             {
                 TextSize = 15,
                 Text = "What's in his Shoe?",

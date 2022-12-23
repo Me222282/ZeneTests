@@ -60,13 +60,6 @@ namespace ImplicitFunctions
             _drawable.Draw();
         }
 
-        protected override void OnSizeChange(SizeChangeEventArgs e)
-        {
-            base.OnSizeChange(e);
-
-            BaseFramebuffer.ViewSize = new Vector2I(e.Width, e.Height);
-        }
-
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);

@@ -8,8 +8,9 @@ namespace GUITest
 {
     class TestElement : Element
     {
-        public TestElement(ILayout layout)
-            : base(layout)
+        public TestElement()
+            //: base(new Layout(0d, 0d, 1d, 1d))
+            : base(new Box((0d, 0d), (400d, 250d)))
         {
             Shader = BorderShader.GetInstance();
         }
@@ -30,10 +31,16 @@ namespace GUITest
             if (MouseSelect)
             {
                 c = new Colour(255, 244, 233);
+                Size = (410d, 260d);
             }
             else if (MouseHover)
             {
                 c = new Colour(199, 144, 202);
+                Size = (410d, 260d);
+            }
+            else
+            {
+                Size = (400d, 250d);
             }
 
             e.Framebuffer.Clear(c);

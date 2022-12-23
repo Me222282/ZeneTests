@@ -198,18 +198,18 @@ namespace CSGL
             _shader.Projection = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)Width / Height, _near, _far);
         }
 
-        protected override void OnSizeChange(SizeChangeEventArgs e)
+        protected override void OnSizeChange(VectorIEventArgs e)
         {
             base.OnSizeChange(e);
 
-            _shader.Projection = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)e.Width / e.Height, _near, _far);
+            _shader.Projection = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)e.X / e.Y, _near, _far);
         }
-        protected override void OnSizePixelChange(SizeChangeEventArgs e)
+        protected override void OnSizePixelChange(VectorIEventArgs e)
         {
             base.OnSizePixelChange(e);
 
             // Invalide size
-            if (e.Width <= 0 || e.Height <= 0) { return; }
+            if (e.X <= 0 || e.Y <= 0) { return; }
         }
         protected override void OnKeyDown(KeyEventArgs e)
         {

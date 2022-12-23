@@ -24,14 +24,13 @@ namespace PhysicsTest
         public Program(int width, int height, string title)
             : base(width, height, title)
         {
-            _textDraw = new TextRenderer(13);
-            _font = new FontA();
+            _textDraw = new TextRenderer();
+            _font = SampleFont.GetInstance();
 
             // Enabling transparency
-            Zene.Graphics.Base.GL.Enable(Zene.Graphics.Base.GLEnum.Blend);
-            Zene.Graphics.Base.GL.BlendFunc(Zene.Graphics.Base.GLEnum.SrcAlpha, Zene.Graphics.Base.GLEnum.OneMinusSrcAlpha);
-
-            OnSizeChange(new SizeChangeEventArgs(width, height));
+            State.Blending = true;
+            State.SourceScaleBlending = BlendFunction.SourceAlpha;
+            State.DestinationScaleBlending = BlendFunction.OneMinusSourceAlpha;
         }
 
         private readonly TextRenderer _textDraw;
@@ -54,18 +53,18 @@ namespace PhysicsTest
 
             Framebuffer.Clear(BufferBit.Colour);
 
-            _textDraw.DrawLeftBound($"Count:{_count:N3}", _font, -0.15, 0);
+            _textDraw.DrawLeftBound($"Count:{_count:N3}", _font, 0, 0);
             _count += 0.001;
         }
 
-        protected override void OnSizeChange(SizeChangeEventArgs e)
+        protected override void OnSizeChange(VectorIEventArgs e)
         {
             base.OnSizeChange(e);
 
-            _textDraw.Projection = Matrix4.CreateOrthographic(e.Width, e.Height, 0, -1);
-            _textDraw.Model = Matrix4.CreateScale(30, 30, 1) * Matrix4.CreateTranslation(-e.Width * 0.5, e.Height * 0.5, 0);
+            _textDraw.Projection = Matrix4.CreateOrthographic(e.X, e.Y, 0, -1);
+            _textDraw.Model = Matrix4.CreateScale(30, 30, 1) * Matrix4.CreateTranslation(-e.X * 0.5, e.Y * 0.5, 0);
 
-            Framebuffer.ViewSize = new Vector2I(e.Width, e.Height);
+            Framebuffer.Viewport.Size = e.Value;
         }
     }
 }
