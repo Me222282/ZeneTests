@@ -46,7 +46,7 @@ namespace GUITest
             e.Framebuffer.Clear(c);
 
             TextRenderer.Model = Matrix4.CreateScale(10);
-            TextRenderer.DrawCentred($"R:{Shader.Radius:N2}, B:{Shader.BorderWidth}", f, 0, 0);
+            TextRenderer.DrawCentred($"R:{_radius:N2}, B:{_borderWidth}", f, 0, 0);
 
             // Set uniforms for Shader
             Shader.Size = Size;

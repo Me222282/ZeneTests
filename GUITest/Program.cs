@@ -35,6 +35,11 @@ namespace GUITest
             {
                 Text = "BEANS!"
             });
+            c.AddChild(new TextInput(new TextLayout(2d, 2d, 0d, 0.7))
+            {
+                TextSize = 25
+            });
+
             Label l;
             _em.AddChild(l = new Label(new TextLayout(5d, 5d, -0.7, 0.7))
             {
