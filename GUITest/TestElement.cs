@@ -12,10 +12,10 @@ namespace GUITest
             //: base(new Layout(0d, 0d, 1d, 1d))
             : base(new Box((0d, 0d), (400d, 250d)))
         {
-            Shader = BorderShader.GetInstance();
+            _shader = BorderShader.GetInstance();
         }
 
-        public override BorderShader Shader { get; }
+        private BorderShader _shader;
 
         private readonly Font f = SampleFont.GetInstance();
 
@@ -43,16 +43,22 @@ namespace GUITest
                 Size = (400d, 250d);
             }
 
-            e.Framebuffer.Clear(c);
+            // Set uniforms for Shader
+            _shader.Size = Size;
+            _shader.BorderColour = new Colour(100, 200, 97);
+            _shader.Radius = _radius;
+            _shader.BorderWidth = _borderWidth;
+            DrawingBoundOffset = _shader.BorderWidth;
+            _shader.ColourSource = ColourSource.UniformColour;
+            _shader.Colour = c;
+            _shader.Matrix1 = Matrix4.CreateScale(Bounds.Size);
+            _shader.Matrix2 = Matrix4.Identity;
+            _shader.Matrix3 = Projection;
+
+            Shapes.Square.Draw();
 
             TextRenderer.Model = Matrix4.CreateScale(10);
             TextRenderer.DrawCentred($"R:{_radius:N2}, B:{_borderWidth}", f, 0, 0);
-
-            // Set uniforms for Shader
-            Shader.Size = Size;
-            Shader.BorderColour = new Colour(100, 200, 97);
-            Shader.Radius = _radius;
-            Shader.BorderWidth = _borderWidth;
         }
 
         protected override void OnScroll(ScrollEventArgs e)
@@ -63,6 +69,12 @@ namespace GUITest
             {
                 _radius += e.DeltaY * 0.01;
                 _radius = Math.Clamp(_radius, 0d, 0.5);
+                return;
+            }
+
+            if (this[Mods.Shift])
+            {
+                ViewPan += (e.DeltaY * -10d, 0d);
                 return;
             }
 

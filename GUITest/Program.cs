@@ -31,6 +31,11 @@ namespace GUITest
                 CursorStyle = Cursor.Hand
             };
             c.AddChild(_element);
+            _element.AddChild(new Button(new Box((100d, 100d), (100d, 100d)))
+            {
+                Text = "WOOOOOOOOO"
+            });
+
             c.AddChild(new Button(new Layout(0.7, 0.7, 0.25, 0.25))
             {
                 Text = "BEANS!"
