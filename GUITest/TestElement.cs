@@ -58,7 +58,8 @@ namespace GUITest
             Shapes.Square.Draw();
 
             TextRenderer.Model = Matrix4.CreateScale(10);
-            TextRenderer.DrawCentred($"R:{_radius:N2}, B:{_borderWidth}", f, 0, 0);
+            //TextRenderer.DrawCentred($"R:{_radius:N2}, B:{_borderWidth}", f, 0, 0);
+            TextRenderer.DrawCentred($"{RootElement.Hover}", f, 0, 0);
         }
 
         protected override void OnScroll(ScrollEventArgs e)

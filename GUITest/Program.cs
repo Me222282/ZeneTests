@@ -46,7 +46,7 @@ namespace GUITest
             });
 
             Label l;
-            _em.AddChild(l = new Label(new TextLayout(5d, 5d, -0.7, 0.7))
+            c.AddChild(l = new Label(new TextLayout(5d, 5d, -0.7, 0.7))
             {
                 TextSize = 15,
                 Text = "What's in his Shoe?",
