@@ -16,4 +16,10 @@
     <ProjectReference Include="..\..\Windowing\src\Windowing.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="GUI.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

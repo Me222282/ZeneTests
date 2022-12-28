@@ -10,12 +10,14 @@ namespace GUITest
     {
         public TestElement()
             //: base(new Layout(0d, 0d, 1d, 1d))
-            : base(new Box((0d, 0d), (400d, 250d)))
+            : base(new FixedLayout(0d, 0d, 400d, 250d))
         {
             _shader = BorderShader.GetInstance();
         }
 
-        private BorderShader _shader;
+        private readonly BorderShader _shader;
+
+        private FixedLayout _layout => Layout as FixedLayout;
 
         private readonly Font f = SampleFont.GetInstance();
 
@@ -31,16 +33,16 @@ namespace GUITest
             if (MouseSelect)
             {
                 c = new Colour(255, 244, 233);
-                Size = (410d, 260d);
+                _layout.Size = (410d, 260d);
             }
             else if (MouseHover)
             {
                 c = new Colour(199, 144, 202);
-                Size = (410d, 260d);
+                _layout.Size = (410d, 260d);
             }
             else
             {
-                Size = (400d, 250d);
+                _layout.Size = (400d, 250d);
             }
 
             // Set uniforms for Shader
@@ -59,7 +61,7 @@ namespace GUITest
 
             TextRenderer.Model = Matrix4.CreateScale(10);
             //TextRenderer.DrawCentred($"R:{_radius:N2}, B:{_borderWidth}", f, 0, 0);
-            TextRenderer.DrawCentred($"{RootElement.Hover}", f, 0, 0);
+            TextRenderer.DrawCentred($"Hover:{RootElement.Hover}\nFocus:{(RootElement as RootElement).FocusElement}", f, 0, 10);
         }
 
         protected override void OnScroll(ScrollEventArgs e)

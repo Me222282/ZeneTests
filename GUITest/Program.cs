@@ -3,6 +3,7 @@ using Zene.Graphics;
 using Zene.Structs;
 using Zene.Windowing;
 using Zene.GUI;
+using System.IO;
 
 namespace GUITest
 {
@@ -13,7 +14,8 @@ namespace GUITest
             // Start glfw
             Core.Init();
 
-            Window window = new Program(800, 500, "Work");
+            //Window window = new Program(800, 500, "Work");
+            Window window = new Program(800, 500, "Work", File.ReadAllText("GUI.xml"));
             window.RunMultithread();
             //window.Run();
 
@@ -31,7 +33,7 @@ namespace GUITest
                 CursorStyle = Cursor.Hand
             };
             c.AddChild(_element);
-            _element.AddChild(new Button(new Box((100d, 100d), (100d, 100d)))
+            _element.AddChild(new Button(new FixedLayout(100d, 100d, 100d, 100d))
             {
                 Text = "WOOOOOOOOO"
             });
@@ -69,6 +71,13 @@ namespace GUITest
             };
 
             _em.AddChild(c);
+        }
+
+        public Program(int width, int height, string title, string xml)
+            : base(width, height, title, 4.3, true)
+        {
+            Xml decoder = new Xml();
+            _em = decoder.LoadGUI(this, xml);
         }
 
         private readonly RootElement _em;

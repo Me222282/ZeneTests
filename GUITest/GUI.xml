@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<RootElement>
+	<Container Layout="Layout(0, 0, 2, 2)">
+		<TestElement CursorStyle="Hand">
+			<Button Layout="FixedLayout(100, 100, 100, 100)">WOOOOOOOOO</Button>
+		</TestElement>
+		<Button Layout="Layout(0.7, 0.7, 0.25, 0.25)">BEANS!</Button>
+		<TextInput Layout="TextLayout(2, 2, 0, 0.7, true)" TextSize="25" />
+		<Label Layout="TextLayout(5, 5, -0.7, 0.7, true)">
+			<Property Name="TextSize" Value="15"/>
+			<Property Name="CursorStyle">IBeam</Property>
+			What's in his Shoe?
+		</Label>
+	</Container>
+</RootElement>
