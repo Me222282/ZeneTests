@@ -16,8 +16,8 @@ namespace GUITest
 
             //Window window = new Program(800, 500, "Work");
             Window window = new Program(800, 500, "Work", File.ReadAllText("GUI.xml"));
-            window.RunMultithread();
-            //window.Run();
+            //window.RunMultithread();
+            window.Run();
 
             // End glfw
             Core.Terminate();
