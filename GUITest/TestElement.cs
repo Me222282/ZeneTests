@@ -6,7 +6,7 @@ using Zene.Windowing;
 
 namespace GUITest
 {
-    class TestElement : Element
+    class TestElement : Element<FixedLayout>
     {
         public TestElement()
             //: base(new Layout(0d, 0d, 1d, 1d))
@@ -16,8 +16,6 @@ namespace GUITest
         }
 
         private readonly BorderShader _shader;
-
-        private FixedLayout _layout => Layout as FixedLayout;
 
         private readonly Font f = SampleFont.GetInstance();
 
@@ -33,16 +31,16 @@ namespace GUITest
             if (MouseSelect)
             {
                 c = new Colour(255, 244, 233);
-                _layout.Size = (410d, 260d);
+                Layout.Size = (410d, 260d);
             }
             else if (MouseHover)
             {
                 c = new Colour(199, 144, 202);
-                _layout.Size = (410d, 260d);
+                Layout.Size = (410d, 260d);
             }
             else
             {
-                _layout.Size = (400d, 250d);
+                Layout.Size = (400d, 250d);
             }
 
             // Set uniforms for Shader
