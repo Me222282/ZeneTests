@@ -7,11 +7,12 @@
 		
 		<Button Layout="Layout(0.7, 0.7, 0.25, 0.25)">BEANS!</Button>
 		
-		<TextInput Layout="TextLayout(7, 2, 0, 0.7, 50, 0, true)" TextSize="25" />
+		<TextInput Layout="TextLayout(7, 2, 0, 0.7, 50, 0, true)" TextSize="25" BackgroundColour="ColourF(0, 0, 0)" />
 		
-		<Label Layout="TextLayout(5, 5, -0.7, 0.7, true)">
+		<Label Layout="TextLayout(5, 5, -0.7, 0.7, true)" BorderWidth="0">
 			<Property Name="TextSize" Value="15" />
 			<Property Name="CursorStyle">IBeam</Property>
+			<Property Name="Click" Value="LabelClick()" />
 			What's in his Shoe?
 		</Label>
 

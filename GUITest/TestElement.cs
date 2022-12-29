@@ -61,7 +61,8 @@ namespace GUITest
 
             TextRenderer.Model = Matrix4.CreateScale(10);
             //TextRenderer.DrawCentred($"R:{_radius:N2}, B:{_borderWidth}", f, 0, 0);
-            TextRenderer.DrawCentred($"Hover:{RootElement.Hover}\nFocus:{(RootElement as RootElement).FocusElement}", f, 0, 10);
+            TextRenderer.DrawCentred($"Hover:{RootElement.Hover}\nFocus:{RootElement.FocusElement}", f, 0, 10);
+            //TextRenderer.DrawCentred($"{MouseLocation.ToString("N3")}", f, 0, 0);
         }
 
         protected override void OnScroll(ScrollEventArgs e)
@@ -78,6 +79,12 @@ namespace GUITest
             if (this[Mods.Shift])
             {
                 ViewPan += (e.DeltaY * -10d, 0d);
+                return;
+            }
+
+            if (this[Mods.Alt])
+            {
+                ViewScale += ViewScale * e.DeltaY * 0.1;
                 return;
             }
 
