@@ -1,6 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?> 
 <RootElement>
 	<Container Layout="Layout(0, 0, 2, 2)">
+		<TestElement CursorStyle="Hand">
+			<Button Layout="FixedLayout(100, 100, 100, 100)">WOOOOOOOOO</Button>
+		</TestElement>
+
 		<Label Layout="TextLayout(5, 5, -0.7, 0.7, true)" BorderWidth="0">
 			<Property Name="TextSize" Value="15" />
 			<Property Name="CursorStyle">IBeam</Property>
@@ -11,10 +15,6 @@
 		<TextInput Layout="TextLayout(7, 2, 0, 0.7, 50, 0, true)" TextSize="25" BackgroundColour="ColourF(0, 0, 0)" />
 		
 		<Button Layout="Layout(0.7, 0.7, 0.25, 0.25)">BEANS!</Button>
-		
-		<TestElement CursorStyle="Hand">
-			<Button Layout="FixedLayout(100, 100, 100, 100)">WOOOOOOOOO</Button>
-		</TestElement>
 		
 		<Property Name="Colour" Value="ColourF(0.1, 0.1, 0.1)" />
 	</Container>
