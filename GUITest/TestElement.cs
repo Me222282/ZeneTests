@@ -43,9 +43,16 @@ namespace GUITest
                 Layout.Size = (400d, 250d);
             }
 
+            Colour bc = new Colour(100, 200, 97);
+
+            if (Focused)
+            {
+                bc = new Colour(200, 100, 97);
+            }
+
             // Set uniforms for Shader
             _shader.Size = Size;
-            _shader.BorderColour = new Colour(100, 200, 97);
+            _shader.BorderColour = bc;
             _shader.Radius = _radius;
             _shader.BorderWidth = _borderWidth;
             DrawingBoundOffset = _shader.BorderWidth;
