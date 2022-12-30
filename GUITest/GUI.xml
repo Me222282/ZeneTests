@@ -2,7 +2,7 @@
 <RootElement>
 	<Container Layout="Layout(0, 0, 2, 2)">
 		<TestElement CursorStyle="Hand">
-			<Button Layout="FixedLayout(100, 100, 100, 100)">WOOOOOOOOO</Button>
+			<Button Layout="TextLayout(10, 10, 100, 100, 100, 100, false)">WOOOOOOOOO</Button>
 		</TestElement>
 
 		<Label Layout="TextLayout(5, 5, -0.7, 0.7, true)" BorderWidth="0">
@@ -12,9 +12,9 @@
 			What's in his Shoe?
 		</Label>
 		
-		<TextInput Layout="TextLayout(7, 2, 0, 0.7, 50, 0, true)" TextSize="25" BackgroundColour="ColourF(0, 0, 0)" />
+		<TextInput Layout="TextLayout(7, 2, 0, 0.7, 0.2, 0, true)" TextSize="25" BackgroundColour="ColourF(0, 0, 0)" />
 		
-		<Button Layout="Layout(0.7, 0.7, 0.25, 0.25)">BEANS!</Button>
+		<Button Layout="TextLayout(60, 40, 0.7, 0.7, 0.25, 0.25, true)">BEANS!</Button>
 		
 		<Property Name="Colour" Value="ColourF(0.1, 0.1, 0.1)" />
 	</Container>
