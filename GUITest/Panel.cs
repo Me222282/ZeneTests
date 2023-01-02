@@ -357,7 +357,7 @@ namespace GUITest
 
                 _shader.Matrix1 = Matrix4.CreateScale(_bounds.Width, _tabBox.Height, depth)
                     * Matrix4.CreateTranslation((Vector3)(_tabBox.Centre - _bounds.Centre));
-                Shapes.Square.Draw();
+                //Shapes.Square.Draw();
 
                 _redraw = false;
             }
@@ -377,7 +377,7 @@ namespace GUITest
 
             // Bind framebuffer colour texture
             _frame.GetTexture(FrameAttachment.Colour0).Bind(0);
-            Shapes.Square.Draw();
+            //Shapes.Square.Draw();
         }
 
         private bool _disposed;

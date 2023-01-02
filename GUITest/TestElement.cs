@@ -50,6 +50,8 @@ namespace GUITest
                 bc = new Colour(200, 100, 97);
             }
 
+            e.Context.Shader = _shader;
+
             // Set uniforms for Shader
             _shader.Size = Size;
             _shader.BorderColour = bc;
@@ -62,11 +64,11 @@ namespace GUITest
             _shader.Matrix2 = Matrix4.Identity;
             _shader.Matrix3 = Projection;
 
-            Shapes.Square.Draw();
+            e.Context.DrawObject(Shapes.Square);
 
             TextRenderer.Model = Matrix4.CreateScale(10);
             //TextRenderer.DrawCentred($"R:{_radius:N2}, B:{_borderWidth}", f, 0, 0);
-            TextRenderer.DrawCentred($"Hover:{RootElement.Hover}\nFocus:{RootElement.FocusElement}", f, 0, 10);
+            TextRenderer.DrawCentred(e.Context, $"Hover:{RootElement.Hover}\nFocus:{RootElement.FocusElement}", f, 0, 10);
             //TextRenderer.DrawCentred($"{MouseLocation.ToString("N3")}", f, 0, 0);
         }
 
