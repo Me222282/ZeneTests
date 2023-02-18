@@ -4,7 +4,7 @@
 		<TestElement CursorStyle="Hand">
 			<Button Layout="TextLayout(10, 10, 100, 100, 100, 100, false)">WOOOOOOOOO</Button>
 		</TestElement>
-
+		
 		<Label Layout="TextLayout(5, 5, -0.7, 0.7, true)" BorderWidth="0">
 			<Property Name="TextSize" Value="15" />
 			<Property Name="CursorStyle">IBeam</Property>

@@ -6,70 +6,39 @@ using Zene.Windowing;
 
 namespace GUITest
 {
-    class TestElement : Element<FixedLayout>
+    class TestElement : ParentElement<FixedLayout>
     {
         public TestElement()
             //: base(new Layout(0d, 0d, 1d, 1d))
             : base(new FixedLayout(0d, 0d, 400d, 250d))
         {
-            _shader = BorderShader.GetInstance();
+            _g = new Renderer(this);
         }
 
-        private readonly BorderShader _shader;
+        private readonly Renderer _g;
+        public override GraphicsManager Graphics => _g;
 
-        private readonly Font f = SampleFont.GetInstance();
-
-        private double _radius = 0.2;
-        private double _borderWidth = 10;
-
-        protected override void OnUpdate(FrameEventArgs e)
+        private Colour _c;
+        protected override void OnUpdate(EventArgs e)
         {
             base.OnUpdate(e);
 
-            Colour c = new Colour(166, 188, 199);
+            _c = new Colour(166, 188, 199);
 
             if (MouseSelect)
             {
-                c = new Colour(255, 244, 233);
+                _c = new Colour(255, 244, 233);
                 Layout.Size = (410d, 260d);
             }
             else if (MouseHover)
             {
-                c = new Colour(199, 144, 202);
+                _c = new Colour(199, 144, 202);
                 Layout.Size = (410d, 260d);
             }
             else
             {
                 Layout.Size = (400d, 250d);
             }
-
-            Colour bc = new Colour(100, 200, 97);
-
-            if (Focused)
-            {
-                bc = new Colour(200, 100, 97);
-            }
-
-            e.Context.Shader = _shader;
-
-            // Set uniforms for Shader
-            _shader.Size = Size;
-            _shader.BorderColour = bc;
-            _shader.Radius = _radius;
-            _shader.BorderWidth = _borderWidth;
-            DrawingBoundOffset = _shader.BorderWidth;
-            _shader.ColourSource = ColourSource.UniformColour;
-            _shader.Colour = c;
-            _shader.Matrix1 = Matrix4.CreateScale(Bounds.Size);
-            _shader.Matrix2 = Matrix4.Identity;
-            _shader.Matrix3 = Projection;
-
-            e.Context.DrawObject(Shapes.Square);
-
-            TextRenderer.Model = Matrix4.CreateScale(10);
-            //TextRenderer.DrawCentred($"R:{_radius:N2}, B:{_borderWidth}", f, 0, 0);
-            TextRenderer.DrawCentred(e.Context, $"Hover:{RootElement.Hover}\nFocus:{RootElement.FocusElement}", f, 0, 10);
-            //TextRenderer.DrawCentred($"{MouseLocation.ToString("N3")}", f, 0, 0);
         }
 
         protected override void OnScroll(ScrollEventArgs e)
@@ -78,8 +47,8 @@ namespace GUITest
 
             if (this[Mods.Control])
             {
-                _radius += e.DeltaY * 0.01;
-                _radius = Math.Clamp(_radius, 0d, 0.5);
+                _g._radius += e.DeltaY * 0.01;
+                _g._radius = Math.Clamp(_g._radius, 0d, 0.5);
                 return;
             }
 
@@ -95,7 +64,52 @@ namespace GUITest
                 return;
             }
 
-            _borderWidth += e.DeltaY;
+            _g._borderWidth += e.DeltaY;
+        }
+
+        private class Renderer : GraphicsManager<TestElement>
+        {
+            public Renderer(TestElement source)
+                : base(source)
+            {
+            }
+
+            private readonly BorderShader _shader = BorderShader.GetInstance();
+
+            private readonly Font f = SampleFont.GetInstance();
+
+            public double _radius = 0.2;
+            public double _borderWidth = 10;
+
+            public override void OnRender(DrawManager context)
+            {
+                Colour bc = new Colour(100, 200, 97);
+
+                if (Source.Focused)
+                {
+                    bc = new Colour(200, 100, 97);
+                }
+
+                context.Shader = _shader;
+
+                // Set uniforms for Shader
+                _shader.Size = Source.Size;
+                _shader.BorderColour = bc;
+                _shader.Radius = _radius;
+                _shader.BorderWidth = _borderWidth;
+                Size = Source.Size + _shader.BorderWidth;
+                _shader.ColourSource = ColourSource.UniformColour;
+                _shader.Colour = Source._c;
+
+                context.Model = Matrix4.CreateScale(Source.Bounds.Size);
+                context.Draw(Shapes.Square);
+
+                TextRenderer.Colour = new ColourF(1f, 1f, 1f);
+                TextRenderer.Model = Matrix4.CreateScale(10);
+                //TextRenderer.DrawCentred(context, $"R:{_radius:N2}, B:{_borderWidth}", f, 0, 0);
+                TextRenderer.DrawCentred(context, $"Hover:{Source.Hande.Hover}\nFocus:{Source.Hande.Focus}", f, 0, 10);
+                //TextRenderer.DrawCentred(context, $"{Source.MouseLocation.ToString("N3")}", f, 0, 0);
+            }
         }
     }
 }
