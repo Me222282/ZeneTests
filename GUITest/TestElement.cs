@@ -74,9 +74,7 @@ namespace GUITest
             {
             }
 
-            private readonly BorderShader _shader = BorderShader.GetInstance();
-
-            private readonly Font f = SampleFont.GetInstance();
+            private readonly Font _f = SampleFont.GetInstance();
 
             public double _radius = 0.2;
             public double _borderWidth = 10;
@@ -84,30 +82,18 @@ namespace GUITest
             public override void OnRender(DrawManager context)
             {
                 Colour bc = new Colour(100, 200, 97);
-
                 if (Source.Focused)
                 {
                     bc = new Colour(200, 100, 97);
                 }
-
-                context.Shader = _shader;
-
-                // Set uniforms for Shader
-                _shader.Size = Source.Size;
-                _shader.BorderColour = bc;
-                _shader.Radius = _radius;
-                _shader.BorderWidth = _borderWidth;
-                Size = Source.Size + _shader.BorderWidth;
-                _shader.ColourSource = ColourSource.UniformColour;
-                _shader.Colour = Source._c;
-
-                context.Model = Matrix4.CreateScale(Source.Bounds.Size);
-                context.Draw(Shapes.Square);
+                Size = Source.Size + _borderWidth;
+                
+                context.DrawBorderBox(Source.Bounds, Source._c, _borderWidth, bc, _radius);
 
                 TextRenderer.Colour = new ColourF(1f, 1f, 1f);
-                TextRenderer.Model = Matrix4.CreateScale(10);
+                context.Model = Matrix4.CreateScale(10);
                 //TextRenderer.DrawCentred(context, $"R:{_radius:N2}, B:{_borderWidth}", f, 0, 0);
-                TextRenderer.DrawCentred(context, $"Hover:{Source.Hande.Hover}\nFocus:{Source.Hande.Focus}", f, 0, 10);
+                TextRenderer.DrawCentred(context, $"Hover:{Source.Hande.Hover}\nFocus:{Source.Hande.Focus}", _f, 0, 10);
                 //TextRenderer.DrawCentred(context, $"{Source.MouseLocation.ToString("N3")}", f, 0, 0);
             }
         }
