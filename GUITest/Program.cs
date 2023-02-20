@@ -29,6 +29,8 @@ namespace GUITest
         {
             if (sender is not GUIWindow w) { return; }
 
+            if (!e[Keys.R]) { return; }
+
             w.ClearChildren();
             w.LoadXml(File.ReadAllText("GUI.xml"), typeof(Program));
         }
