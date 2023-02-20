@@ -16,11 +16,21 @@ namespace GUITest
             window.LoadXml(File.ReadAllText("GUI.xml"), typeof(Program));
             //window.LoadXml(File.ReadAllText("GUI2.xml"), typeof(Program));
 
+            window.KeyDown += KeyDown;
+
             window.RunMultithread();
             //window.Run();
 
             // End glfw
             Core.Terminate();
+        }
+
+        private static void KeyDown(object sender, KeyEventArgs e)
+        {
+            if (sender is not GUIWindow w) { return; }
+
+            w.ClearChildren();
+            w.LoadXml(File.ReadAllText("GUI.xml"), typeof(Program));
         }
 
         private static void LabelClick(object sender, MouseEventArgs e)

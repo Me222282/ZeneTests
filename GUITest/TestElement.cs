@@ -13,10 +13,17 @@ namespace GUITest
             : base(new FixedLayout(0d, 0d, 400d, 250d))
         {
             _g = new Renderer(this);
+            _sizeAnimation = new AnimatorData(SetSize, 0.02, 0d, 1d);
         }
 
         private readonly Renderer _g;
         public override GraphicsManager Graphics => _g;
+
+        private readonly AnimatorData _sizeAnimation;
+        private void SetSize(double v)
+        {
+            Layout.Size = new Vector2(400d, 250d).Lerp((410d, 260d), v);
+        }
 
         private Colour _c;
         protected override void OnUpdate(EventArgs e)
@@ -28,16 +35,26 @@ namespace GUITest
             if (MouseSelect)
             {
                 _c = new Colour(255, 244, 233);
-                Layout.Size = (410d, 260d);
+
+                if (Layout.Size != (410d, 260d) && !(_sizeAnimation.Animating && _sizeAnimation.StartValue == 0d))
+                {
+                    _sizeAnimation.Start(0d, 1d, Hande.Animator);
+                }
             }
             else if (MouseHover)
             {
                 _c = new Colour(199, 144, 202);
-                Layout.Size = (410d, 260d);
+                if (Layout.Size != (410d, 260d) && !(_sizeAnimation.Animating && _sizeAnimation.StartValue == 0d))
+                {
+                    _sizeAnimation.Start(0d, 1d, Hande.Animator);
+                }
             }
             else
             {
-                Layout.Size = (400d, 250d);
+                if (Layout.Size != (400d, 250d) && !(_sizeAnimation.Animating && _sizeAnimation.StartValue == 1d))
+                {
+                    _sizeAnimation.Start(1d, 0d, Hande.Animator);
+                }
             }
         }
 
