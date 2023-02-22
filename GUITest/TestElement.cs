@@ -97,14 +97,11 @@ namespace GUITest
                 set
                 {
                     _borderWidth = value;
-                    Size = Source.Layout.Size;
+                    Size = Source.Size + _borderWidth;
                 }
             }
 
-            protected override void OnSizeChange(VectorEventArgs e)
-            {
-                Size = e.Value + _borderWidth;
-            }
+            protected override Vector2 OnSizeChange(VectorEventArgs e) => e.Value + _borderWidth;
 
             public override void OnRender(DrawManager context)
             {
@@ -119,7 +116,7 @@ namespace GUITest
                 TextRenderer.Colour = new ColourF(1f, 1f, 1f);
                 context.Model = Matrix4.CreateScale(10);
                 //TextRenderer.DrawCentred(context, $"R:{_radius:N2}, B:{_borderWidth}", f, 0, 0);
-                TextRenderer.DrawCentred(context, $"Hover:{Source.Hande.Hover}\nFocus:{Source.Hande.Focus}", _f, 0, 10);
+                TextRenderer.DrawCentred(context, $"Hover:{Source.Hande.Hover}\nFocus:{Source.Hande.Focus}\nView:{Source.Properties.ScrollBox.ToString("N2")}", _f, 0, 10);
                 //TextRenderer.DrawCentred(context, $"{Source.MouseLocation.ToString("N3")}", f, 0, 0);
             }
         }
