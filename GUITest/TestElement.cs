@@ -14,6 +14,7 @@ namespace GUITest
         {
             _g = new Renderer(this);
             _sizeAnimation = new AnimatorData<Vector2>(SetSize, 0.03, (400d, 250d), (410d, 260d));
+            //OverrideScroll = true;
         }
 
         private readonly Renderer _g;
@@ -65,19 +66,14 @@ namespace GUITest
                 return;
             }
 
-            if (this[Mods.Shift])
-            {
-                ViewPan += (e.DeltaY * -10d, 0d);
-                return;
-            }
-
             if (this[Mods.Alt])
             {
                 ViewScale += ViewScale * e.DeltaY * 0.1;
                 return;
             }
 
-            _g.BorderWidth += e.DeltaY;
+            //_g.BorderWidth += e.DeltaY;
+            //ViewPan += (0d, e.DeltaY * -10d);
         }
 
         private class Renderer : GraphicsManager<TestElement>
