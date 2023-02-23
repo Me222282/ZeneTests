@@ -20,6 +20,9 @@
     <None Update="GUI.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="LayoutStress.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="GUI2.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

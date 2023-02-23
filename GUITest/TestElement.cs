@@ -13,7 +13,10 @@ namespace GUITest
             : base(new FixedLayout(0d, 0d, 400d, 250d))
         {
             _g = new Renderer(this);
+            _g.RendersWithOffset = true;
+            _g.RendersWithScale = true;
             _sizeAnimation = new AnimatorData<Vector2>(SetSize, 0.03, (400d, 250d), (410d, 260d));
+            Properties.ScrollBar = new ScrollBar();
             //OverrideScroll = true;
         }
 
@@ -107,7 +110,7 @@ namespace GUITest
                     bc = new Colour(200, 100, 97);
                 }
 
-                context.DrawBorderBox(Source.Bounds, Source._c, _borderWidth, bc, _radius);
+                context.DrawBorderBox(new Box(Vector2.Zero, Source.Bounds.Size), Source._c, _borderWidth, bc, _radius);
 
                 TextRenderer.Colour = new ColourF(1f, 1f, 1f);
                 context.Model = Matrix4.CreateScale(10);

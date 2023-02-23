@@ -13,8 +13,9 @@ namespace GUITest
             Core.Init();
 
             GUIWindow window = new GUIWindow(800, 500, "Work", 4.3);
-            window.LoadXml(File.ReadAllText("GUI.xml"), typeof(Program));
-            //window.LoadXml(File.ReadAllText("GUI2.xml"), typeof(Program));
+            //window.LoadXml(File.ReadAllText("GUI.xml"), typeof(Program));
+            window.LoadXml(File.ReadAllText("GUI2.xml"), typeof(Program));
+            //window.LoadXml(File.ReadAllText("LayoutStress.xml"), typeof(Program));
 
             window.KeyDown += KeyDown;
 
