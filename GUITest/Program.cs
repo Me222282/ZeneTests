@@ -13,8 +13,8 @@ namespace GUITest
             Core.Init();
 
             GUIWindow window = new GUIWindow(800, 500, "Work", 4.3);
-            //window.LoadXml(File.ReadAllText("GUI.xml"), typeof(Program));
-            window.LoadXml(File.ReadAllText("GUI2.xml"), typeof(Program));
+            window.LoadXml(File.ReadAllText("GUI.xml"), typeof(Program));
+            //window.LoadXml(File.ReadAllText("GUI2.xml"), typeof(Program));
             //window.LoadXml(File.ReadAllText("LayoutStress.xml"), typeof(Program));
 
             window.KeyDown += KeyDown;
@@ -30,10 +30,27 @@ namespace GUITest
         {
             if (sender is not GUIWindow w) { return; }
 
-            if (!e[Keys.R]) { return; }
-
-            w.ClearChildren();
-            w.LoadXml(File.ReadAllText("GUI.xml"), typeof(Program));
+            if (e[Keys.D1] && e[Mods.Alt])
+            {
+                w.ClearChildren();
+                w.RootElement.LayoutManager = null;
+                w.LoadXml(File.ReadAllText("GUI.xml"), typeof(Program));
+                Console.WriteLine("Loaded");
+            }
+            if (e[Keys.D2] && e[Mods.Alt])
+            {
+                w.ClearChildren();
+                w.RootElement.LayoutManager = null;
+                w.LoadXml(File.ReadAllText("GUI2.xml"), typeof(Program));
+                Console.WriteLine("Loaded");
+            }
+            if (e[Keys.D3] && e[Mods.Alt])
+            {
+                w.ClearChildren();
+                w.RootElement.LayoutManager = null;
+                w.LoadXml(File.ReadAllText("LayoutStress.xml"), typeof(Program));
+                Console.WriteLine("Loaded");
+            }
         }
 
         private static void LabelClick(object sender, MouseEventArgs e)
