@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32510.428
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeuralNetworkTest", "NeuralNetworkTest.csproj", "{DC7F783E-750E-4DAE-A9E4-34F7A32FC831}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Structs", "..\..\Structs\src\Structs.csproj", "{DA61932D-50DF-4EF2-A7A8-A91C746AD765}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeuralNetwork", "..\..\NeuralNetwork\src\NeuralNetwork.csproj", "{5125FD2F-BD64-453A-B76F-EB6A3B448DF8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DC7F783E-750E-4DAE-A9E4-34F7A32FC831}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC7F783E-750E-4DAE-A9E4-34F7A32FC831}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC7F783E-750E-4DAE-A9E4-34F7A32FC831}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC7F783E-750E-4DAE-A9E4-34F7A32FC831}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA61932D-50DF-4EF2-A7A8-A91C746AD765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA61932D-50DF-4EF2-A7A8-A91C746AD765}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA61932D-50DF-4EF2-A7A8-A91C746AD765}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA61932D-50DF-4EF2-A7A8-A91C746AD765}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5125FD2F-BD64-453A-B76F-EB6A3B448DF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5125FD2F-BD64-453A-B76F-EB6A3B448DF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5125FD2F-BD64-453A-B76F-EB6A3B448DF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5125FD2F-BD64-453A-B76F-EB6A3B448DF8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18705574-4CA2-4E77-AEA9-52A73EC146DC}
+	EndGlobalSection
+EndGlobal

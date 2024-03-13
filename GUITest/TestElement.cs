@@ -38,7 +38,7 @@ namespace GUITest
                 if (Layout.Size != _sizeAnimation.EndValue && (!_sizeAnimation.Animating || _sizeAnimation.Reversed))
                 {
                     _sizeAnimation.Reversed = false;
-                    _sizeAnimation.Reset(Hande.Animator);
+                    _sizeAnimation.Reset(Handle.Animator);
                 }
             }
             else if (MouseHover)
@@ -47,7 +47,7 @@ namespace GUITest
                 if (Layout.Size != _sizeAnimation.EndValue && (!_sizeAnimation.Animating || _sizeAnimation.Reversed))
                 {
                     _sizeAnimation.Reversed = false;
-                    _sizeAnimation.Reset(Hande.Animator);
+                    _sizeAnimation.Reset(Handle.Animator);
                 }
             }
             else
@@ -55,7 +55,7 @@ namespace GUITest
                 if (Layout.Size != _sizeAnimation.StartValue && !(_sizeAnimation.Animating && _sizeAnimation.Reversed))
                 {
                     _sizeAnimation.Reversed = true;
-                    _sizeAnimation.Reset(Hande.Animator);
+                    _sizeAnimation.Reset(Handle.Animator);
                 }
             }
         }
@@ -115,7 +115,7 @@ namespace GUITest
                 TextRenderer.Colour = new ColourF(1f, 1f, 1f);
                 context.Model = Matrix4.CreateScale(10);
                 //TextRenderer.DrawCentred(context, $"R:{_radius:N2}, B:{_borderWidth}", f, 0, 0);
-                TextRenderer.DrawCentred(context, $"Hover:{Source.Hande.Hover}\nFocus:{Source.Hande.Focus}\nView:{Source.Properties.ScrollBox.ToString("N2")}", _f, 0, 10);
+                TextRenderer.DrawCentred(context, $"Hover:{Source.Handle.Hover}\nFocus:{Source.Handle.Focus}\nView:{Source.Properties.ScrollBox.ToString("N2")}", _f, 0, 10);
                 //TextRenderer.DrawCentred(context, $"{Source.MouseLocation.ToString("N3")}", f, 0, 0);
             }
         }

@@ -40,6 +40,7 @@ namespace CSGL
             Thread.Sleep(2000);
             */
             Window3D b = new Window3D(800, 500, "Work");
+            //CubeMapTest b = new CubeMapTest(800, 500, "Work");
             //ShadowLWindow b = new ShadowLWindow(800, 500, "Work");
 
             b.Run();
@@ -56,7 +57,7 @@ namespace CSGL
                 TransparentFramebuffer = true
             });
 
-            GLArray<ColourI> a = new GLArray<ColourI>(1, 1);
+            GLArray<Colour> a = new GLArray<Colour>(1, 1);
 
             TextureFormat[] allFormats = new TextureFormat[]
             {

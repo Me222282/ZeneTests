@@ -50,7 +50,7 @@ namespace CSGL
 
         //private readonly Random r = new Random();
 
-        private Matrix4 matrix;
+        private IMatrix matrix;
 
         private double scale;
 
@@ -71,12 +71,12 @@ namespace CSGL
 
             scale = 100;
 
-            matrix = Matrix4.Identity;
+            matrix = Matrix.Identity;
 
             //GL.PolygonMode(GLEnum.FrontAndBack, GLEnum.Line);
         }
 
-        protected override void OnUpdate(EventArgs e)
+        protected override void OnUpdate(FrameEventArgs e)
         {
             base.OnUpdate(e);
 
@@ -99,8 +99,8 @@ namespace CSGL
             //Shader.Matrix1 = Matrix4.CreateTranslation(0, 0, scale) * Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(60), orthoWidth / orthoHeight, 1, 100);
 
             Shader.ColourSource = ColourSource.AttributeColour;
-
-            DrawObject.Draw();
+            e.Context.Shader = Shader;
+            e.Context.Draw(DrawObject);
         }
 
         private bool _leftShift;

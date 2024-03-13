@@ -94,7 +94,7 @@ namespace CSGL
             }, WrapStyle.EdgeClamp, TextureSampling.Blend, false);*/
 
             
-            _cubeMap = CubeMap.LoadSync(new string[]
+            _cubeMap = CubeMap.LoadAsync(new string[]
             {
                 "Resources/cubeMaps/Storforsen4/posx.jpg",  // Right
                 "Resources/cubeMaps/Storforsen4/negx.jpg",  // Left
@@ -128,7 +128,7 @@ namespace CSGL
         }
 
         private Vector3 _offset = Vector3.Zero;
-        protected override void OnUpdate(EventArgs e)
+        protected override void OnUpdate(FrameEventArgs e)
         {
             base.OnUpdate(e);
 
@@ -161,19 +161,17 @@ namespace CSGL
                 cameraMove.Y += 0.025;
             }
 
-            Matrix3 rotationMatrix = Matrix3.CreateRotationY(rotateY) * Matrix3.CreateRotationX(rotateX);
+            IMatrix rotationMatrix = Matrix3.CreateRotationY(rotateY) * Matrix3.CreateRotationX(rotateX);
 
-            _offset += cameraMove * rotationMatrix;
+            _offset += (Vector3)(cameraMove * rotationMatrix);
 
             _shader.Bind();
             _shader.View = Matrix4.CreateTranslation(_offset) * Matrix4.CreateRotationY(rotateY) * Matrix4.CreateRotationX(rotateX);
             _shader.TextureSlot = 0;
 
             _cubeMap.Bind(0);
-
-            _drawObject.Draw();
-
-            _cubeMap.Unbind();
+            e.Context.Shader = _shader;
+            e.Context.Draw(_drawObject);
         }
 
         private double _zoom = 60;
@@ -331,7 +329,7 @@ namespace CSGL
             if (new Vector2(e.X, e.Y) == _mouseLocation) { return; }
 
             double distanceX = e.X - _mouseLocation.X;
-            double distanceY = _mouseLocation.Y - e.Y;
+            double distanceY = e.Y - _mouseLocation.Y;
 
             _mouseLocation = new Vector2(e.X, e.Y);
 

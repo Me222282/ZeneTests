@@ -4,7 +4,7 @@ using Zene.Graphics.Z3D;
 
 namespace CSGL
 {
-    public class Player : IDrawable, IDisposable
+    public class Player : IDrawObject, IDisposable
     {
         public Player(double width, double height, double depth)
         {
@@ -57,20 +57,20 @@ namespace CSGL
 
         public bool Small { get; set; }
 
-        public void Draw()
+        public Drawable GetRenderable(IDrawingContext context)
         {
             if (Small)
             {
-                _objectSmall.Draw();
-                return;
+                return _objectSmall.GetRenderable(context);
             }
 
-            _object.Draw();
+            return _object.GetRenderable(context);
         }
 
         public void Dispose()
         {
             _object.Dispose();
+            _objectSmall.Dispose();
         }
     }
 }

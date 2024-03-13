@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\NeuralNetwork\src\NeuralNetwork.csproj" />
+    <ProjectReference Include="..\..\Structs\src\Structs.csproj" />
+  </ItemGroup>
+
+</Project>

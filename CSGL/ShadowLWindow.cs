@@ -13,7 +13,7 @@ namespace CSGL
         public ShadowLWindow(int width, int height, string title)
             : base(width, height, title)
         {
-            Framebuffer = new PostProcessing(width, height);
+            _context = new PostProcessing(width, height);
 
             SetUp();
 
@@ -30,7 +30,7 @@ namespace CSGL
             {
                 Shader.Dispose();
                 Framebuffer.Dispose();
-                ShadowMapShader.Dispose();
+                ShadowMapper.Dispose();
 
                 DrawObject.Dispose();
 
@@ -45,16 +45,15 @@ namespace CSGL
             }
         }
 
-        protected override void OnUpdate(EventArgs e)
+        protected override void OnUpdate(FrameEventArgs e)
         {
             base.OnUpdate(e);
 
-            Draw();
-
-            Framebuffer.Draw();
+            Draw(_context);
+            e.Context.Render(_context);
         }
 
-        public override PostProcessing Framebuffer { get; }
+        private PostProcessing _context;
 
         private static readonly Vector3 Red = new Vector3(1, 0, 0);
 
@@ -105,7 +104,7 @@ namespace CSGL
 
         private LightingShader Shader;
 
-        private ShadowMapper ShadowMapShader;
+        private ShadowMapper ShadowMapper;
 
         private DrawObject<Vector3, uint> DrawObject;
 
@@ -130,7 +129,7 @@ namespace CSGL
         {
             Shader = new LightingShader(1, 1);
 
-            ShadowMapShader = new ShadowMapper(20480, 20480);
+            ShadowMapper = new ShadowMapper(20480, 20480);
 
             Object3D.AddNormals(vertData, 2, indexData, out List<Vector3> vertices, out List<uint> indices);
 
@@ -210,9 +209,9 @@ namespace CSGL
 
         //private Point3 lightDir = new Point3(-0.5, -2, -0.5) * 100;
         private Vector3 lightDir = new Vector3(1, -1, 1) * 100;
-        private readonly Matrix3 lightRotation = Matrix3.CreateRotationX(Radian.Percent(-0.0000125)) * Matrix3.CreateRotationZ(Radian.Percent(0.0000125));
+        private readonly IMatrix lightRotation = Matrix3.CreateRotationX(Radian.Percent(-0.0000125)) * Matrix3.CreateRotationZ(Radian.Percent(0.0000125));
 
-        protected virtual void Draw()
+        protected virtual void Draw(IDrawingContext context)
         {
             Vector3 cameraMove = new Vector3(0, 0, 0);
 
@@ -270,28 +269,26 @@ namespace CSGL
             //Shader.SetViewMatrix(Matrix4.LookAt(lightDir, Point3.Zero, new Point3(0, 1, 0)));
             
             Shader.DrawLighting = doLight;
-            Shader.Matrix1 = Matrix4.Identity;
+            Shader.Matrix1 = Matrix.Identity;
 
             Shader.NormalMapping = false;
             Shader.ColourSource = ColourSource.AttributeColour;
             Shader.SetMaterial(ObjectMaterial);
-
-            DrawObject.Draw();
+            context.Shader = Shader;
+            context.Draw(DrawObject);
 
             Shader.NormalMapping = false;
             Shader.ColourSource = ColourSource.UniformColour;
             Shader.Colour = new Colour(100, 200, 255);
             Shader.SetMaterial(FloorMaterial);
-
-            Plane.Draw();
+            context.Draw(Plane);
 
             Shader.NormalMapping = false;
             Shader.DrawLighting = false;
             Shader.Matrix1 = Matrix4.CreateTranslation(lightDir);
             Shader.ColourSource = ColourSource.UniformColour;
             Shader.Colour = new Colour(255, 255, 255);
-
-            LightObject.Draw();
+            context.Draw(LightObject);
 
             Shader.ColourSource = ColourSource.Texture;
             Shader.SetMaterial(FloorMaterial);
@@ -302,9 +299,9 @@ namespace CSGL
             FloorNormalMap.Bind(1);
 
             Shader.Matrix1 = Matrix4.CreateTranslation(10, 2.5, 10);
-            sphere.Draw();
-            Shader.Matrix1 = Matrix4.Identity;
-            Floor.Draw();
+            context.Draw(sphere);
+            Shader.Matrix1 = Matrix.Identity;
+            context.Draw(Floor);
 
             FloorTexture.Unbind();
             FloorNormalMap.Unbind();
@@ -314,32 +311,28 @@ namespace CSGL
 
         private void CreateShadowMap(Matrix4 playerMatrix)
         {
-            ShadowMapShader.Bind();
-            //GL.ClearDepth(0);
-            ShadowMapShader.Clear();
+            ShadowMapper.Clear();
 
-            Matrix4 smP = /*Matrix4.CreateOrthographic(100, 100, 0, 1000);*/ Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(110), 1, 0.1, 5000);
-            Matrix4 smV = Matrix4.LookAt(lightDir, Vector3.Zero, new Vector3(0, 1, 0)) * Matrix4.CreateRotationX(Radian.Percent(0.5));
+            IMatrix smP = /*Matrix4.CreateOrthographic(100, 100, 0, 1000);*/ Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(110), 1, 0.1, 5000);
+            IMatrix smV = Matrix4.LookAt(lightDir, Vector3.Zero, new Vector3(0, 1, 0)) * Matrix4.CreateRotationX(Radian.Percent(0.5));
 
-            ShadowMapShader.ProjectionMatrix = smP;
-            ShadowMapShader.ViewMatrix = smV;
+            ShadowMapper.ProjectionMatrix = smP;
+            ShadowMapper.ViewMatrix = smV;
             Shader.LightSpaceMatrix = smV * smP;
-            ShadowMapShader.ModelMatrix = Matrix4.Identity;
+            ShadowMapper.ModelMatrix = Matrix.Identity;
 
-            Floor.Draw();
-            DrawObject.Draw();
-            Plane.Draw();
+            ShadowMapper.Draw(Floor);
+            ShadowMapper.Draw(DrawObject);
+            ShadowMapper.Draw(Plane);
 
-            ShadowMapShader.ModelMatrix = Matrix4.CreateTranslation(10, 2.5, 10);
-            sphere.Draw();
+            ShadowMapper.ModelMatrix = Matrix4.CreateTranslation(10, 2.5, 10);
+            ShadowMapper.Draw(sphere);
 
-            ShadowMapShader.ModelMatrix = playerMatrix;
-            player.Draw();
+            ShadowMapper.ModelMatrix = playerMatrix;
+            ShadowMapper.Draw(player);
 
-            ShadowMapShader.BindTexture(2);
+            ShadowMapper.DepthMap.Bind(2);
             Shader.ShadowMapSlot = 2;
-
-            ShadowMapShader.UnBind();
         }
 
         private void PlayerPhysics(ref Vector3 pos, ref Vector3 velocity, double yOffset)
@@ -573,7 +566,7 @@ namespace CSGL
             // Invalide size
             if (e.X <= 0 || e.Y <= 0) { return; }
 
-            Framebuffer.Size = e.Value;
+            _context.Size = e.Value;
         }
     }
 }

@@ -19,11 +19,11 @@ namespace CSGL
         {
             set
             {
-                SetUniformI(Uniforms[0], value);
+                SetUniform(Uniforms[0], value);
             }
         }
-        private Matrix4 _m3 = Matrix4.Identity;
-        public Matrix4 Projection
+        private IMatrix _m3 = Matrix.Identity;
+        public IMatrix Projection
         {
             get => _m3;
             set
@@ -33,8 +33,8 @@ namespace CSGL
                 SetMatrices();
             }
         }
-        private Matrix4 _m2 = Matrix4.Identity;
-        public Matrix4 View
+        private IMatrix _m2 = Matrix.Identity;
+        public IMatrix View
         {
             get => _m2;
             set
@@ -44,8 +44,8 @@ namespace CSGL
                 SetMatrices();
             }
         }
-        private Matrix4 _m1 = Matrix4.Identity;
-        public Matrix4 Model
+        private IMatrix _m1 = Matrix.Identity;
+        public IMatrix Model
         {
             get => _m1;
             set
@@ -57,7 +57,7 @@ namespace CSGL
         }
         private void SetMatrices()
         {
-            SetUniformF(Uniforms[1], _m1 * _m2 * _m3);
+            SetUniform(Uniforms[1], _m1 * _m2 * _m3);
         }
     }
 }

@@ -4,7 +4,7 @@ using Zene.Structs;
 
 namespace CSGL
 {
-    public class Light : IDrawable, IDisposable
+    public class Light : IDrawObject, IDisposable
     {
         public Light(Vector3 position, double size, BufferUsage usage)
         {
@@ -57,10 +57,7 @@ namespace CSGL
 
         private readonly DrawObject<Vector3, byte> _drawable;
 
-        public void Draw()
-        {
-            _drawable.Draw();
-        }
+        public Drawable GetRenderable(IDrawingContext context) => _drawable.GetRenderable(context);
 
         private bool _disposed;
 
