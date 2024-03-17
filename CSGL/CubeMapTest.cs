@@ -163,13 +163,12 @@ namespace CSGL
 
             IMatrix rotationMatrix = Matrix3.CreateRotationY(rotateY) * Matrix3.CreateRotationX(rotateX);
 
-            _offset += (Vector3)(cameraMove * rotationMatrix);
+            _offset += cameraMove * rotationMatrix;
 
             _shader.Bind();
             _shader.View = Matrix4.CreateTranslation(_offset) * Matrix4.CreateRotationY(rotateY) * Matrix4.CreateRotationX(rotateX);
-            _shader.TextureSlot = 0;
+            _shader.Texture = _cubeMap;
 
-            _cubeMap.Bind(0);
             e.Context.Shader = _shader;
             e.Context.Draw(_drawObject);
         }

@@ -13,15 +13,11 @@ namespace CSGL
                 File.ReadAllText("Resources/skyBoxVert.shader"),
                 File.ReadAllText("Resources/skyBoxFrag.shader"),
                 "skybox", "matrix");
+
+            SetUniform(Uniforms[0], 0);
         }
 
-        public int TextureSlot
-        {
-            set
-            {
-                SetUniform(Uniforms[0], value);
-            }
-        }
+        public ITexture Texture { get; set; }
         private IMatrix _m3 = Matrix.Identity;
         public IMatrix Projection
         {
@@ -58,6 +54,7 @@ namespace CSGL
         private void SetMatrices()
         {
             SetUniform(Uniforms[1], _m1 * _m2 * _m3);
+            Texture?.Bind(0);
         }
     }
 }

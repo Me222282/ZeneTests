@@ -6,7 +6,7 @@ using Zene.Structs;
 
 namespace CSGL
 {
-    public class Room : IRenderable, IDisposable
+    public class Room : IRenderable<LightingShader>, IDisposable
     {
         public Room(LightingShader shader)
         {
@@ -107,18 +107,18 @@ namespace CSGL
         public const int TexTexSlot = 0;
         public const int NorTexSlot = 1;
 
-        public void OnRender(IDrawingContext context)
+        public void OnRender(IDrawingContext context, LightingShader shader)
         {
-            wallTexture.Bind(TexTexSlot);
-            wallNormal.Bind(NorTexSlot);
+            shader.Texture = wallTexture;
+            shader.NormalMap = wallNormal;
             context.Draw(wallSide);
 
-            wallTopTexture.Bind(TexTexSlot);
-            wallTopNormal.Bind(NorTexSlot);
+            shader.Texture = wallTopTexture;
+            shader.NormalMap = wallTopNormal;
             context.Draw(wallTop);
 
-            floorTexture.Bind(TexTexSlot);
-            floorNormal.Bind(NorTexSlot);
+            shader.Texture = floorTexture;
+            shader.NormalMap = floorNormal;
             context.Draw(floor);
         }
 

@@ -14,16 +14,17 @@ namespace CSGL
         {
             _context = new PostProcessing(width, height)
             {
-
                 //Pixelated = true,
                 //UseKernel = true,
                 Kernel = PostShader.SharpenKernel,
                 KernelOffset = 200
             };
+            _perspective = new PerspectiveMatrix(Radian.Degrees(60d), (double)width / height, 0.1, 3000d);
+            _context.Projection = _perspective;
 
             SetUp();
 
-            CursorMode = CursorMode.Disabled;
+            //CursorMode = CursorMode.Disabled;
 
             State.OutputDebug = false;
         }
@@ -39,7 +40,7 @@ namespace CSGL
 
                 _drawObject.Dispose();
 
-                Floor.Dispose();
+                _floor.Dispose();
                 _floorTexture.Dispose();
                 _floorNormalMap.Dispose();
 
@@ -76,8 +77,7 @@ namespace CSGL
             base.OnUpdate(e);
 
             State.ClearErrors();
-
-            _actions.Flush();
+            //e.Context.Framebuffer.Clear(BufferBit.Colour);
 
             State.PolygonMode = _polygonMode;
             Draw(_context);
@@ -104,7 +104,7 @@ namespace CSGL
             System.IO.File.WriteAllLines("runtimeLog.txt", _runTimeLog);
         }
 
-        private PostProcessing _context;
+        private readonly PostProcessing _context;
 
         private static readonly Vector3 _red = new Vector3(1, 0, 0);
         private static readonly Vector3 _green = new Vector3(0, 1, 0);
@@ -160,7 +160,7 @@ namespace CSGL
         private Object3D _loadObject;
         private Texture2D _loadObjectImage;
 
-        private DrawObject<Vector3, uint> Floor;
+        private DrawObject<Vector3, uint> _floor;
 
         private Texture2D _floorTexture;
         private Texture2D _floorNormalMap;
@@ -196,18 +196,16 @@ namespace CSGL
                 new Vector3(500, 10, 500), new Vector3(100, 100, 0),
                 new Vector3(-500, 10, 500), new Vector3(0, 100, 0)}, 2, 1, new uint[] { 0, 1, 2, 2, 3, 0 }, out List<Vector3> floorVerts, out List<uint> floorInds);
 
-            Floor = new DrawObject<Vector3, uint>(floorVerts.ToArray(), floorInds.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
+            _floor = new DrawObject<Vector3, uint>(floorVerts.ToArray(), floorInds.ToArray(), 4, 0, AttributeSize.D3, BufferUsage.DrawFrequent);
 
             _floorTexture = Texture2D.LoadAsync("Resources/wood.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
 
-            _shader.TextureSlot = 0;
-            _shader.NormalMapSlot = 1;
             _floorNormalMap = Texture2D.LoadAsync("Resources/woodNor.png", WrapStyle.Repeated, TextureSampling.BlendMipMapBlend, true);
 
-            Floor.AddAttribute(ShaderLocation.TextureCoords, 1, AttributeSize.D3); // Texture Coordinates
-            Floor.AddAttribute(ShaderLocation.NormalTexture, 1, AttributeSize.D3); // Normal Map Coordinates
-            Floor.AddAttribute(ShaderLocation.Normal, 2, AttributeSize.D3); // Normals
-            Floor.AddAttribute(ShaderLocation.Tangent, 3, AttributeSize.D3); // Tangents
+            _floor.AddAttribute(ShaderLocation.TextureCoords, 1, AttributeSize.D3); // Texture Coordinates
+            _floor.AddAttribute(ShaderLocation.NormalTexture, 1, AttributeSize.D3); // Normal Map Coordinates
+            _floor.AddAttribute(ShaderLocation.Normal, 2, AttributeSize.D3); // Normals
+            _floor.AddAttribute(ShaderLocation.Tangent, 3, AttributeSize.D3); // Tangents
 
             State.Blending = true;
             State.SourceScaleBlending = BlendFunction.SourceAlpha;
@@ -215,7 +213,7 @@ namespace CSGL
 
             //GL.PolygonMode(GLEnum.FrontAndBack, GLEnum.Line);
 
-            rotationMatrix = Matrix3.CreateRotationX(0);
+            _rotationMatrix = Matrix3.CreateRotationX(0);
 
             _light = new Zene.Graphics.Light(new Colour3(255, 255, 255), Colour3.Zero, 0.0014, 0.000007, new Vector3(10, 0, 10));
             _shader.SetLight(0, _light);
@@ -229,8 +227,8 @@ namespace CSGL
 
             _farLightObject = new Light(new Vector3(500, 0, 500), 0.5, BufferUsage.DrawFrequent);
 
-            cameraLightCC = cameraLight = new Colour(120, 110, 100);
-            _shader.SetSpotLight(0, new SpotLight((Colour3)cameraLight, Radian.Degrees(22.5), Radian.Degrees(40), 0.0045, 0.00075, Vector3.Zero, new Vector3(0d, 0d, 1d)));
+            _cameraLightCC = _cameraLight = new Colour(120, 110, 100);
+            _shader.SetSpotLight(0, new SpotLight((Colour3)_cameraLight, Radian.Degrees(22.5), Radian.Degrees(40), 0.0045, 0.00075, Vector3.Zero, new Vector3(0d, 0d, 1d)));
 
             _room = new Room(_shader);
 
@@ -244,68 +242,62 @@ namespace CSGL
             _loadObjectImage = Texture2D.Create(new GLArray<Colour>(1, 1, 1, new Colour(134, 94, 250)), WrapStyle.EdgeClamp, TextureSampling.Blend, false);
         }
 
-        private readonly Matrix3 lightRotation = Matrix3.CreateRotationY(Radian.Percent(0.001));
+        private readonly Matrix3 _lightRotation = Matrix3.CreateRotationY(Radian.Percent(0.001));
 
-        private Vector3 CameraPos = Vector3.Zero;
+        private Vector3 _cameraPos = Vector3.Zero;
 
-        private Radian rotateX = Radian.Percent(0.5);
-        private Radian rotateY = 0;
-        private Radian rotateZ = 0;
+        private Radian _rotateX = Radian.Percent(0.5);
+        private Radian _rotateY = 0;
+        private Radian _rotateZ = 0;
 
-        private IMatrix rotationMatrix;
+        private IMatrix _rotationMatrix;
+        private readonly PerspectiveMatrix _perspective;
 
-        private Colour cameraLight;
-
-        private double moveSpeed = 1;
+        private Colour _cameraLight;
+        private double _moveSpeed = 1;
 
         protected virtual void Draw(IDrawingContext context)
         {
-            rotationMatrix = Matrix3.CreateRotationY(rotateY) * Matrix3.CreateRotationX(rotateX);
+            _rotationMatrix = Matrix3.CreateRotationY(_rotateY) * Matrix3.CreateRotationX(_rotateX);
 
             Vector3 cameraMove = new Vector3(0, 0, 0);
 
-            if (this[Keys.A])       { cameraMove.X += moveSpeed; }
-            if (this[Keys.D])       { cameraMove.X -= moveSpeed; }
-            if (this[Keys.W])       { cameraMove.Z -= moveSpeed; }
-            if (this[Keys.S])       { cameraMove.Z += moveSpeed; }
-            if (this[Keys.Space])   { cameraMove.Y -= moveSpeed; }
-            if (this[Mods.Control]) { cameraMove.Y += moveSpeed; }
+            if (this[Keys.A])       { cameraMove.X += _moveSpeed; }
+            if (this[Keys.D])       { cameraMove.X -= _moveSpeed; }
+            if (this[Keys.W])       { cameraMove.Z -= _moveSpeed; }
+            if (this[Keys.S])       { cameraMove.Z += _moveSpeed; }
+            if (this[Keys.Space])   { cameraMove.Y -= _moveSpeed; }
+            if (this[Mods.Control]) { cameraMove.Y += _moveSpeed; }
 
             if (this[Keys.LeftShift])   { cameraMove *= 2; }
             if (this[Keys.RightShift])  { cameraMove *= 0.25; }
             if (this[Mods.Alt])         { cameraMove *= 4; }
 
-            CameraPos += (Vector3)(cameraMove * rotationMatrix);
+            _cameraPos += cameraMove * _rotationMatrix;
 
-            _shader.Bind();
-
-            _shader.CameraPosition = -CameraPos;
+            _shader.CameraPosition = -_cameraPos;
 
             Vector3 lv3 = (Vector3)_light.LightVector;
-            lv3 *= lightRotation;
+            lv3 *= _lightRotation;
             _light.LightVector = (lv3, _light.LightVector.W);
 
             _shader.SetLightPosition(0, _light.LightVector);
 
-            IMatrix view = Matrix4.CreateTranslation(CameraPos) * Matrix4.CreateRotationY(rotateY) *
-                Matrix4.CreateRotationX(rotateX) * Matrix4.CreateRotationZ(rotateZ);
-            _shader.Matrix2 = view;
+            IMatrix view = Matrix4.CreateTranslation(_cameraPos) * Matrix4.CreateRotationY(_rotateY) *
+                Matrix4.CreateRotationX(_rotateX) * Matrix4.CreateRotationZ(_rotateZ);
+            context.View = view;
             _textDisplay.View = view;
 
-            _shader.SetSpotLightPosition(0, -CameraPos);
+            _shader.SetSpotLightPosition(0, -_cameraPos);
             _shader.SetSpotLightDirection(0, new Vector3(0, 0, 1) *
-                (Matrix3.CreateRotationX(rotateX - Radian.Percent(0.5)) * Matrix3.CreateRotationY(rotateY) * Matrix3.CreateRotationZ(rotateZ)));
-
-            _shader.TEMP();
-
-            State.DepthTesting = true;
+                (Matrix3.CreateRotationX(_rotateX - Radian.Percent(0.5)) * Matrix3.CreateRotationY(_rotateY) * Matrix3.CreateRotationZ(_rotateZ)));
 
             //IFrameBuffer.ClearColour(new ColourF(0.2f, 0.4f, 0.8f, 1.0f));
-            Framebuffer.Clear(BufferBit.Colour | BufferBit.Depth);
+            context.Framebuffer.Clear(BufferBit.Colour | BufferBit.Depth);
 
             _shader.NormalMapping = false;
-            _shader.DrawLighting = doLight;
-            _shader.Matrix1 = Matrix4.CreateRotationX(Radian.Percent(_objectRotation));
+            _shader.DrawLighting = _doLight;
+            context.Model = Matrix4.CreateRotationX(Radian.Percent(_objectRotation));
             _objectRotation += 0.001;
             _shader.ColourSource = ColourSource.AttributeColour;
             _shader.SetMaterial(_objectMaterial);
@@ -313,31 +305,27 @@ namespace CSGL
             context.Shader = _shader;
             context.Draw(_drawObject);
 
-            _shader.DrawLighting = doLight;
-            _shader.Matrix1 = Matrix4.CreateRotationZ(Radian.Percent(0.5)) * Matrix4.CreateRotationY(Radian.Percent(0.25)) * Matrix4.CreateTranslation(100, 0, 0);
+            _shader.DrawLighting = _doLight;
+            context.Model = Matrix4.CreateRotationZ(Radian.Percent(0.5)) * Matrix4.CreateRotationY(Radian.Percent(0.25)) * Matrix4.CreateTranslation(100, 0, 0);
             //Shader.SetColourSource(ColourSource.UniformColour);
             _shader.ColourSource = ColourSource.Texture;
             _shader.Colour = new Colour(134, 94, 250);
 
-            _loadObjectImage.Bind(0);
-            _shader.TextureSlot = 0;
+            _shader.Texture = _loadObjectImage;
             context.Draw(_loadObject);
 
             _shader.ColourSource = ColourSource.Texture;
-            _shader.Matrix1 = Matrix.Identity;
+            context.Model = Matrix.Identity;
             _shader.SetMaterial(_floorMaterial);
             _shader.NormalMapping = true;
 
-            _floorTexture.Bind(0);
-            _floorNormalMap.Bind(1);
-            context.Draw(Floor);
-
-            _floorTexture.Unbind();
-            _floorNormalMap.Unbind();
+            _shader.Texture = _floorTexture;
+            _shader.NormalMap = _floorNormalMap;
+            context.Draw(_floor);
 
             _shader.NormalMapping = false;
             _shader.DrawLighting = false;
-            _shader.Matrix1 = Matrix4.CreateTranslation((Vector3)_light.LightVector);
+            context.Model = Matrix4.CreateTranslation((Vector3)_light.LightVector);
             _shader.ColourSource = ColourSource.UniformColour;
             _shader.Colour = (ColourF)_light.LightColour;
             context.Draw(_lightObject);
@@ -357,35 +345,31 @@ namespace CSGL
 
             _shader.SetLight(1, _farLight);
 
-            _shader.Matrix1 = Matrix.Identity;
+            context.Model = Matrix.Identity;
             _shader.ColourSource = ColourSource.UniformColour;
             _shader.Colour = (ColourF)_farLight.LightColour;
             context.Draw(_farLightObject);
 
-            _shader.DrawLighting = doLight;
+            _shader.DrawLighting = _doLight;
             _shader.SetMaterial(_room.RoomMat);
-            _shader.Matrix1 = Matrix4.CreateTranslation(8000, 0, 0);
+            context.Model = Matrix4.CreateTranslation(8000, 0, 0);
             _shader.ColourSource = ColourSource.Texture;
-            _shader.TextureSlot = Room.TexTexSlot;
-            _shader.NormalMapSlot = Room.NorTexSlot;
             _shader.NormalMapping = true;
-            context.Render(_room);
+            context.Render(_room, _shader);
 
-            _textDisplay.Model = Matrix4.CreateTranslation(0, 0, -5.1) * Matrix4.CreateRotationX(Radian.Percent(_objectRotation));
+            context.Model = Matrix4.CreateTranslation(0, 0, -5.1) * Matrix4.CreateRotationX(Radian.Percent(_objectRotation));
             _textDisplay.DrawCentred(context, $"{Core.Time:N3}\n", _font, 0, 0);
-            _textDisplay.DrawCentred(context, $"\n{CameraPos.SquaredLength:N3}", _font, 0, 0);
+            _textDisplay.DrawCentred(context, $"\n{_cameraPos.SquaredLength:N3}", _font, 0, 0);
         }
 
         private int _fpsCounter = 0;
 
-        private bool torchLight = true;
-        private bool doLight = true;
-        private Colour cameraLightCC;
+        private bool _torchLight = true;
+        private bool _doLight = true;
+        private Colour _cameraLightCC;
 
         private bool _postProcess = false;
         private PolygonMode _polygonMode = PolygonMode.Fill;
-
-        private readonly ActionManager _actions = new ActionManager();
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
@@ -403,57 +387,57 @@ namespace CSGL
             }
             if (e[Keys.BackSpace])
             {
-                CameraPos = Vector3.Zero;
-                rotateX = Radian.Percent(0.5);
-                rotateY = 0;
-                rotateZ = 0;
-                moveSpeed = 1;
+                _cameraPos = Vector3.Zero;
+                _rotateX = Radian.Percent(0.5);
+                _rotateY = 0;
+                _rotateZ = 0;
+                _moveSpeed = 1;
 
-                cameraLightCC = cameraLight;
-                if (torchLight)
+                _cameraLightCC = _cameraLight;
+                if (_torchLight)
                 {
-                    _actions.Push(() => _shader.SetSpotLightColour(0, cameraLightCC));
+                    Actions.Push(() => _shader.SetSpotLightColour(0, _cameraLightCC));
                 }
                 return;
             }
             if (e[Keys.Enter])
             {
-                CameraPos = new Vector3(-8008, -2, 8);
-                rotateX = Radian.Percent(0.5);
-                rotateY = 0;
-                rotateZ = 0;
-                moveSpeed = 0.125;
+                _cameraPos = new Vector3(-8008, -2, 8);
+                _rotateX = Radian.Percent(0.5);
+                _rotateY = 0;
+                _rotateZ = 0;
+                _moveSpeed = 0.125;
 
-                cameraLightCC = new Colour(255, 235, 210);
-                if (torchLight)
+                _cameraLightCC = new Colour(255, 235, 210);
+                if (_torchLight)
                 {
-                    _actions.Push(() => _shader.SetSpotLightColour(0, cameraLightCC));
+                    Actions.Push(() => _shader.SetSpotLightColour(0, _cameraLightCC));
                 }
                 return;
             }
             if (e[Keys.L])
             {
-                torchLight = !torchLight;
+                _torchLight = !_torchLight;
 
-                if (torchLight)
+                if (_torchLight)
                 {
-                    _actions.Push(() => _shader.SetSpotLightColour(0, cameraLightCC));
+                    Actions.Push(() => _shader.SetSpotLightColour(0, _cameraLightCC));
                     return;
                 }
 
-                _actions.Push(() => _shader.SetSpotLightColour(0, Colour.Zero));
+                Actions.Push(() => _shader.SetSpotLightColour(0, Colour.Zero));
                 return;
             }
             if (e[Keys.N])
             {
-                doLight = !doLight;
+                _doLight = !_doLight;
                 return;
             }
             if (e[Keys.P])
             {
                 _postProcess = !_postProcess;
 
-                _actions.Push(() =>
+                Actions.Push(() =>
                 {
                     _context.Pixelated = _postProcess;
                     _context.UseKernel = _postProcess;
@@ -497,26 +481,19 @@ namespace CSGL
 
             _mouseLocation = new Vector2(e.X, e.Y);
 
-            rotateY += Radian.Degrees(distanceX * 0.1);
-            rotateX += Radian.Degrees(distanceY * 0.1);
+            _rotateY += Radian.Degrees(distanceX * 0.1);
+            _rotateX += Radian.Degrees(distanceY * 0.1);
         }
 
-        private const double _near = 0.1;
-        private const double _far = 3000;
         protected override void OnSizePixelChange(VectorIEventArgs e)
         {
             base.OnSizePixelChange(e);
 
-            _actions.Push(() => OnSizePixelChangeReceive(e));
+            Actions.Push(() => OnSizePixelChangeReceive(e));
         }
         private void OnSizePixelChangeReceive(VectorIEventArgs e)
         {
-            // Matrices
-            Matrix4 matrix = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)e.X / e.Y, _near, _far);
-
-            _shader.Matrix3 = matrix;
-            _textDisplay.Projection = matrix;
-
+            _perspective.Aspect = (double)e.X / e.Y;
             _context.Size = e.Value;
 
             double mWidth;
@@ -547,32 +524,28 @@ namespace CSGL
         {
             base.OnScroll(e);
 
-            _actions.Push(() => OnScrollReceive(e));
-        }
-        private void OnScrollReceive(ScrollEventArgs e)
-        {
-            _zoom -= e.DeltaY * _zoom * 0.02;
-
-            if (_zoom < 1)
+            lock (_perspective)
             {
-                _zoom = 1;
-            }
-            else if (_zoom > 179)
-            {
-                _zoom = 179;
-            }
+                double zoom = Degrees.Radian(_perspective.Fovy) - (e.DeltaY * _zoom * 0.02);
 
-            Matrix4 matrix = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)Width / Height, _near, _far);
+                if (zoom < 1)
+                {
+                    zoom = 1;
+                }
+                else if (zoom > 179)
+                {
+                    zoom = 179;
+                }
 
-            _shader.Matrix3 = matrix;
-            _textDisplay.Projection = matrix;
+                _perspective.Fovy = Radian.Degrees(zoom);
+            }
         }
 
         protected override void OnFileDrop(FileDropEventArgs e)
         {
             base.OnFileDrop(e);
 
-            _actions.Push(() => OnFileDropReceive(e));
+            Actions.Push(() => OnFileDropReceive(e));
         }
         private void OnFileDropReceive(FileDropEventArgs e)
         {

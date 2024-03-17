@@ -112,16 +112,14 @@ namespace CSGL
 
             _shader.Matrix1 = Matrix.Identity;
             _shader.ColourSource = ColourSource.Texture;
-            _shader.TextureSlot = Room.TexTexSlot;
             e.Context.Shader = _shader;
-            e.Context.Render(_room);
+            //e.Context.Render(_room, _shader);
 
             _shader.Matrix1 = Matrix4.CreateScale(0.25) * Matrix4.CreateRotationY(Radian.Percent(pDir)) * Matrix4.CreateRotationZ(-0.125) *
                 Matrix4.CreateTranslation(-CameraPos + new Vector3(-5, 5, 0));
             _shader.ColourSource = ColourSource.Texture;
-            _shader.TextureSlot = 0;
+            _shader.Texture = _texture;
 
-            _texture.Bind(0);
             e.Context.Draw(_drawObject);
             _texture.Unbind();
         }

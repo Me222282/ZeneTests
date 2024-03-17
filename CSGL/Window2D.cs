@@ -93,9 +93,7 @@ namespace CSGL
                 scale -= 1;
             }
 
-            Shader.Bind();
-
-            Shader.Matrix1 = matrix * Matrix4.CreateScale(scale) * Matrix4.CreateOrthographic(orthoWidth, orthoHeight, 10, 0);
+            e.Context.Model = matrix * Matrix4.CreateScale(scale) * Matrix4.CreateOrthographic(orthoWidth, orthoHeight, 10, 0);
             //Shader.Matrix1 = Matrix4.CreateTranslation(0, 0, scale) * Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(60), orthoWidth / orthoHeight, 1, 100);
 
             Shader.ColourSource = ColourSource.AttributeColour;
