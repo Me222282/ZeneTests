@@ -79,9 +79,7 @@ namespace CSGL
             State.ClearErrors();
             //e.Context.Framebuffer.Clear(BufferBit.Colour);
 
-            State.PolygonMode = _polygonMode;
             Draw(_context);
-            State.PolygonMode = PolygonMode.Fill;
 
             e.Context.Render(_context);
 
@@ -207,10 +205,6 @@ namespace CSGL
             _floor.AddAttribute(ShaderLocation.Normal, 2, AttributeSize.D3); // Normals
             _floor.AddAttribute(ShaderLocation.Tangent, 3, AttributeSize.D3); // Tangents
 
-            State.Blending = true;
-            State.SourceScaleBlending = BlendFunction.SourceAlpha;
-            State.DestinationScaleBlending = BlendFunction.OneMinusSourceAlpha;
-
             //GL.PolygonMode(GLEnum.FrontAndBack, GLEnum.Line);
 
             _rotationMatrix = Matrix3.CreateRotationX(0);
@@ -300,7 +294,7 @@ namespace CSGL
             context.Model = Matrix4.CreateRotationX(Radian.Percent(_objectRotation));
             _objectRotation += 0.001;
             _shader.ColourSource = ColourSource.AttributeColour;
-            _shader.SetMaterial(_objectMaterial);
+            _shader.Material = _objectMaterial;
 
             context.Shader = _shader;
             context.Draw(_drawObject);
@@ -316,7 +310,7 @@ namespace CSGL
 
             _shader.ColourSource = ColourSource.Texture;
             context.Model = Matrix.Identity;
-            _shader.SetMaterial(_floorMaterial);
+            _shader.Material = _floorMaterial;
             _shader.NormalMapping = true;
 
             _shader.Texture = _floorTexture;
@@ -351,10 +345,7 @@ namespace CSGL
             context.Draw(_farLightObject);
 
             _shader.DrawLighting = _doLight;
-            _shader.SetMaterial(_room.RoomMat);
             context.Model = Matrix4.CreateTranslation(8000, 0, 0);
-            _shader.ColourSource = ColourSource.Texture;
-            _shader.NormalMapping = true;
             context.Render(_room, _shader);
 
             context.Model = Matrix4.CreateTranslation(0, 0, -5.1) * Matrix4.CreateRotationX(Radian.Percent(_objectRotation));
@@ -369,7 +360,6 @@ namespace CSGL
         private Colour _cameraLightCC;
 
         private bool _postProcess = false;
-        private PolygonMode _polygonMode = PolygonMode.Fill;
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
@@ -457,13 +447,13 @@ namespace CSGL
             }
             if (e[Keys.J])
             {
-                if (_polygonMode == PolygonMode.Fill)
+                if (_context.RenderState.PolygonMode == PolygonMode.Fill)
                 {
-                    _polygonMode = PolygonMode.Line;
+                    _context.RenderState.PolygonMode = PolygonMode.Line;
                     return;
                 }
 
-                _polygonMode = PolygonMode.Fill;
+                _context.RenderState.PolygonMode = PolygonMode.Fill;
                 return;
             }
         }

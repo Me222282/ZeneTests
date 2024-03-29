@@ -170,10 +170,6 @@ namespace CSGL
             Floor.AddAttribute((uint)LightingShader.Location.Normal, 2, AttributeSize.D3); // Normals
             Floor.AddAttribute((uint)LightingShader.Location.Tangents, 3, AttributeSize.D3); // Tangents
 
-            State.Blending = true;
-            State.SourceScaleBlending = BlendFunction.SourceAlpha;
-            State.DestinationScaleBlending = BlendFunction.OneMinusSourceAlpha;
-
             Shader.AmbientLight = new Colour(12, 12, 15);
 
             Shader.IngorBlackLight = true;
@@ -273,14 +269,14 @@ namespace CSGL
 
             Shader.NormalMapping = false;
             Shader.ColourSource = ColourSource.AttributeColour;
-            Shader.SetMaterial(ObjectMaterial);
+            Shader.Material = ObjectMaterial;
             context.Shader = Shader;
             context.Draw(DrawObject);
 
             Shader.NormalMapping = false;
             Shader.ColourSource = ColourSource.UniformColour;
             Shader.Colour = new Colour(100, 200, 255);
-            Shader.SetMaterial(FloorMaterial);
+            Shader.Material = FloorMaterial;
             context.Draw(Plane);
 
             Shader.NormalMapping = false;
@@ -291,7 +287,7 @@ namespace CSGL
             context.Draw(LightObject);
 
             Shader.ColourSource = ColourSource.Texture;
-            Shader.SetMaterial(FloorMaterial);
+            Shader.Material = FloorMaterial;
             Shader.NormalMapping = true;
             Shader.DrawLighting = doLight;
 

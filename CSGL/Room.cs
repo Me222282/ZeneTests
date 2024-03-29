@@ -109,6 +109,10 @@ namespace CSGL
 
         public void OnRender(IDrawingContext context, LightingShader shader)
         {
+            shader.Material = RoomMat;
+            shader.ColourSource = ColourSource.Texture;
+            shader.NormalMapping = true;
+
             shader.Texture = wallTexture;
             shader.NormalMap = wallNormal;
             context.Draw(wallSide);
