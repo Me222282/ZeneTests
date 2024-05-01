@@ -20,6 +20,9 @@ namespace CSGL
             _perspective = new PerspectiveMatrix(Radian.Degrees(60d), (double)width / height, 1d, 5000d);
             _context.Projection = _perspective;
 
+            AddWindowFollower(_perspective);
+            AddWindowFollower(_context);
+
             SetUp();
 
             //CursorMode = CursorMode.Disabled;
@@ -553,21 +556,12 @@ namespace CSGL
             rotateX += Radian.Degrees(distanceY * 0.1);
         }
 
-        protected override void OnSizeChange(VectorIEventArgs e)
-        {
-            base.OnSizeChange(e);
-
-            _perspective.Aspect = (double)e.X / e.Y;
-        }
-
         protected override void OnSizePixelChange(VectorIEventArgs e)
         {
             base.OnSizePixelChange(e);
 
             // Invalide size
             if (e.X <= 0 || e.Y <= 0) { return; }
-
-            _context.Size = e.Value;
 
             double mWidth;
             double mHeight;
@@ -589,7 +583,7 @@ namespace CSGL
                 mWidth = mHeight * widthPercent;
             }
 
-            _context.PixelateSize = (mWidth, mHeight);
+            Actions.Push(() => _context.PixelateSize = new Vector2(mWidth, mHeight));
         }
     }
 }

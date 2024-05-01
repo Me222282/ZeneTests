@@ -369,7 +369,7 @@ namespace GUITest
 
             _shader.Bind();
             _shader.ColourSource = ColourSource.Texture;
-            _shader.TextureSlot = 0;
+            _shader.Texture = _frame.GetTexture(FrameAttachment.Colour0);
 
             Box bounds = Bounds;
             _shader.Matrix1 = Matrix4.CreateScale(bounds.Width, bounds.Height, depth) *

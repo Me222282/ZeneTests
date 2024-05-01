@@ -22,6 +22,9 @@ namespace CSGL
             _perspective = new PerspectiveMatrix(Radian.Degrees(60d), (double)width / height, 0.1, 3000d);
             _context.Projection = _perspective;
 
+            AddWindowFollower(_perspective);
+            AddWindowFollower(_context);
+
             SetUp();
 
             //CursorMode = CursorMode.Disabled;
@@ -479,13 +482,6 @@ namespace CSGL
         {
             base.OnSizePixelChange(e);
 
-            Actions.Push(() => OnSizePixelChangeReceive(e));
-        }
-        private void OnSizePixelChangeReceive(VectorIEventArgs e)
-        {
-            _perspective.Aspect = (double)e.X / e.Y;
-            _context.Size = e.Value;
-
             double mWidth;
             double mHeight;
 
@@ -506,17 +502,17 @@ namespace CSGL
                 mWidth = mHeight * widthPercent;
             }
 
-            _context.PixelateSize = (mWidth, mHeight);
+            Actions.Push(() => _context.PixelateSize = new Vector2(mWidth, mHeight));
         }
 
-        private double _zoom = 60;
         protected override void OnScroll(ScrollEventArgs e)
         {
             base.OnScroll(e);
 
             lock (_perspective)
             {
-                double zoom = Degrees.Radian(_perspective.Fovy) - (e.DeltaY * _zoom * 0.02);
+                double zoom = Degrees.Radian(_perspective.Fovy);
+                zoom -= e.DeltaY * zoom * 0.02;
 
                 if (zoom < 1)
                 {

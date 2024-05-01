@@ -102,7 +102,7 @@ namespace GUITest
 
             protected override Vector2 OnSizeChange(VectorEventArgs e) => e.Value + _borderWidth;
 
-            public override void OnRender(DrawManager context)
+            public override void OnRender(IDrawingContext context)
             {
                 Colour bc = new Colour(100, 200, 97);
                 if (Source.Focused)
