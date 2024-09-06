@@ -99,6 +99,9 @@ namespace CSGL
             Shader.ColourSource = ColourSource.AttributeColour;
             e.Context.Shader = Shader;
             e.Context.Draw(DrawObject);
+
+            e.Context.RenderState.PostMatrixMods = false;
+            e.Context.DrawTriangle((-0.2, 0.3), 1d, (0.5, -0.6), ColourF.Lime);
         }
 
         private bool _leftShift;
