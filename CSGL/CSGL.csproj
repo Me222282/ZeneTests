@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -22,10 +22,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Graphics\src\Graphics.csproj" />
-    <ProjectReference Include="..\..\Structs\src\Structs.csproj" />
+	<ProjectReference Include="..\..\Structs\src\Structs.csproj" />
     <ProjectReference Include="..\..\Windowing\src\Windowing.csproj" />
   </ItemGroup>
-
+	
   <ItemGroup>
     <None Update="Resources\Bean.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

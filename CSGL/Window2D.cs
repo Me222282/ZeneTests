@@ -52,10 +52,10 @@ namespace CSGL
 
         private IMatrix matrix;
 
-        private double scale;
+        private float scale;
 
-        private double orthoWidth;
-        private double orthoHeight;
+        private float orthoWidth;
+        private float orthoHeight;
 
         protected virtual void SetUp()
         {
@@ -170,12 +170,12 @@ namespace CSGL
         {
             base.OnSizeChange(e);
 
-            double mWidth;
-            double mHeight;
+            float mWidth;
+            float mHeight;
 
             if (e.X > e.Y)
             {
-                double heightPercent = (double)e.Y / e.X;
+                float heightPercent = (float)e.Y / e.X;
 
                 mWidth = 1600;
 
@@ -183,7 +183,7 @@ namespace CSGL
             }
             else
             {
-                double widthPercent = (double)e.X / e.Y;
+                float widthPercent = (float)e.X / e.Y;
 
                 mHeight = 900;
 

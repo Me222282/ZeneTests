@@ -57,9 +57,9 @@ namespace TexelPhysics
                 for (int i = 0; i < _cells.Count; i++)
                 {
                     //total += _cells[i].Colour;
-                    total.R *= _cells[i].Colour.R;
-                    total.G *= _cells[i].Colour.G;
-                    total.B *= _cells[i].Colour.B;
+                    total.R += _cells[i].Colour.R;
+                    total.G += _cells[i].Colour.G;
+                    total.B += _cells[i].Colour.B;
                 }
 
                 return (Colour)total;

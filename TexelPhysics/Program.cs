@@ -160,7 +160,7 @@ namespace TexelPhysics
 
         private readonly World _world;
         private Cell.Type _addingCell;
-        protected override void OnUpdate(EventArgs e)
+        protected override void OnUpdate(FrameEventArgs e)
         {
             base.OnUpdate(e);
 
@@ -179,7 +179,6 @@ namespace TexelPhysics
             _world.UpdateCells();
 
             base.Framebuffer.Clear(BufferBit.Colour);
-
 
             // Set texture data to values of cellmap
             _texture.TexSubImage2D(0, 0, 0, _texture.Width, _texture.Height, BaseFormat.Rgba, TextureData.Byte, _world.GetTextureData());
@@ -224,9 +223,12 @@ namespace TexelPhysics
         {
             base.OnMouseMove(e);
 
+            //Console.WriteLine(e.Location);
+
             _worldMouse = new Vector2I(
                 (e.Location.X / Width) * _world.Width,
                 (e.Location.Y / Height) * _world.Height);
+            _worldMouse.Y = _world.Height - _worldMouse.Y;
         }
 
         private bool _sKey = false;

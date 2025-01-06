@@ -17,7 +17,7 @@ namespace CSGL
                 Kernel = PostShader.SharpenKernel,
                 KernelOffset = 200
             };
-            _perspective = new PerspectiveMatrix(Radian.Degrees(60d), (double)width / height, 1d, 5000d);
+            _perspective = new PerspectiveMatrix(Radian.Degrees(60), (float)width / height, 1, 5000);
             _context.Projection = _perspective;
 
             AddWindowFollower(_perspective);
@@ -193,10 +193,10 @@ namespace CSGL
 
             player = new Player(2, 8, 2);
 
-            hMWS = (double)heightMap.Width / 1000;
-            hMHS = (double)heightMap.Height / 1000;
-            bw = (double)1000 / heightMap.Width;
-            bh = (double)1000 / heightMap.Height;
+            hMWS = (float)heightMap.Width / 1000;
+            hMHS = (float)heightMap.Height / 1000;
+            bw = (float)1000 / heightMap.Width;
+            bh = (float)1000 / heightMap.Height;
 
             sphere = Object3D.FromObjNMT("Resources/Sphere.obj");
         }
@@ -206,26 +206,26 @@ namespace CSGL
 
         private Player player;
 
-        private Radian rotateX = Radian.Percent(0.5);
+        private Radian rotateX = Radian.Percent(0.5f);
         private Radian rotateY = 0;
         private Radian rotateZ = 0;
 
         //private Point3 lightDir = new Point3(-0.5, -2, -0.5) * 100;
         private Vector3 lightDir = new Vector3(1, -1, 1) * 100;
-        private readonly IMatrix lightRotation = Matrix3.CreateRotationX(Radian.Percent(-0.0000125)) * Matrix3.CreateRotationZ(Radian.Percent(0.0000125));
+        private readonly IMatrix lightRotation = Matrix3.CreateRotationX(Radian.Percent(-0.0000125f)) * Matrix3.CreateRotationZ(Radian.Percent(0.0000125f));
         private readonly PerspectiveMatrix _perspective;
 
         protected virtual void Draw(IDrawingContext context)
         {
             Vector3 cameraMove = new Vector3(0, 0, 0);
 
-            double speed = 0.5;
+            float speed = 0.5f;
             if (CameraPos.Y > (GetHeightMapPos(CameraPos) + 0.5))
             {
-                speed += 0.25;
+                speed += 0.25f;
             }
 
-            double offset = 0;
+            float offset = 0;
 
             if (_left) { cameraMove.X += speed; }
             if (_right) { cameraMove.X -= speed; }
@@ -297,7 +297,7 @@ namespace CSGL
             Shader.Texture = FloorTexture;
             Shader.NormalMap = FloorNormalMap;
 
-            context.Model = Matrix4.CreateTranslation(10, 2.5, 10);
+            context.Model = Matrix4.CreateTranslation(10, 2.5f, 10);
             context.Draw(sphere);
             context.Model = Matrix.Identity;
             context.Draw(Floor);
@@ -309,8 +309,8 @@ namespace CSGL
         {
             ShadowMapper.Clear();
 
-            IMatrix smP = /*Matrix4.CreateOrthographic(100, 100, 0, 1000);*/ Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(110), 1, 0.1, 5000);
-            IMatrix smV = Matrix4.LookAt(lightDir, Vector3.Zero, new Vector3(0, 1, 0)) * Matrix4.CreateRotationX(Radian.Percent(0.5));
+            IMatrix smP = /*Matrix4.CreateOrthographic(100, 100, 0, 1000);*/ Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(110), 1, 0.1f, 5000);
+            IMatrix smV = Matrix4.LookAt(lightDir, Vector3.Zero, new Vector3(0, 1, 0)) * Matrix4.CreateRotationX(Radian.Percent(0.5f));
 
             ShadowMapper.Projection = smP;
             ShadowMapper.View = smV;
@@ -321,7 +321,7 @@ namespace CSGL
             ShadowMapper.Draw(DrawObject);
             ShadowMapper.Draw(Plane);
 
-            ShadowMapper.Model = Matrix4.CreateTranslation(10, 2.5, 10);
+            ShadowMapper.Model = Matrix4.CreateTranslation(10, 2.5f, 10);
             ShadowMapper.Draw(sphere);
 
             ShadowMapper.Model = playerMatrix;
@@ -330,9 +330,9 @@ namespace CSGL
             Shader.ShadowMap = ShadowMapper.DepthMap;
         }
 
-        private void PlayerPhysics(ref Vector3 pos, ref Vector3 velocity, double yOffset)
+        private void PlayerPhysics(ref Vector3 pos, ref Vector3 velocity, float yOffset)
         {
-            velocity.Y -= 0.15;
+            velocity.Y -= 0.15f;
 
             Vector3 shift = cube.Collision(player.ColBox, player.ColBox.Shifted(-velocity));
 
@@ -340,7 +340,7 @@ namespace CSGL
 
             player.ColBox.Shift(shift);
 
-            double floor = GetHeightMapPos(pos);
+            float floor = GetHeightMapPos(pos);
 
             if ((pos.Y + yOffset) < floor)
             {
@@ -350,19 +350,19 @@ namespace CSGL
             }
         }
 
-        private readonly BitmapD heightMap = new BitmapD(new Bitmap("Resources/floorHeight.png"), -1, 0.5);
+        private readonly BitmapF heightMap = new BitmapF(new Bitmap("Resources/floorHeight.png"), -1, 0.5f);
 
         private readonly CObject cube = new CObject(-5, 5, -5, 5, 5, -5);
 
-        private double hMWS;
-        private double hMHS;
-        private double bw;
-        private double bh;
+        private float hMWS;
+        private float hMHS;
+        private float bw;
+        private float bh;
 
-        private double GetHeightMapPos(Vector3 worldPos)
+        private float GetHeightMapPos(Vector3 worldPos)
         {
-            double wx = worldPos.X + 500;
-            double wy = worldPos.Z + 500;
+            float wx = worldPos.X + 500;
+            float wy = worldPos.Z + 500;
 
             int x1 = (int)Math.Floor(wx * hMWS);
             int y1 = (int)Math.Floor(wy * hMHS);
@@ -370,21 +370,21 @@ namespace CSGL
             int x2 = (int)Math.Ceiling(wx * hMWS);
             int y2 = (int)Math.Ceiling(wy * hMHS);
 
-            double x1y1 = heightMap.GetValue(x1, y1);
-            double x2y1 = heightMap.GetValue(x2, y1);
-            double x1y2 = heightMap.GetValue(x1, y2);
-            double x2y2 = heightMap.GetValue(x2, y2);
+            float x1y1 = heightMap.GetValue(x1, y1);
+            float x2y1 = heightMap.GetValue(x2, y1);
+            float x1y2 = heightMap.GetValue(x1, y2);
+            float x2y2 = heightMap.GetValue(x2, y2);
 
-            double xs = (((x1 / hMWS) - wx) / bw) * -1;
-            double ys = (((y1 / hMHS) - wy) / bh) * -1;
+            float xs = (((x1 / hMWS) - wx) / bw) * -1;
+            float ys = (((y1 / hMHS) - wy) / bh) * -1;
 
-            double y1I = Lerp(x1y1, x2y1, xs);
-            double y2I = Lerp(x1y2, x2y2, xs);
+            float y1I = Lerp(x1y1, x2y1, xs);
+            float y2I = Lerp(x1y2, x2y2, xs);
 
             return Lerp(y1I, y2I, ys);
         }
 
-        private static double Lerp(double a, double b, double scale)
+        private static float Lerp(float a, float b, float scale)
         {
             return a + ((b - a) * scale);
         }
@@ -458,7 +458,7 @@ namespace CSGL
             if (e[Keys.BackSpace])
             {
                 CameraPos = Vector3.Zero;
-                rotateX = Radian.Percent(0.5);
+                rotateX = Radian.Percent(0.5f);
                 rotateY = 0;
                 rotateZ = 0;
                 return;
@@ -547,13 +547,13 @@ namespace CSGL
 
             if (new Vector2(e.X, e.Y) == _mouseLocation) { return; }
 
-            double distanceX = e.X - _mouseLocation.X;
-            double distanceY = e.Y - _mouseLocation.Y;
+            float distanceX = e.X - _mouseLocation.X;
+            float distanceY = e.Y - _mouseLocation.Y;
 
             _mouseLocation = new Vector2(e.X, e.Y);
 
-            rotateY += Radian.Degrees(distanceX * 0.1);
-            rotateX += Radian.Degrees(distanceY * 0.1);
+            rotateY += Radian.Degrees(distanceX * 0.1f);
+            rotateX += Radian.Degrees(distanceY * 0.1f);
         }
 
         protected override void OnSizePixelChange(VectorIEventArgs e)
@@ -563,12 +563,12 @@ namespace CSGL
             // Invalide size
             if (e.X <= 0 || e.Y <= 0) { return; }
 
-            double mWidth;
-            double mHeight;
+            float mWidth;
+            float mHeight;
 
             if (e.X > e.Y)
             {
-                double heightPercent = (double)e.Y / e.X;
+                float heightPercent = (float)e.Y / e.X;
 
                 mWidth = 400;
 
@@ -576,9 +576,9 @@ namespace CSGL
             }
             else
             {
-                double widthPercent = (double)e.X / e.Y;
+                float widthPercent = (float)e.X / e.Y;
 
-                mHeight = 56.25 * 4;
+                mHeight = 56.25f * 4;
 
                 mWidth = mHeight * widthPercent;
             }

@@ -69,11 +69,11 @@ namespace CSGL
 
         private Matrix3 rotationMatrix;
 
-        private readonly double moveSpeed = 0.5;
+        private readonly float moveSpeed = 0.5f;
 
         private Vector3 CameraPos = Vector3.Zero;
 
-        private double pDir = 0;
+        private float pDir = 0;
 
         protected override void OnUpdate(FrameEventArgs e)
         {
@@ -90,7 +90,7 @@ namespace CSGL
             }
             if (_right) 
             {
-                pDir = 0.5;
+                pDir = 0.5f;
                 cameraMove.X -= moveSpeed;
             }
             if (_forward)   { cameraMove.Z += moveSpeed; }
@@ -106,7 +106,7 @@ namespace CSGL
             _shader.Bind();
 
             _shader.Matrix2 = Matrix4.CreateTranslation(CameraPos) * Matrix4.CreateRotationY(rotateY) *
-                Matrix4.CreateRotationX(Radian.Percent(-0.125 + 0.5));
+                Matrix4.CreateRotationX(Radian.Percent(-0.125f + 0.5f));
 
             BaseFramebuffer.Clear(BufferBit.Colour | BufferBit.Depth);
 
@@ -238,7 +238,7 @@ namespace CSGL
         {
             base.OnSizeChange(e);
 
-            _shader.Matrix3 = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(65), (double)e.X / e.Y, 0.1, 1000);
+            _shader.Matrix3 = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(65), (float)e.X / e.Y, 0.1f, 1000);
         }
 
         private Vector2 _mouseLocation = Vector2.Zero;
@@ -250,12 +250,12 @@ namespace CSGL
 
             if (new Vector2(e.X, e.Y) == _mouseLocation) { return; }
 
-            double distanceX = e.X - _mouseLocation.X;
-            double distanceY = _mouseLocation.Y - e.Y;
+            float distanceX = e.X - _mouseLocation.X;
+            float distanceY = _mouseLocation.Y - e.Y;
 
             _mouseLocation = new Vector2(e.X, e.Y);
 
-            rotateY += Radian.Degrees(distanceX * 0.1);
+            rotateY += Radian.Degrees(distanceX * 0.1f);
             //rotateX += Radian.Degrees(distanceY * 0.1);
         }
 

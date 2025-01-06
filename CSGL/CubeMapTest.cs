@@ -12,18 +12,18 @@ namespace CSGL
         {
             _shader = new SkyBoxShader();
 
-            _drawObject = new DrawObject<double, byte>(
-                new double[]
+            _drawObject = new DrawObject<float, byte>(
+                new float[]
                 {
-                    -1.0, 1.0, 1.0,     // 0
-                    1.0, 1.0, 1.0,      // 1
-                    1.0, -1.0, 1.0,     // 2
-                    -1.0, -1.0, 1.0,    // 3
+                    -1.0f, 1.0f, 1.0f,     // 0
+                    1.0f, 1.0f, 1.0f,      // 1
+                    1.0f, -1.0f, 1.0f,     // 2
+                    -1.0f, -1.0f, 1.0f,    // 3
 
-                    -1.0, 1.0, -1.0,    // 4
-                    1.0, 1.0, -1.0,     // 5
-                    1.0, -1.0, -1.0,    // 6
-                    -1.0, -1.0, -1.0    // 7
+                    -1.0f, 1.0f, -1.0f,    // 4
+                    1.0f, 1.0f, -1.0f,     // 5
+                    1.0f, -1.0f, -1.0f,    // 6
+                    -1.0f, -1.0f, -1.0f    // 7
                 },
                 new byte[]
                 {
@@ -111,7 +111,7 @@ namespace CSGL
             CursorMode = CursorMode.Disabled;
         }
 
-        private readonly DrawObject<double, byte> _drawObject;
+        private readonly DrawObject<float, byte> _drawObject;
         private readonly CubeMap _cubeMap;
         private readonly SkyBoxShader _shader;
 
@@ -138,27 +138,27 @@ namespace CSGL
 
             if (_w)
             {
-                cameraMove.Z -= 0.025;
+                cameraMove.Z -= 0.025f;
             }
             if (_s)
             {
-                cameraMove.Z += 0.025;
+                cameraMove.Z += 0.025f;
             }
             if (_a)
             {
-                cameraMove.X += 0.025;
+                cameraMove.X += 0.025f;
             }
             if (_d)
             {
-                cameraMove.X -= 0.025;
+                cameraMove.X -= 0.025f;
             }
             if (_space)
             {
-                cameraMove.Y -= 0.025;
+                cameraMove.Y -= 0.025f;
             }
             if (_ctrl)
             {
-                cameraMove.Y += 0.025;
+                cameraMove.Y += 0.025f;
             }
 
             IMatrix rotationMatrix = Matrix3.CreateRotationY(rotateY) * Matrix3.CreateRotationX(rotateX);
@@ -166,16 +166,16 @@ namespace CSGL
             _offset += cameraMove * rotationMatrix;
 
             _shader.Bind();
-            _shader.View = Matrix4.CreateTranslation(_offset) * Matrix4.CreateRotationY(rotateY) * Matrix4.CreateRotationX(rotateX);
             _shader.Texture = _cubeMap;
 
             e.Context.Shader = _shader;
+            e.Context.View = Matrix4.CreateTranslation(_offset) * Matrix4.CreateRotationY(rotateY) * Matrix4.CreateRotationX(rotateX);
             e.Context.Draw(_drawObject);
         }
 
-        private double _zoom = 60;
-        private const double _near = 0.00001;
-        private const double _far = 10;
+        private float _zoom = 60;
+        private const float _near = 0.00001f;
+        private const float _far = 10;
         protected override void OnScroll(ScrollEventArgs e)
         {
             base.OnScroll(e);
@@ -192,14 +192,14 @@ namespace CSGL
                 _zoom = 1;
             }
 
-            _shader.Projection = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)Width / Height, _near, _far);
+            DrawContext.Projection = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (float)Width / Height, _near, _far);
         }
 
         protected override void OnSizeChange(VectorIEventArgs e)
         {
             base.OnSizeChange(e);
 
-            _shader.Projection = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (double)e.X / e.Y, _near, _far);
+            DrawContext.Projection = Matrix4.CreatePerspectiveFieldOfView(Radian.Degrees(_zoom), (float)e.X / e.Y, _near, _far);
         }
         protected override void OnSizePixelChange(VectorIEventArgs e)
         {
@@ -327,13 +327,13 @@ namespace CSGL
 
             if (new Vector2(e.X, e.Y) == _mouseLocation) { return; }
 
-            double distanceX = e.X - _mouseLocation.X;
-            double distanceY = e.Y - _mouseLocation.Y;
+            float distanceX = e.X - _mouseLocation.X;
+            float distanceY = e.Y - _mouseLocation.Y;
 
             _mouseLocation = new Vector2(e.X, e.Y);
 
-            rotateY -= Radian.Degrees(distanceX * 0.1);
-            rotateX += Radian.Degrees(distanceY * 0.1);
+            rotateY -= Radian.Degrees(distanceX * 0.1f);
+            rotateX += Radian.Degrees(distanceY * 0.1f);
         }
     }
 }

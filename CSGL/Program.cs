@@ -39,8 +39,8 @@ namespace CSGL
 
             Thread.Sleep(2000);
             */
-            //Window3D b = new Window3D(800, 500, "Work");
-            Window2D b = new Window2D(800, 500, "Work");
+            Window3D b = new Window3D(800, 500, "Work");
+            //Window2D b = new Window2D(800, 500, "Work");
             //CubeMapTest b = new CubeMapTest(800, 500, "Work");
             //ShadowLWindow b = new ShadowLWindow(800, 500, "Work");
 

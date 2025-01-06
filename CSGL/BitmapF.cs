@@ -3,17 +3,17 @@ using Zene.Graphics;
 
 namespace CSGL
 {
-    public struct BitmapD
+    public struct BitmapF
     {
-        public BitmapD(int width, int height)
+        public BitmapF(int width, int height)
         {
             Width = width;
             Height = height;
 
-            _data = new double[width, height];
+            _data = new float[width, height];
         }
 
-        public BitmapD(int width, int height, double[,] data)
+        public BitmapF(int width, int height, float[,] data)
         {
             Width = width;
             Height = height;
@@ -26,12 +26,12 @@ namespace CSGL
             _data = data;
         }
 
-        public BitmapD(Bitmap b, double offset, double scale)
+        public BitmapF(Bitmap b, float offset, float scale)
         {
             Width = b.Width;
             Height = b.Height;
 
-            _data = new double[Width, Height];
+            _data = new float[Width, Height];
 
             for (int x = 0; x < Width; x++)
             {
@@ -42,11 +42,11 @@ namespace CSGL
             }
         }
 
-        public unsafe BitmapD(string path)
+        public unsafe BitmapF(string path)
         {
             byte[] data = Bitmap.ExtractData(path, out int width, out int height);
 
-            _data = new double[width, height];
+            _data = new float[width, height];
 
             Width = width;
             Height = height;
@@ -69,9 +69,9 @@ namespace CSGL
 
         public int Height { get; }
 
-        private readonly double[,] _data;
+        private readonly float[,] _data;
 
-        public void SetValue(int x, int y, double value)
+        public void SetValue(int x, int y, float value)
         {
             x = x < Width ? x : Width - 1;
             x = x < 0 ? 0 : x;
@@ -82,7 +82,7 @@ namespace CSGL
             _data[x, y] = value;
         }
 
-        public double GetValue(int x, int y)
+        public float GetValue(int x, int y)
         {
             x = x < Width ? x : Width - 1;
             x = x < 0 ? 0 : x;

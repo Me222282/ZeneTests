@@ -52,8 +52,8 @@ namespace CSGL
 
             RoomMat = new Material(new Colour3(106, 80, 93), Material.Source.None, Shine.None);
 
-            shader.SetLight(2, new Zene.Graphics.Light(new Colour3(120, 100, 120), Colour3.Zero, 0.007, 0.00014, new Vector3(8008, -3, -8)));
-            shader.SetLight(3, new Zene.Graphics.Light(new Colour3(120, 100, 120), Colour3.Zero, 0.007, 0.00014, new Vector3(8008, -3, -28)));
+            shader.SetLight(2, new Zene.Graphics.Light(new Colour3(120, 100, 120), Colour3.Zero, 0.007f, 0.00014f, new Vector3(8008, -3, -8)));
+            shader.SetLight(3, new Zene.Graphics.Light(new Colour3(120, 100, 120), Colour3.Zero, 0.007f, 0.00014f, new Vector3(8008, -3, -28)));
         }
 
         public Room()

@@ -19,7 +19,7 @@ namespace CSGL
                 Kernel = PostShader.SharpenKernel,
                 KernelOffset = 200
             };
-            _perspective = new PerspectiveMatrix(Radian.Degrees(60d), (double)width / height, 0.1, 3000d);
+            _perspective = new PerspectiveMatrix(Radian.Degrees(60), (float)width / height, 0.1f, 3000);
             _context.Projection = _perspective;
 
             AddWindowFollower(_perspective);
@@ -154,7 +154,7 @@ namespace CSGL
         private LightingShader _shader;
 
         private DrawObject<Vector3, uint> _drawObject;
-        private double _objectRotation = 0.001;
+        private float _objectRotation = 0.001f;
 
         private Material _objectMaterial = new Material(Material.Source.Default, Material.Source.None, Shine.None);
 
@@ -174,7 +174,7 @@ namespace CSGL
         private Zene.Graphics.Light _light;
         private Zene.Graphics.Light _farLight;
 
-        private double _lightAmplitude = 0;
+        private float _lightAmplitude = 0;
 
         private Room _room;
 
@@ -212,10 +212,10 @@ namespace CSGL
 
             _rotationMatrix = Matrix3.CreateRotationX(0);
 
-            _light = new Zene.Graphics.Light(new Colour3(255, 255, 255), Colour3.Zero, 0.0014, 0.000007, new Vector3(10, 0, 10));
+            _light = new Zene.Graphics.Light(new Colour3(255, 255, 255), Colour3.Zero, 0.0014f, 0.000007f, new Vector3(10, 0, 10));
             _shader.SetLight(0, _light);
 
-            _farLight = new Zene.Graphics.Light(new Colour3(200, 200, 200), Colour3.Zero, 0.014, 0.0007, new Vector3(500, 0, 500));
+            _farLight = new Zene.Graphics.Light(new Colour3(200, 200, 200), Colour3.Zero, 0.014f, 0.0007f, new Vector3(500, 0, 500));
             _shader.SetLight(1, _farLight);
 
             _shader.AmbientLight = new Colour(12, 12, 15);
@@ -225,7 +225,7 @@ namespace CSGL
             _farLightObject = new Light(new Vector3(500, 0, 500), 0.5, BufferUsage.DrawFrequent);
 
             _cameraLightCC = _cameraLight = new Colour(120, 110, 100);
-            _shader.SetSpotLight(0, new SpotLight((Colour3)_cameraLight, Radian.Degrees(22.5), Radian.Degrees(40), 0.0045, 0.00075, Vector3.Zero, new Vector3(0d, 0d, 1d)));
+            _shader.SetSpotLight(0, new SpotLight((Colour3)_cameraLight, Radian.Degrees(22.5f), Radian.Degrees(40), 0.0045f, 0.00075f, Vector3.Zero, new Vector3(0, 0, 1)));
 
             _room = new Room(_shader);
 
@@ -239,23 +239,23 @@ namespace CSGL
             _loadObjectImage = Texture2D.Create(new GLArray<Colour>(1, 1, 1, new Colour(134, 94, 250)), WrapStyle.EdgeClamp, TextureSampling.Blend, false);
         }
 
-        private readonly Matrix3 _lightRotation = Matrix3.CreateRotationY(Radian.Percent(0.001));
+        private readonly Matrix3 _lightRotation = Matrix3.CreateRotationY(Radian.Percent(0.001f));
 
         private Vector3 _cameraPos = Vector3.Zero;
 
-        private Radian _rotateX = Radian.Percent(0.5);
+        private Radian _rotateX = Radian.Percent(0.5f);
         private Radian _rotateY = 0;
         private Radian _rotateZ = 0;
 
-        private IMatrix _rotationMatrix;
+        private Matrix3 _rotationMatrix;
         private readonly PerspectiveMatrix _perspective;
 
         private Colour _cameraLight;
-        private double _moveSpeed = 1;
+        private float _moveSpeed = 1;
 
         protected virtual void Draw(IDrawingContext context)
         {
-            _rotationMatrix = Matrix3.CreateRotationY(_rotateY) * Matrix3.CreateRotationX(_rotateX);
+            _rotationMatrix = Matrix3.CreateRotationX(-_rotateX) * Matrix3.CreateRotationY(-_rotateY);
 
             Vector3 cameraMove = new Vector3(0, 0, 0);
 
@@ -280,14 +280,12 @@ namespace CSGL
 
             _shader.SetLightPosition(0, _light.LightVector);
 
-            IMatrix view = Matrix4.CreateTranslation(_cameraPos) * Matrix4.CreateRotationY(_rotateY) *
+            context.View = Matrix4.CreateTranslation(_cameraPos) * Matrix4.CreateRotationY(_rotateY) *
                 Matrix4.CreateRotationX(_rotateX) * Matrix4.CreateRotationZ(_rotateZ);
-            context.View = view;
-            _textDisplay.View = view;
 
             _shader.SetSpotLightPosition(0, -_cameraPos);
-            _shader.SetSpotLightDirection(0, new Vector3(0, 0, 1) *
-                (Matrix3.CreateRotationX(_rotateX - Radian.Percent(0.5)) * Matrix3.CreateRotationY(_rotateY) * Matrix3.CreateRotationZ(_rotateZ)));
+            _shader.SetSpotLightDirection(0, new Vector3(0, 0, -1) *
+                Matrix3.CreateRotationX(-_rotateX) * Matrix3.CreateRotationY(-_rotateY) * Matrix3.CreateRotationZ(_rotateZ));
 
             //IFrameBuffer.ClearColour(new ColourF(0.2f, 0.4f, 0.8f, 1.0f));
             context.Framebuffer.Clear(BufferBit.Colour | BufferBit.Depth);
@@ -295,7 +293,7 @@ namespace CSGL
             _shader.NormalMapping = false;
             _shader.DrawLighting = _doLight;
             context.Model = Matrix4.CreateRotationX(Radian.Percent(_objectRotation));
-            _objectRotation += 0.001;
+            _objectRotation += 0.001f;
             _shader.ColourSource = ColourSource.AttributeColour;
             _shader.Material = _objectMaterial;
 
@@ -303,7 +301,7 @@ namespace CSGL
             context.Draw(_drawObject);
 
             _shader.DrawLighting = _doLight;
-            context.Model = Matrix4.CreateRotationZ(Radian.Percent(0.5)) * Matrix4.CreateRotationY(Radian.Percent(0.25)) * Matrix4.CreateTranslation(100, 0, 0);
+            context.Model = Matrix4.CreateRotationZ(Radian.Percent(0.5f)) * Matrix4.CreateRotationY(Radian.Percent(0.25f)) * Matrix4.CreateTranslation(100, 0, 0);
             //Shader.SetColourSource(ColourSource.UniformColour);
             _shader.ColourSource = ColourSource.Texture;
             _shader.Colour = new Colour(134, 94, 250);
@@ -327,18 +325,18 @@ namespace CSGL
             _shader.Colour = (ColourF)_light.LightColour;
             context.Draw(_lightObject);
 
-            double lA = Math.Sin(Radian.Percent(_lightAmplitude));
-            _lightAmplitude += 0.005;
+            float lA = MathF.Sin(Radian.Percent(_lightAmplitude));
+            _lightAmplitude += 0.005f;
 
             byte colourValue = (byte)(255 - (int)((lA + 1) * 100));
             _farLight.LightColour = new Colour3(colourValue, colourValue, colourValue);
 
-            //double lightScale = (3 - ((lA + 1) * 1.5)) + 1;
+            //float lightScale = (3 - ((lA + 1) * 1.5)) + 1;
 
-            double lightSizeL = ((lA + 1) * 4.5) + 1;
-            double lightSizeQ = ((lA + 1) * 4.5) + 1;
-            _farLight.Linear = 0.0014 * lightSizeL;
-            _farLight.Quadratic = 0.000007 * lightSizeQ;
+            float lightSizeL = ((lA + 1) * 4.5f) + 1;
+            float lightSizeQ = ((lA + 1) * 4.5f) + 1;
+            _farLight.Linear = 0.0014f * lightSizeL;
+            _farLight.Quadratic = 0.000007f * lightSizeQ;
 
             _shader.SetLight(1, _farLight);
 
@@ -351,7 +349,7 @@ namespace CSGL
             context.Model = Matrix4.CreateTranslation(8000, 0, 0);
             context.Render(_room, _shader);
 
-            context.Model = Matrix4.CreateTranslation(0, 0, -5.1) * Matrix4.CreateRotationX(Radian.Percent(_objectRotation));
+            context.Model = Matrix4.CreateTranslation(0, 0, -5.1f) * Matrix4.CreateRotationX(Radian.Percent(_objectRotation));
             _textDisplay.DrawCentred(context, $"{Core.Time:N3}\n", _font, 0, 0);
             _textDisplay.DrawCentred(context, $"\n{_cameraPos.SquaredLength:N3}", _font, 0, 0);
         }
@@ -381,7 +379,7 @@ namespace CSGL
             if (e[Keys.BackSpace])
             {
                 _cameraPos = Vector3.Zero;
-                _rotateX = Radian.Percent(0.5);
+                _rotateX = Radian.Percent(0.5f);
                 _rotateY = 0;
                 _rotateZ = 0;
                 _moveSpeed = 1;
@@ -396,10 +394,10 @@ namespace CSGL
             if (e[Keys.Enter])
             {
                 _cameraPos = new Vector3(-8008, -2, 8);
-                _rotateX = Radian.Percent(0.5);
+                _rotateX = Radian.Percent(0.5f);
                 _rotateY = 0;
                 _rotateZ = 0;
-                _moveSpeed = 0.125;
+                _moveSpeed = 0.125f;
 
                 _cameraLightCC = new Colour(255, 235, 210);
                 if (_torchLight)
@@ -469,25 +467,25 @@ namespace CSGL
 
             if (new Vector2(e.X, e.Y) == _mouseLocation) { return; }
 
-            double distanceX = e.X - _mouseLocation.X;
-            double distanceY = e.Y - _mouseLocation.Y;
+            float distanceX = e.X - _mouseLocation.X;
+            float distanceY = e.Y - _mouseLocation.Y;
 
             _mouseLocation = new Vector2(e.X, e.Y);
 
-            _rotateY += Radian.Degrees(distanceX * 0.1);
-            _rotateX += Radian.Degrees(distanceY * 0.1);
+            _rotateY += Radian.Degrees(distanceX * 0.1f);
+            _rotateX += Radian.Degrees(distanceY * 0.1f);
         }
 
         protected override void OnSizePixelChange(VectorIEventArgs e)
         {
             base.OnSizePixelChange(e);
 
-            double mWidth;
-            double mHeight;
+            float mWidth;
+            float mHeight;
 
             if (e.X > e.Y)
             {
-                double heightPercent = (double)e.Y / e.X;
+                float heightPercent = (float)e.Y / e.X;
 
                 mWidth = 400;
 
@@ -495,9 +493,9 @@ namespace CSGL
             }
             else
             {
-                double widthPercent = (double)e.X / e.Y;
+                float widthPercent = (float)e.X / e.Y;
 
-                mHeight = 56.25 * 4;
+                mHeight = 56.25f * 4;
 
                 mWidth = mHeight * widthPercent;
             }
@@ -511,8 +509,8 @@ namespace CSGL
 
             lock (_perspective)
             {
-                double zoom = Degrees.Radian(_perspective.Fovy);
-                zoom -= e.DeltaY * zoom * 0.02;
+                float zoom = Degrees.Radian(_perspective.Fovy);
+                zoom -= e.DeltaY * zoom * 0.02f;
 
                 if (zoom < 1)
                 {
